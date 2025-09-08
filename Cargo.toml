@@ -1,0 +1,9 @@
+[package]
+name = "chessengine"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+generic-array = "1.2.0"
+num-integer = "0.1.46"
+either = "1.15.0"
