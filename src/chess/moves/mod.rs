@@ -1,0 +1,5 @@
+pub mod pawn;
+pub mod knight;
+pub mod king;
+pub mod rook;
+mod magicBitBoard;
