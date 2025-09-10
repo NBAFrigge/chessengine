@@ -1,5 +1,3 @@
-const NOTBORDER: u64 = 0x7e7e7e7e7e7e00;
-
 const DP:u64 = 0x8040201008040201;
 const DS :u64 = 0x102040810204080;
 pub fn generateMask(index: u64) -> u64 {
