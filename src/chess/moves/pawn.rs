@@ -1,12 +1,64 @@
 const NOT_AFILE: u64 = 0xfefefefefefefefe;
 const NOT_HFILE: u64 = 0x7f7f7f7f7f7f7f7f;
+const RANK4: u64 = 0x00000000FF000000;
+const RANK5: u64 = 0x000000FF00000000;
 
-pub fn north_one(b: u64) -> u64 {b << 8}
-pub fn south_one(b: u64) -> u64 {b >> 8}
+pub fn white_moves(b : u64, empty: u64) -> u64 {
+    let single_push = white_pawns_able_to_push(b, empty);
+    let double_push = white_pawns_able_double_push(b, empty);
 
-pub fn east_one(b: u64)  -> u64    {(b << 1) & NOT_AFILE}
-pub fn northeast_one(b: u64) -> u64{(b << 9) & NOT_AFILE}
-pub fn southeast_one(b: u64) -> u64{(b >> 7) & NOT_AFILE}
-pub fn west_one(b: u64)    -> u64  {(b >> 1) & NOT_HFILE}
-pub fn southwest_one(b: u64) -> u64{(b >> 9) & NOT_HFILE}
-pub fn northwest_one(b: u64) -> u64 {(b << 7) & NOT_HFILE}
+    white_single_push(single_push, empty) | white_double_push(double_push, empty)
+}
+
+pub fn black_moves(b : u64, empty: u64) -> u64 {
+    let single_push = black_pawns_able_to_push(b, empty);
+    let double_push = black_pawns_able_double_push(b, empty);
+
+    black_single_push(single_push, empty) | black_double_push(double_push, empty)
+}
+
+fn white_single_push(b : u64, empty : u64) -> u64 {
+    north_one(b) & empty
+}
+
+fn white_double_push(b : u64, empty : u64) -> u64 {
+    let single = white_single_push(b, empty);
+    north_one(single) & empty & RANK4
+}
+
+fn white_pawns_able_to_push(b : u64, empty : u64) -> u64 {
+    south_one(empty) & b
+}
+
+fn white_pawns_able_double_push(b : u64, empty : u64) -> u64 {
+    let empty_rank = south_one(empty & RANK4) & empty;
+    white_pawns_able_to_push(b, empty_rank)
+}
+
+fn black_single_push(b : u64, empty : u64) -> u64 {
+    south_one(b) & empty
+}
+
+fn black_double_push(b : u64, empty : u64) -> u64 {
+    let single = black_single_push(b, empty);
+    south_one(single) & empty & RANK5
+}
+
+fn black_pawns_able_to_push(b : u64, empty : u64) -> u64 {
+    north_one(empty) & b
+}
+
+fn black_pawns_able_double_push(b : u64, empty : u64) -> u64 {
+    let empty_rank = north_one(empty & RANK4) & empty;
+    black_pawns_able_to_push(b, empty_rank)
+}
+
+
+fn north_one(b: u64) -> u64 {b << 8}
+fn south_one(b: u64) -> u64 {b >> 8}
+fn east_one(b: u64)  -> u64    {(b << 1) & NOT_AFILE}
+fn northeast_one(b: u64) -> u64{(b << 9) & NOT_AFILE}
+fn southeast_one(b: u64) -> u64{(b >> 7) & NOT_AFILE}
+fn west_one(b: u64)    -> u64  {(b >> 1) & NOT_HFILE}
+fn southwest_one(b: u64) -> u64{(b >> 9) & NOT_HFILE}
+fn northwest_one(b: u64) -> u64 {(b << 7) & NOT_HFILE}

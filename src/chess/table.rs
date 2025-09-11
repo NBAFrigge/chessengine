@@ -1,234 +1,242 @@
 use either::Either;
-use crate::bitboard::bitboard::bitboard;
+use crate::bitboard::bitboard::Bitboard;
 use crate::chess::moves;
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
+
+const FIRSTRANK: u64 = 0xff;
+const LASTRANK: u64 = 0xff00000000000000;
+const WHITESHORTCASTLING: u64 = 0x60;
+const WHITELONGCASTLING: u64 = 0xe;
+const BLACKSHORTCASTLING: u64 = 0x600000000000000;
+const BLACKLONGCASTLING: u64 = 0x7000000000000000;
+
+#[derive(Clone, Copy)]
+pub enum Color {
+    White,
+    Black,
+    Any,
+}
+#[derive(Debug, EnumIter, Clone, Copy)]
+pub enum Type {
+    Pawn,
+    Bishop,
+    Knight,
+    Rook,
+    Queen,
+    King,
+    Any,
+}
 
 pub struct Board {
-    pawn: bitboard,
-    bishop: bitboard,
-    knight: bitboard,
-    rook: bitboard,
-    queen: bitboard,
-    king: bitboard,
-    white: bitboard,
-    black: bitboard,
+    pawn: Bitboard,
+    bishop: Bitboard,
+    knight: Bitboard,
+    rook: Bitboard,
+    queen: Bitboard,
+    king: Bitboard,
+    white: Bitboard,
+    black: Bitboard,
 
-    is_white_turn : bool,
+    is_white_turn: bool,
+
+    whithe_castling: bool,
+    black_castling: bool,
 }
 
 impl Board {
     pub fn new() -> Self {
         Board {
-            pawn:   bitboard::new(0xff00000000ff00),
-            bishop: bitboard::new(2400000000000024),
-            knight: bitboard::new(0x4200000000000042),
-            rook:   bitboard::new(0x8100000000000081),
-            queen:  bitboard::new(0x800000000000008),
-            king:   bitboard::new(0x1000000000000010),
-            white:  bitboard::new(0xffff),
-            black:  bitboard::new(0xffff000000000000),
-            is_white_turn : true,
+            pawn: Bitboard::new(0xff00000000ff00),
+            bishop: Bitboard::new(0x2400000000000024),
+            knight: Bitboard::new(0x4200000000000042),
+            rook: Bitboard::new(0x8100000000000081),
+            queen: Bitboard::new(0x800000000000008),
+            king: Bitboard::new(0x1000000000000010),
+            white: Bitboard::new(0xffff),
+            black: Bitboard::new(0xffff000000000000),
+            is_white_turn: true,
+            black_castling: true,
+            whithe_castling: true,
         }
     }
 
-
-    pub fn get_white(&self) -> u64 {self.white.get_value()}
-
-    pub fn get_black(&self) -> u64 {self.black.get_value()}
-
-    pub fn get_occupied_pos(&self) -> u64 {self.black.get_value() | self.white.get_value()}
-
-    pub fn get_free_pos(&self) -> u64 {
-        !self.get_occupied_pos()
+    pub fn get_pieces(&self, color: Color, piece_type: Type) -> Bitboard {
+        match color {
+            Color::White => self.get_piece_white(piece_type),
+            Color::Black => self.get_piece_black(piece_type),
+            Color::Any => self.get_piece_any(piece_type),
+        }
     }
 
-    // region get pieces per type
-    pub fn get_king(&self) -> u64 {self.king.get_value()}
-    pub fn get_queen(&self) -> u64 {self.queen.get_value()}
-    pub fn get_rook(&self) -> u64 {self.rook.get_value()}
-    pub fn get_bishop(&self) -> u64 {self.bishop.get_value()}
-    pub fn get_knight(&self) -> u64 {self.knight.get_value()}
-    pub fn get_pawn(&self) -> u64 {self.pawn.get_value()}
+    fn get_piece_any(&self, piece_type: Type) -> Bitboard {
+        match piece_type {
+            Type::Any => self.white.or(self.black.clone()),
+            Type::Pawn => self.pawn.clone(),
+            Type::Bishop => self.bishop.clone(),
+            Type::Knight => self.knight.clone(),
+            Type::Rook => self.rook.clone(),
+            Type::Queen => self.queen.clone(),
+            Type::King => self.king.clone(),
+        }
+    }
 
+    fn get_piece_white(&self, piece_type: Type) -> Bitboard {
+        match piece_type {
+            Type::Any => self.white.clone(),
+            Type::Pawn => self.pawn.and(self.white.clone()),
+            Type::Bishop => self.bishop.and(self.white.clone()),
+            Type::Knight => self.knight.and(self.white.clone()),
+            Type::Rook => self.rook.and(self.white.clone()),
+            Type::Queen => self.queen.and(self.white.clone()),
+            Type::King => self.king.and(self.white.clone()),
+        }
+    }
+
+    fn get_piece_black(&self, piece_type: Type) -> Bitboard {
+        match piece_type {
+            Type::Any => self.black.clone(),
+            Type::Pawn => self.pawn.and(self.black.clone()),
+            Type::Bishop => self.bishop.and(self.black.clone()),
+            Type::Knight => self.knight.and(self.black.clone()),
+            Type::Rook => self.rook.and(self.black.clone()),
+            Type::Queen => self.queen.and(self.black.clone()),
+            Type::King => self.king.and(self.black.clone()),
+        }
+    }
+
+    pub fn get_free_pos(&self) -> Bitboard {
+        self.get_pieces(Color::White, Type::Any).or(self.get_pieces(Color::Black, Type::Any))
+            .not()
+    }
+
+    pub fn get_occupied_post(&self) -> Bitboard {
+        self.get_free_pos().not()
+    }
+
+    // region count pieces
+    pub fn count_pieces(&self, color: Color, piece_type: Type) -> u64 {
+        match color {
+            Color::White => self.count_white(piece_type),
+            Color::Black => self.count_black(piece_type),
+            Color::Any => self.count_any(piece_type),
+        }
+    }
+
+    fn count_any(&self, piece_type: Type) -> u64 {
+        match piece_type {
+            Type::Any => self.white.or(self.black.clone()).count_ones(),
+            Type::Pawn => self.pawn.count_ones(),
+            Type::Bishop => self.bishop.count_ones(),
+            Type::Knight => self.knight.count_ones(),
+            Type::Rook => self.rook.count_ones(),
+            Type::Queen => self.queen.count_ones(),
+            Type::King => self.king.count_ones(),
+        }
+    }
+
+    fn count_white(&self, piece_type: Type) -> u64 {
+        match piece_type {
+                Type::Any => self.white.count_ones(),
+                Type::Pawn => self.pawn.and(self.white.clone()).count_ones(),
+                Type::Bishop => self.bishop.and(self.white.clone()).count_ones(),
+                Type::Knight => self.knight.and(self.white.clone()).count_ones(),
+                Type::Rook => self.rook.and(self.white.clone()).count_ones(),
+                Type::Queen => self.queen.and(self.white.clone()).count_ones(),
+                Type::King => self.king.and(self.white.clone()).count_ones(),
+        }
+    }
+
+    fn count_black(&self, piece_type: Type) -> u64 {
+        match piece_type {
+            Type::Any => self.black.count_ones(),
+            Type::Pawn => self.pawn.and(self.black.clone()).count_ones(),
+            Type::Bishop => self.bishop.and(self.black.clone()).count_ones(),
+            Type::Knight => self.knight.and(self.black.clone()).count_ones(),
+            Type::Rook => self.rook.and(self.black.clone()).count_ones(),
+            Type::Queen => self.queen.and(self.black.clone()).count_ones(),
+            Type::King => self.king.and(self.black.clone()).count_ones(),
+        }
+    }
     // endregion
 
-    // region get pieces per type and color methods
-    pub fn get_black_king(&self) -> u64 {self.get_black() & self.get_king()}
-    pub fn get_black_queen(&self) -> u64 {self.get_black() & self.get_queen()}
-    pub fn get_black_rook(&self) -> u64 {self.get_black() & self.get_rook()}
-    pub fn get_black_bishop(&self) -> u64 {self.get_black() & self.get_bishop()}
-    pub fn get_black_knight(&self) -> u64 {self.get_black() & self.get_knight()}
-    pub fn get_black_pawn(&self) -> u64 {self.get_black() & self.get_pawn()}
-
-
-    pub fn get_white_king(&self) -> u64 {self.get_white() & self.get_king()}
-    pub fn get_white_queen(&self) -> u64 {self.get_white() & self.get_queen()}
-    pub fn get_white_rook(&self) -> u64 {self.get_white() & self.get_rook()}
-    pub fn get_white_bishop(&self) -> u64 {self.get_white() & self.get_bishop()}
-    pub fn get_white_knight(&self) -> u64 {self.get_white() & self.get_knight()}
-    pub fn get_white_pawn(&self) -> u64 {self.get_white() & self.get_pawn()}
-    // endregion
 
     // region moves
-    pub fn white_moves_bitboard_king(&self)  -> u64 {
+    pub fn get_all_moves_bitboard(&self, color: Color) -> Vec<Bitboard> {
         let empty = self.get_free_pos();
-        let king = self.get_white_king();
-        (
-            moves::king::north_one(king) |
-            moves::king::south_one(king) |
-            moves::king::east_one(king) |
-            moves::king::northeast_one(king) |
-            moves::king::southeast_one(king) |
-            moves::king::west_one(king) |
-            moves::king::southwest_one(king) |
-            moves::king::northwest_one(king)
-        ) & empty
-    }
-    
-    pub fn white_moves_bitboard_queen(&self)  -> u64 {
-        let queenmask = moves::queen::generatemask(44);
-        let blockers = self.get_occupied_pos() & queenmask;
-        queenmask ^ blockers
+        let vec = Vec::new();
+        for t in Type::iter() {
 
+            //vec.append()
+        }
+
+        vec
     }
 
-    pub fn white_moves_bitboard_rook(&self)  -> u64 {
-        let rookmask = moves::rook::generateMask(45);
-        let blockers = self.get_occupied_pos() & rookmask;
-        rookmask ^  blockers
+    pub fn get_move(&self, color : Color, piece_type: Type) -> Vec<Bitboard> {
+        let moves = Vec::new();
+        let piece_bitboard = self.get_pieces(color, piece_type);
+        match piece_type {
+            // TODO implement all moves
+            Type::Any => moves,
+            Type::Pawn => {self.get_pawn_move(piece_bitboard, color)}
+            Type::King => {Vec::new()}
+            Type::Bishop => {Vec::new()}
+            Type::Knight => {Vec::new()}
+            Type::Rook => {Vec::new()}
+            Type::Queen => {Vec::new()}
+        }
     }
 
-    pub fn white_moves_bitboard_bishop(&self)  -> u64 {
-        let bishopmask = moves::bishop::generateMask(44);
-        let blockers = self.get_occupied_pos() & bishopmask;
-        bishopmask ^  blockers
-    }
-
-    pub fn white_moves_bitboard_knight(&self)  -> u64 {
+    fn get_pawn_move(&self, bitboard: Bitboard, color: Color) -> Vec<Bitboard> {
+        let mut moves = Vec::new();
         let empty = self.get_free_pos();
-        let white_knight: u64 = self.get_white_knight();
-        (moves::knight::north_northWest(white_knight) |
-         moves::knight::north_northEast(white_knight) |
-         moves::knight::north_westWest(white_knight) |
-         moves::knight::north_eastEast(white_knight) |
-         moves::knight::south_westWest(white_knight) |
-         moves::knight::south_eastEast(white_knight) |
-         moves::knight::south_southWest(white_knight) |
-         moves::knight::south_southEast(white_knight))
-        & empty
-    }
-    //
-    pub fn white_moves_bitboard_pawn(&self)  -> u64 {self.white_pawns_single_push() | self.white_pawns_double_push()}
-
-    pub fn black_moves_bitboard_king(&self)  -> u64 {
-        let empty = self.get_free_pos();
-        let king = self.get_black_king();
-        (
-            moves::king::north_one(king) |
-                moves::king::south_one(king) |
-                moves::king::east_one(king) |
-                moves::king::northeast_one(king) |
-                moves::king::southeast_one(king) |
-                moves::king::west_one(king) |
-                moves::king::southwest_one(king) |
-                moves::king::northwest_one(king)
-        ) & empty
+        match color {
+            Color::White => {
+                for p in bitboard.get_single_ones(){
+                    let temp_bitboard = Bitboard::new(moves::pawn::white_moves(p.get_value(), empty.get_value()));
+                    moves.push(temp_bitboard);
+                }
+            }
+            Color::Black => {
+                for p in bitboard.get_single_ones(){
+                    let temp_bitboard = Bitboard::new(moves::pawn::black_moves(p.get_value(), empty.get_value()));
+                    moves.push(temp_bitboard);
+                }
+            }
+            Color::Any => {}
+        }
+        moves
     }
 
-    //pub fn black_moves_bitboard_queen(&self)  -> u64 {}
-    //
-    // pub fn black_moves_bitboard_rook(&self)  -> u64 {}
-    //
-    // pub fn black_moves_bitboard_bishop(&self)  -> u64 {}
-    //
-    pub fn black_moves_bitboard_knight(&self)  -> u64 {
-        let empty = self.get_free_pos();
-        let black_knight: u64 = self.get_black_knight();
-        (moves::knight::north_northWest(black_knight) |
-            moves::knight::north_northEast(black_knight) |
-            moves::knight::north_westWest(black_knight) |
-            moves::knight::north_eastEast(black_knight) |
-            moves::knight::south_westWest(black_knight) |
-            moves::knight::south_eastEast(black_knight) |
-            moves::knight::south_southWest(black_knight) |
-            moves::knight::south_southEast(black_knight))
-            & empty
-    }
 
-    pub fn black_moves_bitboard_pawn(&self)  -> u64 {self.black_pawns_single_push() | self.black_pawns_double_push() }
+    // // endregion
+    //
+    // // region pawns private methods
+
+
+    // fn black_pawns_single_push(&self) -> u64 { moves::pawn::south_one(self.black_pawns_able_to_push()) & self.get_free_pos() }
+    //
+    // fn black_pawns_double_push(&self) -> u64 {
+    //     let able: u64 = 0x000000FF00000000;
+    //     let singlepush = self.black_pawns_single_push();
+    //     moves::pawn::south_one(singlepush) & able & self.get_free_pos()
+    // }
+    //
+    // fn black_pawns_able_to_push(&self) -> u64 { moves::pawn::north_one(self.get_free_pos()) & self.get_black_pawn() }
+    //
+    // fn black_pawns_east_attack(&self) -> u64 { moves::pawn::southeast_one(self.get_black_pawn()) }
+    //
+    // fn black_pawns_west_attack(&self) -> u64 { moves::pawn::southwest_one(self.get_black_pawn()) }
+    //
+    // fn black_pawns_promotion_check(&self) -> bool {
+    //     (!(self.get_black_pawn() ^ FIRSTRANK)) > 0
+    // }
 
     // endregion
 
-    // region attacks
-    pub fn white_pawns_attack(&self) -> u64 {self.white_pawns_west_attack() | self.white_pawns_east_attack()}
-
-    pub fn white_pawn_double_attack(&self) -> u64 {self.white_pawns_west_attack() & self.white_pawns_east_attack()}
-
-    pub fn white_pawn_single_attack(&self) -> u64 {self.white_pawns_west_attack() ^ self.white_pawns_east_attack()}
-
-    pub fn black_pawns_attack(&self) -> u64 {self.black_pawns_east_attack() | self.black_pawns_west_attack()}
-
-    pub fn black_pawn_double_attack(&self) -> u64 {self.black_pawns_east_attack() & self.black_pawns_west_attack()}
-
-    pub fn black_pawn_single_attack(&self) -> u64 {self.black_pawns_east_attack() ^ self.black_pawns_west_attack()}
-
-    // endregion
-
-    // region captures
-    fn white_able_capture(&self) -> u64 {
-        self.get_white_pawn() & self.black_pawns_attack()
-    }
-
-    fn white_able_capture_west(&self) -> u64 {
-        self.get_white_pawn() & self.black_pawns_west_attack()
-    }
-
-    fn white_able_capture_east(&self) -> u64 {
-        self.get_white_pawn() & self.black_pawns_east_attack()
-    }
-
-    fn black_able_capture(&self) -> u64 {
-        self.get_black_pawn() & self.white_pawns_attack()
-    }
-
-    fn black_able_capture_west(&self) -> u64 {
-        self.get_black_pawn() & self.black_pawns_west_attack()
-    }
-
-    fn black_able_capture_east(&self) -> u64 {
-        self.get_black_pawn() & self.black_pawns_east_attack()
-    }
-    // endregion
-
-    // region pawns private methods
-    fn white_pawns_single_push(&self) -> u64 { moves::pawn::north_one(self.white_pawns_able_to_push()) & self.get_free_pos() }
-
-    fn white_pawns_double_push(&self) -> u64 {
-        let able:u64 = 0x00000000FF000000;
-        let singlepush = self.white_pawns_single_push();
-        moves::pawn::north_one(singlepush) & able & self.get_free_pos()
-    }
-
-    fn white_pawns_able_to_push(&self) -> u64 { moves::pawn::south_one(self.get_free_pos()) & self.get_white_pawn()}
-
-    fn white_pawns_east_attack(&self) -> u64 { moves::pawn::northeast_one(self.get_white_pawn())}
-
-    fn white_pawns_west_attack(&self) -> u64 { moves::pawn::northwest_one(self.get_white_pawn())}
-
-
-    fn black_pawns_single_push(&self) -> u64 { moves::pawn::south_one(self.black_pawns_able_to_push()) & self.get_free_pos()}
-
-    fn black_pawns_double_push(&self) -> u64 {
-        let able:u64 = 0x000000FF00000000;
-        let singlepush = self.black_pawns_single_push();
-        moves::pawn::south_one(singlepush) & able & self.get_free_pos()
-    }
-
-    fn black_pawns_able_to_push(&self) -> u64 { moves::pawn::north_one(self.get_free_pos()) & self.get_black_pawn()}
-
-    fn black_pawns_east_attack(&self) -> u64 { moves::pawn::southeast_one(self.get_black_pawn())}
-
-    fn black_pawns_west_attack(&self) -> u64 { moves::pawn::southwest_one(self.get_black_pawn())}
-
+    // region castling
+    // pub fn white_can_castle(&self) -> bool {}
     // endregion
 
     pub fn to_string(&self) -> String {
@@ -236,24 +244,24 @@ impl Board {
         // add pieces to the board
 
         // white pieces
-        let white_pawns =  format!("{:064b}", self.get_white_pawn());
-        let white_rooks =  format!("{:064b}", self.get_white_rook());
-        let white_queens =  format!("{:064b}", self.get_white_queen());
-        let white_kings =  format!("{:064b}", self.get_white_king());
-        let white_bishops =  format!("{:064b}", self.get_white_bishop());
-        let white_knights = format!("{:064b}", self.get_white_knight());
+        let white_pawns =  self.get_pieces(Color::White, Type::Pawn).to_string();
+        let white_rooks = self.get_pieces(Color::White, Type::Rook).to_string();
+        let white_queens = self.get_pieces(Color::White, Type::Queen).to_string();
+        let white_kings = self.get_pieces(Color::White, Type::King).to_string();
+        let white_bishops = self.get_pieces(Color::White, Type::Bishop).to_string();
+        let white_knights = self.get_pieces(Color::White, Type::Knight).to_string();
 
 
         // black pieces
-        let black_pawns =  format!("{:064b}", self.get_black_pawn());
-        let black_kings =  format!("{:064b}", self.get_black_king());
-        let black_queens =  format!("{:064b}", self.get_black_queen());
-        let black_bishops =  format!("{:064b}", self.get_black_bishop());
-        let black_knights =  format!("{:064b}", self.get_black_knight());
-        let black_rooks =  format!("{:064b}", self.get_black_rook());
+        let black_pawns = self.get_pieces(Color::Black, Type::Pawn).to_string();
+        let black_kings = self.get_pieces(Color::Black, Type::Rook).to_string();
+        let black_queens = self.get_pieces(Color::Black, Type::Queen).to_string();
+        let black_bishops = self.get_pieces(Color::Black, Type::King).to_string();
+        let black_knights = self.get_pieces(Color::Black, Type::Bishop).to_string();
+        let black_rooks = self.get_pieces(Color::Black, Type::Knight).to_string();
 
         for i in 0..64 {
-            if  white_pawns.chars().skip(i).take(1).collect::<Vec<_>>()[0] == '1' {
+            if white_pawns.chars().skip(i).take(1).collect::<Vec<_>>()[0] == '1' {
                 string = change_char_in_string(string, i, '♙')
             }
 
@@ -331,7 +339,6 @@ impl Board {
 
         string
     }
-
 }
 
 

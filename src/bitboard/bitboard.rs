@@ -1,18 +1,18 @@
 use std::string;
 
-pub struct bitboard {
+pub struct Bitboard {
     board: u64
 }
 
-impl bitboard{
+impl Bitboard {
     pub fn new(value :u64) -> Self {
-        bitboard {
+        Bitboard {
             board: value
         }
     }
 
     pub fn empty(&self) -> Self {
-        bitboard {
+        Bitboard {
             board: 0
         }
     }
@@ -22,7 +22,15 @@ impl bitboard{
         1 << index
     }
 
+    pub fn count_ones(&self) -> u64 {
+        self.board.count_ones() as u64
+    }
+
     pub fn to_string(&self) -> String {
+        format!("{:064b}", self.board)
+    }
+
+    pub fn to_formatted_string(&self) -> String {
         let string = format!("{:064b}", self.board);
         
         let s = string.chars()
@@ -42,5 +50,40 @@ impl bitboard{
 
     pub fn get_value(&self) -> u64 {
         self.board
+    }
+
+    pub fn clone(&self) -> Bitboard {
+        Bitboard::new(self.get_value())
+    }
+
+    pub fn and(&self, other: Bitboard) -> Bitboard {
+        Bitboard::new(self.board & other.board)
+    }
+
+    pub fn or(&self, other: Bitboard) -> Bitboard {
+        Bitboard::new(self.board | other.board)
+    }
+
+    pub fn not(&self) -> Bitboard {
+        Bitboard::new(!self.get_value())
+    }
+
+    pub fn xor(&self, other: Bitboard) -> Bitboard {
+        Bitboard::new(self.board ^ other.get_value())
+    }
+
+    pub fn subtract(&self, other: Option<&Bitboard>) -> Bitboard {
+        Bitboard::new(self.board - other.unwrap().board)
+    }
+
+    pub fn get_single_ones(&self) -> Vec<Bitboard> {
+        let mut v = Vec::new();
+        let mut temp = self.clone();
+        while temp.count_ones() > 0 {
+            v.push(Bitboard::new(temp.lsb()));
+            temp = temp.subtract(v.get(v.len()-1))
+        }
+
+        v
     }
 }
