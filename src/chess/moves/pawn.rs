@@ -17,6 +17,16 @@ pub fn black_moves(b : u64, empty: u64) -> u64 {
     black_single_push(single_push, empty) | black_double_push(double_push, empty)
 }
 
+pub fn white_attack(b : u64, black : u64) -> u64 {
+    let att = northeast_one(b) | northwest_one(b);
+    att & black
+}
+
+pub fn black_attack(b : u64, white : u64) -> u64 {
+    let att = southeast_one(b) | southwest_one(b);
+    att & white
+}
+
 fn white_single_push(b : u64, empty : u64) -> u64 {
     north_one(b) & empty
 }
