@@ -10,7 +10,13 @@ impl Bitboard {
             board: value
         }
     }
-
+    
+    pub fn new_from_index(value: u64) -> Self {
+        Bitboard {
+            board: 1 << value,
+        }
+    }
+    
     pub fn empty(&self) -> Self {
         Bitboard {
             board: 0
