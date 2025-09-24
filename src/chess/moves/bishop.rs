@@ -1,41 +1,14 @@
-use crate::bitboard::bitboard::Bitboard;
+use crate::chess::moves::hyperbola_quint::hyp_quint;
+use crate::chess::moves::hyperbola_quint::DIAG;
+use crate::chess::moves::hyperbola_quint::ANTI_DIAG;
 
-const DP:u64 = 0x8040201008040201;
-const DS :u64 = 0x102040810204080;
+pub fn moves(b :u64, occ: u64) -> u64{
+    let index = b.trailing_zeros();
+    let tr = index as usize / 8;
+    let tf = index as usize % 8;
 
-pub fn moves(b: u64, empty: u64) -> u64 {
-    let mask = generate_mask(b);
-    let blockers = get_blockers(mask, !empty);
-    mask & blockers
-}
+    let diag_index: usize = 7 + tr - tf;
+    let anti_diag_index: usize = tr + tf;
 
-pub fn attack(b : u64, black: u64) -> u64 {
-    let mask = generate_mask(b);
-    get_blockers(mask, black)
-}
-
-fn get_blockers(mask : u64, occ : u64) -> u64 {
-    mask & occ
-}
-
-fn generate_mask(index: u64) -> u64 {
-    let y = 8 - index / 8;
-    let x = 7 - index % 8;
-
-    let mut m: u64 = 0;
-    if (x >= y) {
-        m |= DP << ((x - y) << 3);
-    } else {
-        m |= DP >> ((y - x) << 3);
-    }
-
-    let z = 7 - x;
-
-    if (z >= y) {
-        m |= DS << ((z - y) << 3);
-    } else {
-        m |= DS >> ((y - z) << 3);
-    }
-
-    m
+    hyp_quint(index as u64, occ, DIAG[diag_index]) | hyp_quint(index as u64, occ, ANTI_DIAG[anti_diag_index])
 }

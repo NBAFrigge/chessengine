@@ -1,2 +1,2 @@
 pub mod table;
-mod moves;
+pub(crate) mod moves;
