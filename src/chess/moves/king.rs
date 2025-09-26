@@ -1,26 +1,15 @@
 const NOT_AFILE: u64 = 0xfefefefefefefefe;
 const NOT_HFILE: u64 = 0x7f7f7f7f7f7f7f7f;
 
-pub fn moves(b : u64, empty: u64) -> u64 {
-    (north_one(b) |
+pub fn moves(b : u64) -> u64 {
+    north_one(b) |
     east_one(b) | 
     west_one(b) | 
     south_one(b) | 
     northeast_one(b) | 
     southeast_one(b) | 
     southwest_one(b) | 
-    northwest_one(b)) & empty
-}
-
-pub fn attack(b: u64, opponent_piece: u64) -> u64 {
-    (north_one(b) |
-    east_one(b) |
-    west_one(b) |
-    south_one(b) |
-    northeast_one(b) |
-    southeast_one(b) |
-    southwest_one(b) |
-    northwest_one(b))  & opponent_piece
+    northwest_one(b)
 }
 
  fn north_one(b: u64) -> u64 {b << 8}

@@ -3,6 +3,7 @@ use crate::bitboard::bitboard::Bitboard;
 use crate::chess::moves;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
+use crate::chess::moves::rook::moves;
 
 const FIRSTRANK: u64 = 0xff;
 const LASTRANK: u64 = 0xff00000000000000;
@@ -110,7 +111,7 @@ impl Board {
             .not()
     }
 
-    pub fn get_occupied_post(&self) -> Bitboard {
+    pub fn get_occupied_pos(&self) -> Bitboard {
         self.get_free_pos().not()
     }
 
@@ -164,10 +165,9 @@ impl Board {
     // region moves
     pub fn get_all_moves_bitboard(&self, color: Color) -> Vec<Bitboard> {
         let empty = self.get_free_pos();
-        let vec = Vec::new();
+        let mut vec = Vec::new();
         for t in Type::iter() {
-
-            //vec.append()
+            vec.append(self.get_move(color, t).as_mut())
         }
 
         vec
@@ -177,14 +177,13 @@ impl Board {
         let moves = Vec::new();
         let piece_bitboard = self.get_pieces(color, piece_type);
         match piece_type {
-            // TODO implement all moves
             Type::Any => moves,
             Type::Pawn => {self.get_pawn_move(piece_bitboard, color)}
-            Type::King => {Vec::new()}
-            Type::Bishop => {Vec::new()}
-            Type::Knight => {Vec::new()}
-            Type::Rook => {Vec::new()}
-            Type::Queen => {Vec::new()}
+            Type::King => {self.get_king_move(piece_bitboard)}
+            Type::Bishop => {self.get_bishop_move(piece_bitboard, self.get_occupied_pos())}
+            Type::Knight => {self.get_knight_move(piece_bitboard)}
+            Type::Rook => {self.get_rook_move(piece_bitboard, self.get_occupied_pos())}
+            Type::Queen => {self.get_queen_move(piece_bitboard, self.get_occupied_pos())}
         }
     }
 
@@ -209,29 +208,50 @@ impl Board {
         moves
     }
 
+    fn get_knight_move(&self, bitboard: Bitboard) -> Vec<Bitboard> {
+        let mut moves = Vec::new();
+        for p in bitboard.get_single_ones(){
+            let temp_bitboard = Bitboard::new(moves::knight::moves(p.get_value()));
+            moves.push(temp_bitboard);
+        }
+        moves
+    }
 
-    // // endregion
-    //
-    // // region pawns private methods
+    fn get_king_move(&self, bitboard: Bitboard) -> Vec<Bitboard> {
+        let mut moves = Vec::new();
+        for p in bitboard.get_single_ones(){
+            let temp_bitboard = Bitboard::new(moves::king::moves(p.get_value()));
+            moves.push(temp_bitboard);
+        }
+        moves
+    }
 
+    fn get_rook_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Bitboard> {
+        let mut moves = Vec::new();
+        for p in bitboard.get_single_ones(){
+            let temp_bitboard = Bitboard::new(moves::rook::moves(p.get_value(), occupied.get_value()));
+            moves.push(temp_bitboard);
+        }
+        moves
+    }
 
-    // fn black_pawns_single_push(&self) -> u64 { moves::pawn::south_one(self.black_pawns_able_to_push()) & self.get_free_pos() }
-    //
-    // fn black_pawns_double_push(&self) -> u64 {
-    //     let able: u64 = 0x000000FF00000000;
-    //     let singlepush = self.black_pawns_single_push();
-    //     moves::pawn::south_one(singlepush) & able & self.get_free_pos()
-    // }
-    //
-    // fn black_pawns_able_to_push(&self) -> u64 { moves::pawn::north_one(self.get_free_pos()) & self.get_black_pawn() }
-    //
-    // fn black_pawns_east_attack(&self) -> u64 { moves::pawn::southeast_one(self.get_black_pawn()) }
-    //
-    // fn black_pawns_west_attack(&self) -> u64 { moves::pawn::southwest_one(self.get_black_pawn()) }
-    //
-    // fn black_pawns_promotion_check(&self) -> bool {
-    //     (!(self.get_black_pawn() ^ FIRSTRANK)) > 0
-    // }
+    fn get_bishop_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Bitboard> {
+        let mut moves = Vec::new();
+        for p in bitboard.get_single_ones(){
+            let temp_bitboard = Bitboard::new(moves::bishop::moves(p.get_value(), occupied.get_value()));
+            moves.push(temp_bitboard);
+        }
+        moves
+    }
+
+    fn get_queen_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Bitboard> {
+        let mut moves = Vec::new();
+        for p in bitboard.get_single_ones(){
+            let temp_bitboard = Bitboard::new(moves::queen::moves(p.get_value(), occupied.get_value()));
+            moves.push(temp_bitboard);
+        }
+        moves
+    }
 
     // endregion
 

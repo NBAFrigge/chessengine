@@ -5,28 +5,15 @@ const NOT_HFILE: u64 = 0x7f7f7f7f7f7f7f7f;
 const NOT_ABFILE: u64 = 0xfcfcfcfcfcfcfcfc;
 const NOT_GHFILE: u64 = 0x3f3f3f3f3f3f3f3f;
 
-pub fn moves(b : u64, empty: u64) -> u64 {
-    (north_north_west(b) |
-        north_north_east(b) |
-        north_west_west(b) |
-        north_east_east(b) |
-        south_west_west(b) |
-        south_east_east(b) |
-        south_south_west(b) |
-        south_south_east(b)
-    ) & empty
-}
-
-pub fn attack(b : u64, occ : u64) -> u64 {
-    (north_north_west(b) |
-        north_north_east(b) |
-        north_west_west(b) |
-        north_east_east(b) |
-        south_west_west(b) |
-        south_east_east(b) |
-        south_south_west(b) |
-        south_south_east(b)
-    ) & occ
+pub fn moves(b : u64,) -> u64 {
+    north_north_west(b) |
+    north_north_east(b) |
+    north_west_west(b) |
+    north_east_east(b) |
+    south_west_west(b) |
+    south_east_east(b) |
+    south_south_west(b) |
+    south_south_east(b)
 }
 
 fn north_north_west(b :u64) -> u64 {(b << 15) & NOT_HFILE}
