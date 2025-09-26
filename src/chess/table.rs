@@ -29,6 +29,11 @@ pub enum Type {
     Any,
 }
 
+pub enum Side{
+    Long,
+    Short,
+}
+
 pub struct Board {
     pawn: Bitboard,
     bishop: Bitboard,
@@ -40,9 +45,14 @@ pub struct Board {
     black: Bitboard,
 
     is_white_turn: bool,
+    white_rook_long_side: bool,
+    white_rook_short_side: bool,
 
-    whithe_castling: bool,
-    black_castling: bool,
+    black_rook_long_side: bool,
+    black_rook_short_side: bool,
+
+    white_king: bool,
+    black_king: bool,
 }
 
 impl Board {
@@ -57,11 +67,18 @@ impl Board {
             white: Bitboard::new(0xffff),
             black: Bitboard::new(0xffff000000000000),
             is_white_turn: true,
-            black_castling: true,
-            whithe_castling: true,
+
+            white_rook_long_side: true,
+            white_rook_short_side: true,
+            black_rook_long_side: true,
+            black_rook_short_side: true,
+
+            white_king: true,
+            black_king: true,
         }
     }
 
+    // get method
     pub fn get_pieces(&self, color: Color, piece_type: Type) -> Bitboard {
         match color {
             Color::White => self.get_piece_white(piece_type),
@@ -115,7 +132,7 @@ impl Board {
         self.get_free_pos().not()
     }
 
-    // region count pieces
+    // count pieces
     pub fn count_pieces(&self, color: Color, piece_type: Type) -> u64 {
         match color {
             Color::White => self.count_white(piece_type),
@@ -159,10 +176,8 @@ impl Board {
             Type::King => self.king.and(self.black.clone()).count_ones(),
         }
     }
-    // endregion
 
-
-    // region moves
+    // pseudo-legal moves gen
     pub fn get_all_moves_bitboard(&self, color: Color) -> Vec<Bitboard> {
         let empty = self.get_free_pos();
         let mut vec = Vec::new();
@@ -253,12 +268,57 @@ impl Board {
         moves
     }
 
-    // endregion
+    // castling
+    pub fn can_castle(&self, color: Color, side: Side) -> bool {
+        match side {
+            Side::Long => {self.can_castle_long_side(color)}
+            Side::Short => {self.can_castle_short_side(color)}
+        }
+    }
 
-    // region castling
-    // pub fn white_can_castle(&self) -> bool {}
-    // endregion
+    fn can_castle_long_side(&self, color: Color) -> bool {
+        match color {
+            Color::White => {
+                if self.white_rook_long_side && self.white_king && ((self.get_piece_any(Type::Any).get_value() & WHITELONGCASTLING) == 0) {
+                    return true;
+                }
+                false
+            }
+            Color::Black => {
+                if self.black_rook_long_side && self.black_king && ((self.get_piece_any(Type::Any).get_value() & BLACKLONGCASTLING) == 0) {
+                    return true;
+                }
+                false
+            }
+            Color::Any => {panic!("rook side color can't be any")}
+        }
+    }
+    fn can_castle_short_side(&self, color: Color) -> bool {
+        match color {
+            Color::White => {
+                if self.white_rook_short_side && self.white_king && ((self.get_piece_any(Type::Any).get_value() & WHITESHORTCASTLING) == 0) {
+                    return true;
+                }
+                false
+            }
+            Color::Black => {
+                if self.black_rook_short_side && self.black_king && ((self.get_piece_any(Type::Any).get_value() & BLACKSHORTCASTLING) == 0) {
+                    return true;
+                }
+                false
+            }
+            Color::Any => {panic!("rook side color can't be any")}
+        }
+    }
 
+    //TODO checkmate
+    // checkmate
+    
+
+    //TODO promotion
+    // promotion
+
+    // to string function
     pub fn to_string(&self) -> String {
         let mut string = String::from("■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■");
         // add pieces to the board
