@@ -3,7 +3,6 @@ use crate::bitboard::bitboard::Bitboard;
 use crate::chess::moves;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use crate::chess::moves::rook::moves;
 
 const FIRSTRANK: u64 = 0xff;
 const LASTRANK: u64 = 0xff00000000000000;
@@ -189,10 +188,9 @@ impl Board {
     }
 
     pub fn get_move(&self, color : Color, piece_type: Type) -> Vec<Bitboard> {
-        let moves = Vec::new();
         let piece_bitboard = self.get_pieces(color, piece_type);
         match piece_type {
-            Type::Any => moves,
+            Type::Any => panic!("get_move called on type Any"),
             Type::Pawn => {self.get_pawn_move(piece_bitboard, color)}
             Type::King => {self.get_king_move(piece_bitboard)}
             Type::Bishop => {self.get_bishop_move(piece_bitboard, self.get_occupied_pos())}
@@ -309,6 +307,16 @@ impl Board {
             }
             Color::Any => {panic!("rook side color can't be any")}
         }
+    }
+
+    fn check(&self, color: Color, moves: Vec<Bitboard>) -> bool {
+        let king = self.get_pieces(color, Type::King);
+        for m in moves {
+            if m.and(king.clone()).get_value() > 0 {
+                return true;
+            }
+        }
+        false
     }
 
     //TODO checkmate
