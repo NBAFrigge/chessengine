@@ -5,7 +5,6 @@ use crate::chess::moves_gen;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use crate::chess::moves_gen::moves_struct::Moves;
-use crate::chess::moves_gen::moves_struct;
 
 
 const FIRSTRANK: u64 = 0xff;

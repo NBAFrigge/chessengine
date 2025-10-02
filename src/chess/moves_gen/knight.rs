@@ -1,5 +1,3 @@
-use std::io::Empty;
-
 const NOT_AFILE: u64 = 0xfefefefefefefefe;
 const NOT_HFILE: u64 = 0x7f7f7f7f7f7f7f7f;
 const NOT_ABFILE: u64 = 0xfcfcfcfcfcfcfcfc;
