@@ -181,9 +181,19 @@ impl Board {
         }
     }
 
+    // legal moves clearing
+    #[inline]
+    pub fn get_legal_moves(&self, pseudo: Vec<Moves>, color: Color) -> Vec<Moves> {
+        let mut legal_moves = Vec::new();
+        for p in pseudo {
+            legal_moves.push(Moves::new(p.old_pos, p.new_pos.and(self.get_pieces(color, Type::Any).not())));
+        }
+        legal_moves
+    }
+
     // pseudo-legal moves_gen gen
+    #[inline]
     pub fn get_all_moves_bitboard(&self, color: Color) -> Vec<Moves> {
-        let empty = self.get_free_pos();
         let mut vec = Vec::new();
         for t in Type::iter() {
             if t == Type::Any {
