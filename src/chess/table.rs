@@ -1,8 +1,12 @@
+use std::cmp::PartialEq;
 use either::Either;
 use crate::bitboard::bitboard::Bitboard;
-use crate::chess::moves;
+use crate::chess::moves_gen;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
+use crate::chess::moves_gen::moves_struct::Moves;
+use crate::chess::moves_gen::moves_struct;
+
 
 const FIRSTRANK: u64 = 0xff;
 const LASTRANK: u64 = 0xff00000000000000;
@@ -17,7 +21,7 @@ pub enum Color {
     Black,
     Any,
 }
-#[derive(Debug, EnumIter, Clone, Copy)]
+#[derive(Debug, EnumIter, Clone, Copy, PartialEq)]
 pub enum Type {
     Pawn,
     Bishop,
@@ -53,6 +57,7 @@ pub struct Board {
     white_king: bool,
     black_king: bool,
 }
+
 
 impl Board {
     pub fn new() -> Self {
@@ -176,18 +181,21 @@ impl Board {
         }
     }
 
-    // pseudo-legal moves gen
-    pub fn get_all_moves_bitboard(&self, color: Color) -> Vec<Bitboard> {
+    // pseudo-legal moves_gen gen
+    pub fn get_all_moves_bitboard(&self, color: Color) -> Vec<Moves> {
         let empty = self.get_free_pos();
         let mut vec = Vec::new();
         for t in Type::iter() {
+            if t == Type::Any {
+                continue;
+            }
             vec.append(self.get_move(color, t).as_mut())
         }
 
         vec
     }
 
-    pub fn get_move(&self, color : Color, piece_type: Type) -> Vec<Bitboard> {
+    pub fn get_move(&self, color : Color, piece_type: Type) -> Vec<Moves> {
         let piece_bitboard = self.get_pieces(color, piece_type);
         match piece_type {
             Type::Any => panic!("get_move called on type Any"),
@@ -200,70 +208,77 @@ impl Board {
         }
     }
 
-    fn get_pawn_move(&self, bitboard: Bitboard, color: Color) -> Vec<Bitboard> {
-        let mut moves = Vec::new();
+    fn get_pawn_move(&self, bitboard: Bitboard, color: Color) -> Vec<Moves> {
+        let mut m = Vec::new();
         let empty = self.get_free_pos();
         match color {
             Color::White => {
                 for p in bitboard.get_single_ones(){
-                    let temp_bitboard = Bitboard::new(moves::pawn::white_moves(p.get_value(), empty.get_value()));
-                    moves.push(temp_bitboard);
+                    let temp_bitboard = Bitboard::new(moves_gen::pawn::white_moves(p.get_value(), empty.get_value()));
+                    let temp_move = Moves::new(p.clone(), temp_bitboard);
+                    m.push(temp_move);
                 }
             }
             Color::Black => {
                 for p in bitboard.get_single_ones(){
-                    let temp_bitboard = Bitboard::new(moves::pawn::black_moves(p.get_value(), empty.get_value()));
-                    moves.push(temp_bitboard);
+                    let temp_bitboard = Bitboard::new(moves_gen::pawn::black_moves(p.get_value(), empty.get_value()));
+                    let temp_move = Moves::new(p.clone(), temp_bitboard);
+                    m.push(temp_move);
                 }
             }
-            Color::Any => {}
+            Color::Any => {panic!("get_move called on type Any")}
         }
-        moves
+        m
     }
 
-    fn get_knight_move(&self, bitboard: Bitboard) -> Vec<Bitboard> {
-        let mut moves = Vec::new();
+    fn get_knight_move(&self, bitboard: Bitboard) -> Vec<Moves> {
+        let mut m = Vec::new();
         for p in bitboard.get_single_ones(){
-            let temp_bitboard = Bitboard::new(moves::knight::moves(p.get_value()));
-            moves.push(temp_bitboard);
+            let temp_bitboard = Bitboard::new(moves_gen::knight::moves(p.get_value()));
+            let temp_move = Moves::new(p.clone(), temp_bitboard);
+            m.push(temp_move);
         }
-        moves
+        m
     }
 
-    fn get_king_move(&self, bitboard: Bitboard) -> Vec<Bitboard> {
-        let mut moves = Vec::new();
+    fn get_king_move(&self, bitboard: Bitboard) -> Vec<Moves> {
+        let mut m = Vec::new();
         for p in bitboard.get_single_ones(){
-            let temp_bitboard = Bitboard::new(moves::king::moves(p.get_value()));
-            moves.push(temp_bitboard);
+            let temp_bitboard = Bitboard::new(moves_gen::king::moves(p.get_value()));
+            let temp_move = Moves::new(p.clone(), temp_bitboard);
+            m.push(temp_move);
         }
-        moves
+        m
     }
 
-    fn get_rook_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Bitboard> {
-        let mut moves = Vec::new();
+    fn get_rook_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
+        let mut m = Vec::new();
         for p in bitboard.get_single_ones(){
-            let temp_bitboard = Bitboard::new(moves::rook::moves(p.get_value(), occupied.get_value()));
-            moves.push(temp_bitboard);
+            let temp_bitboard = Bitboard::new(moves_gen::rook::moves(p.get_value(), occupied.get_value()));
+            let temp_move = Moves::new(p.clone(), temp_bitboard);
+            m.push(temp_move);
         }
-        moves
+        m
     }
 
-    fn get_bishop_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Bitboard> {
-        let mut moves = Vec::new();
+    fn get_bishop_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
+        let mut m = Vec::new();
         for p in bitboard.get_single_ones(){
-            let temp_bitboard = Bitboard::new(moves::bishop::moves(p.get_value(), occupied.get_value()));
-            moves.push(temp_bitboard);
+            let temp_bitboard = Bitboard::new(moves_gen::bishop::moves(p.get_value(), occupied.get_value()));
+            let temp_move = Moves::new(p.clone(), temp_bitboard);
+            m.push(temp_move);
         }
-        moves
+        m
     }
 
-    fn get_queen_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Bitboard> {
-        let mut moves = Vec::new();
+    fn get_queen_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
+        let mut m = Vec::new();
         for p in bitboard.get_single_ones(){
-            let temp_bitboard = Bitboard::new(moves::queen::moves(p.get_value(), occupied.get_value()));
-            moves.push(temp_bitboard);
+            let temp_bitboard = Bitboard::new(moves_gen::queen::moves(p.get_value(), occupied.get_value()));
+            let temp_move = Moves::new(p.clone(), temp_bitboard);
+            m.push(temp_move);
         }
-        moves
+        m
     }
 
     // castling

@@ -1,6 +1,6 @@
-use crate::chess::moves::hyperbola_quint::hyp_quint;
-use crate::chess::moves::hyperbola_quint::DIAG;
-use crate::chess::moves::hyperbola_quint::ANTI_DIAG;
+use crate::chess::moves_gen::hyperbola_quint::hyp_quint;
+use crate::chess::moves_gen::hyperbola_quint::DIAG;
+use crate::chess::moves_gen::hyperbola_quint::ANTI_DIAG;
 
 pub fn moves(b :u64, occ: u64) -> u64{
     let index = b.trailing_zeros();

@@ -1,2 +1,2 @@
 pub mod table;
-pub(crate) mod moves;
+pub(crate) mod moves_gen;
