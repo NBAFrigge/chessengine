@@ -5,7 +5,7 @@ use crate::chess::moves_gen;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use crate::chess::moves_gen::moves_struct::Moves;
-
+use crate::chess::moves_gen::moves_struct::MoveType;
 
 const FIRSTRANK: u64 = 0xff;
 const LASTRANK: u64 = 0xff00000000000000;
@@ -56,7 +56,6 @@ pub struct Board {
     white_king: bool,
     black_king: bool,
 }
-
 
 impl Board {
     pub fn new() -> Self {
@@ -200,6 +199,8 @@ impl Board {
             }
             vec.append(self.get_move(color, t).as_mut())
         }
+        
+        vec.append(self.castle(color).as_mut());
 
         vec
     }
@@ -291,7 +292,18 @@ impl Board {
     }
 
     // castling
-    pub fn can_castle(&self, color: Color, side: Side) -> bool {
+    fn castle(&self, color: Color,) -> Vec<Moves> {
+        let mut m = Vec::new();
+        if self.can_castle(color, Side::Long) {
+            m.push(Moves::castling(MoveType::LongCastle));
+        }
+        if self.can_castle(color, Side::Short) {
+            m.push(Moves::castling(MoveType::ShortCastle));
+        }
+        
+        m
+    }
+    fn can_castle(&self, color: Color, side: Side) -> bool {
         match side {
             Side::Long => {self.can_castle_long_side(color)}
             Side::Short => {self.can_castle_short_side(color)}
@@ -452,7 +464,6 @@ impl Board {
         string
     }
 }
-
 
 fn change_char_in_string(s: String, index: usize, new_char: char) -> String {
     let mut chars: Vec<char> = s.chars().collect();

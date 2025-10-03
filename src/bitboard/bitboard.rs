@@ -17,7 +17,7 @@ impl Bitboard {
         }
     }
     
-    pub fn empty(&self) -> Self {
+    pub fn empty() -> Self {
         Bitboard {
             board: 0
         }
