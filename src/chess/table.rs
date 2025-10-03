@@ -359,8 +359,15 @@ impl Board {
     // checkmate
     
 
-    //TODO promotion
     // promotion
+    pub fn check_promotion(&self, color: Color) -> Bitboard {
+        let pawn = self.get_pieces(color, Type::Pawn);
+        match color {
+            Color::White => {Bitboard::new(pawn.get_value() & LASTRANK)}
+            Color::Black => {Bitboard::new(pawn.get_value() & FIRSTRANK)}
+            Color::Any => {panic!("color can't be any")}
+        }
+    }
 
     // to string function
     pub fn to_string(&self) -> String {
