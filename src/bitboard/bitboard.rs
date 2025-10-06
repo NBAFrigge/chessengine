@@ -1,5 +1,6 @@
 use std::string;
 
+#[derive(Clone, Copy, PartialEq)]
 pub struct Bitboard {
     pub board: u64
 }

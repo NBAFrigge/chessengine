@@ -36,6 +36,7 @@ pub enum Side{
     Short,
 }
 
+#[derive(Clone, Copy)]
 pub struct Board {
     pawn: Bitboard,
     bishop: Bitboard,
@@ -46,7 +47,7 @@ pub struct Board {
     white: Bitboard,
     black: Bitboard,
 
-    is_white_turn: bool,
+    pub is_white_turn: bool,
     white_rook_long_side: bool,
     white_rook_short_side: bool,
 
@@ -180,8 +181,9 @@ impl Board {
     }
 
     // legal moves clearing
-    pub fn get_legal_moves(&self, pseudo: Vec<Moves>, color: Color) -> Vec<Moves> {
+    pub fn get_legal_moves(&self, color: Color) -> Vec<Moves> {
         let mut legal_moves = Vec::new();
+        let pseudo = self.get_all_moves_bitboard(color);
         for p in pseudo {
             legal_moves.push(Moves::new(p.old_pos, p.new_pos.and(self.get_pieces(color, Type::Any).not())));
         }
@@ -189,7 +191,7 @@ impl Board {
     }
 
     // pseudo-legal moves_gen gen
-    pub fn get_all_moves_bitboard(&self, color: Color) -> Vec<Moves> {
+    fn get_all_moves_bitboard(&self, color: Color) -> Vec<Moves> {
         let mut vec = Vec::new();
         for t in Type::iter() {
             if t == Type::Any {
@@ -355,7 +357,6 @@ impl Board {
 
     //TODO checkmate
     // checkmate
-    
 
     // promotion
     pub fn check_promotion(&self, color: Color) -> Bitboard {
@@ -365,6 +366,32 @@ impl Board {
             Color::Black => {Bitboard::new(pawn.get_value() & FIRSTRANK)}
             Color::Any => {panic!("color can't be any")}
         }
+    }
+
+    //TODO perform move implement attack
+    // move
+    pub fn perform_move(&mut self, old_pos: Bitboard, new_pos: Bitboard) -> &Board {
+        let new_board = self;
+
+        if new_board.queen.and(old_pos.clone()) != Bitboard::empty() {
+            new_board.queen = new_board.queen.xor(old_pos.clone()).or(new_pos);
+        } else if new_board.king.and(old_pos.clone()) != Bitboard::empty() {
+            new_board.king = new_board.king.xor(old_pos.clone()).or(new_pos);
+        } else if new_board.bishop.and(old_pos.clone()) != Bitboard::empty() {
+            new_board.bishop = new_board.bishop.xor(old_pos.clone()).or(new_pos);
+        }else if new_board.pawn.and(old_pos.clone()) != Bitboard::empty() {
+            new_board.pawn = new_board.pawn.xor(old_pos.clone()).or(new_pos);
+        } else if new_board.knight.and(old_pos.clone()) != Bitboard::empty() {
+            new_board.knight = new_board.knight.xor(old_pos.clone()).or(new_pos);
+        }
+
+        if new_board.white.and(old_pos.clone()) != Bitboard::empty() {
+            new_board.white = new_board.white.xor(old_pos.clone()).or(new_pos);
+        } else if new_board.black.and(old_pos.clone()) != Bitboard::empty() {
+            new_board.black = new_board.black.xor(old_pos.clone()).or(new_pos);
+        }
+        new_board.is_white_turn = !new_board.is_white_turn;
+        new_board
     }
 
     // to string function
