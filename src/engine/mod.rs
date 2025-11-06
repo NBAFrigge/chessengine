@@ -1,2 +1,1 @@
-mod evaluate;
-mod perft;
+pub mod perft;

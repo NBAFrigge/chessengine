@@ -1,11 +1,11 @@
-use std::cmp::PartialEq;
-use either::Either;
 use crate::bitboard::bitboard::Bitboard;
 use crate::chess::moves_gen;
+use crate::chess::moves_gen::moves_struct::MoveType;
+use crate::chess::moves_gen::moves_struct::Moves;
+use either::Either;
+use std::cmp::PartialEq;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use crate::chess::moves_gen::moves_struct::Moves;
-use crate::chess::moves_gen::moves_struct::MoveType;
 
 const FIRSTRANK: u64 = 0xff;
 const LASTRANK: u64 = 0xff00000000000000;
@@ -31,7 +31,7 @@ pub enum Type {
     Any,
 }
 
-pub enum Side{
+pub enum Side {
     Long,
     Short,
 }
@@ -127,7 +127,8 @@ impl Board {
     }
 
     pub fn get_free_pos(&self) -> Bitboard {
-        self.get_pieces(Color::White, Type::Any).or(self.get_pieces(Color::Black, Type::Any))
+        self.get_pieces(Color::White, Type::Any)
+            .or(self.get_pieces(Color::Black, Type::Any))
             .not()
     }
 
@@ -158,13 +159,13 @@ impl Board {
 
     fn count_white(&self, piece_type: Type) -> u64 {
         match piece_type {
-                Type::Any => self.white.count_ones(),
-                Type::Pawn => self.pawn.and(self.white.clone()).count_ones(),
-                Type::Bishop => self.bishop.and(self.white.clone()).count_ones(),
-                Type::Knight => self.knight.and(self.white.clone()).count_ones(),
-                Type::Rook => self.rook.and(self.white.clone()).count_ones(),
-                Type::Queen => self.queen.and(self.white.clone()).count_ones(),
-                Type::King => self.king.and(self.white.clone()).count_ones(),
+            Type::Any => self.white.count_ones(),
+            Type::Pawn => self.pawn.and(self.white.clone()).count_ones(),
+            Type::Bishop => self.bishop.and(self.white.clone()).count_ones(),
+            Type::Knight => self.knight.and(self.white.clone()).count_ones(),
+            Type::Rook => self.rook.and(self.white.clone()).count_ones(),
+            Type::Queen => self.queen.and(self.white.clone()).count_ones(),
+            Type::King => self.king.and(self.white.clone()).count_ones(),
         }
     }
 
@@ -185,7 +186,10 @@ impl Board {
         let mut legal_moves = Vec::new();
         let pseudo = self.get_all_moves_bitboard(color);
         for p in pseudo {
-            legal_moves.push(Moves::new(p.old_pos, p.new_pos.and(self.get_pieces(color, Type::Any).not())));
+            if p.new_pos.and(self.get_pieces(color, Type::Any)).get_value() > 0 {
+                continue;
+            }
+            legal_moves.push(p);
         }
         legal_moves
     }
@@ -199,22 +203,22 @@ impl Board {
             }
             vec.append(self.get_move(color, t).as_mut())
         }
-        
+
         vec.append(self.castle(color).as_mut());
 
         vec
     }
 
-    pub fn get_move(&self, color : Color, piece_type: Type) -> Vec<Moves> {
+    pub fn get_move(&self, color: Color, piece_type: Type) -> Vec<Moves> {
         let piece_bitboard = self.get_pieces(color, piece_type);
         match piece_type {
             Type::Any => panic!("get_move called on type Any"),
-            Type::Pawn => {self.get_pawn_move(piece_bitboard, color)}
-            Type::King => {self.get_king_move(piece_bitboard)}
-            Type::Bishop => {self.get_bishop_move(piece_bitboard, self.get_occupied_pos())}
-            Type::Knight => {self.get_knight_move(piece_bitboard)}
-            Type::Rook => {self.get_rook_move(piece_bitboard, self.get_occupied_pos())}
-            Type::Queen => {self.get_queen_move(piece_bitboard, self.get_occupied_pos())}
+            Type::Pawn => self.get_pawn_move(piece_bitboard, color),
+            Type::King => self.get_king_move(piece_bitboard),
+            Type::Bishop => self.get_bishop_move(piece_bitboard, self.get_occupied_pos()),
+            Type::Knight => self.get_knight_move(piece_bitboard),
+            Type::Rook => self.get_rook_move(piece_bitboard, self.get_occupied_pos()),
+            Type::Queen => self.get_queen_move(piece_bitboard, self.get_occupied_pos()),
         }
     }
 
@@ -223,76 +227,103 @@ impl Board {
         let empty = self.get_free_pos();
         match color {
             Color::White => {
-                for p in bitboard.get_single_ones(){
-                    let temp_bitboard = Bitboard::new(moves_gen::pawn::white_moves(p.get_value(), empty.get_value()));
-                    let temp_move = Moves::new(p.clone(), temp_bitboard);
-                    m.push(temp_move);
+                for p in bitboard.get_single_ones() {
+                    let temp_bitboard = Bitboard::new(moves_gen::pawn::white_moves(
+                        p.get_value(),
+                        empty.get_value(),
+                    ));
+                    for new_mv in temp_bitboard.get_single_ones() {
+                        let temp_move = Moves::new(p.clone(), new_mv);
+                        m.push(temp_move);
+                    }
                 }
             }
             Color::Black => {
-                for p in bitboard.get_single_ones(){
-                    let temp_bitboard = Bitboard::new(moves_gen::pawn::black_moves(p.get_value(), empty.get_value()));
-                    let temp_move = Moves::new(p.clone(), temp_bitboard);
-                    m.push(temp_move);
+                for p in bitboard.get_single_ones() {
+                    let temp_bitboard = Bitboard::new(moves_gen::pawn::black_moves(
+                        p.get_value(),
+                        empty.get_value(),
+                    ));
+                    for new_mv in temp_bitboard.get_single_ones() {
+                        let temp_move = Moves::new(p.clone(), new_mv);
+                        m.push(temp_move);
+                    }
                 }
             }
-            Color::Any => {panic!("get_move called on type Any")}
+            Color::Any => {
+                panic!("get_move called on type Any")
+            }
         }
         m
     }
 
     fn get_knight_move(&self, bitboard: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
-        for p in bitboard.get_single_ones(){
+        for p in bitboard.get_single_ones() {
             let temp_bitboard = Bitboard::new(moves_gen::knight::moves(p.get_value()));
-            let temp_move = Moves::new(p.clone(), temp_bitboard);
-            m.push(temp_move);
+            for new_mv in temp_bitboard.get_single_ones() {
+                let temp_move = Moves::new(p.clone(), new_mv);
+                m.push(temp_move);
+            }
         }
         m
     }
 
     fn get_king_move(&self, bitboard: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
-        for p in bitboard.get_single_ones(){
+        for p in bitboard.get_single_ones() {
             let temp_bitboard = Bitboard::new(moves_gen::king::moves(p.get_value()));
-            let temp_move = Moves::new(p.clone(), temp_bitboard);
-            m.push(temp_move);
+            for new_mv in temp_bitboard.get_single_ones() {
+                let temp_move = Moves::new(p.clone(), new_mv);
+                m.push(temp_move);
+            }
         }
         m
     }
 
     fn get_rook_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
-        for p in bitboard.get_single_ones(){
-            let temp_bitboard = Bitboard::new(moves_gen::rook::moves(p.get_value(), occupied.get_value()));
-            let temp_move = Moves::new(p.clone(), temp_bitboard);
-            m.push(temp_move);
+        for p in bitboard.get_single_ones() {
+            let temp_bitboard =
+                Bitboard::new(moves_gen::rook::moves(p.get_value(), occupied.get_value()));
+            for new_mv in temp_bitboard.get_single_ones() {
+                let temp_move = Moves::new(p.clone(), new_mv);
+                m.push(temp_move);
+            }
         }
         m
     }
 
     fn get_bishop_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
-        for p in bitboard.get_single_ones(){
-            let temp_bitboard = Bitboard::new(moves_gen::bishop::moves(p.get_value(), occupied.get_value()));
-            let temp_move = Moves::new(p.clone(), temp_bitboard);
-            m.push(temp_move);
+        for p in bitboard.get_single_ones() {
+            let temp_bitboard = Bitboard::new(moves_gen::bishop::moves(
+                p.get_value(),
+                occupied.get_value(),
+            ));
+            for new_mv in temp_bitboard.get_single_ones() {
+                let temp_move = Moves::new(p.clone(), new_mv);
+                m.push(temp_move);
+            }
         }
         m
     }
 
     fn get_queen_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
-        for p in bitboard.get_single_ones(){
-            let temp_bitboard = Bitboard::new(moves_gen::queen::moves(p.get_value(), occupied.get_value()));
-            let temp_move = Moves::new(p.clone(), temp_bitboard);
-            m.push(temp_move);
+        for p in bitboard.get_single_ones() {
+            let temp_bitboard =
+                Bitboard::new(moves_gen::queen::moves(p.get_value(), occupied.get_value()));
+            for new_mv in temp_bitboard.get_single_ones() {
+                let temp_move = Moves::new(p.clone(), new_mv);
+                m.push(temp_move);
+            }
         }
         m
     }
 
     // castling
-    fn castle(&self, color: Color,) -> Vec<Moves> {
+    fn castle(&self, color: Color) -> Vec<Moves> {
         let mut m = Vec::new();
         if self.can_castle(color, Side::Long) {
             m.push(Moves::castling(MoveType::LongCastle));
@@ -300,48 +331,64 @@ impl Board {
         if self.can_castle(color, Side::Short) {
             m.push(Moves::castling(MoveType::ShortCastle));
         }
-        
+
         m
     }
     fn can_castle(&self, color: Color, side: Side) -> bool {
         match side {
-            Side::Long => {self.can_castle_long_side(color)}
-            Side::Short => {self.can_castle_short_side(color)}
+            Side::Long => self.can_castle_long_side(color),
+            Side::Short => self.can_castle_short_side(color),
         }
     }
 
     fn can_castle_long_side(&self, color: Color) -> bool {
         match color {
             Color::White => {
-                if self.white_rook_long_side && self.white_king && ((self.get_piece_any(Type::Any).get_value() & WHITELONGCASTLING) == 0) {
+                if self.white_rook_long_side
+                    && self.white_king
+                    && ((self.get_piece_any(Type::Any).get_value() & WHITELONGCASTLING) == 0)
+                {
                     return true;
                 }
                 false
             }
             Color::Black => {
-                if self.black_rook_long_side && self.black_king && ((self.get_piece_any(Type::Any).get_value() & BLACKLONGCASTLING) == 0) {
+                if self.black_rook_long_side
+                    && self.black_king
+                    && ((self.get_piece_any(Type::Any).get_value() & BLACKLONGCASTLING) == 0)
+                {
                     return true;
                 }
                 false
             }
-            Color::Any => {panic!("rook side color can't be any")}
+            Color::Any => {
+                panic!("rook side color can't be any")
+            }
         }
     }
     fn can_castle_short_side(&self, color: Color) -> bool {
         match color {
             Color::White => {
-                if self.white_rook_short_side && self.white_king && ((self.get_piece_any(Type::Any).get_value() & WHITESHORTCASTLING) == 0) {
+                if self.white_rook_short_side
+                    && self.white_king
+                    && ((self.get_piece_any(Type::Any).get_value() & WHITESHORTCASTLING) == 0)
+                {
                     return true;
                 }
                 false
             }
             Color::Black => {
-                if self.black_rook_short_side && self.black_king && ((self.get_piece_any(Type::Any).get_value() & BLACKSHORTCASTLING) == 0) {
+                if self.black_rook_short_side
+                    && self.black_king
+                    && ((self.get_piece_any(Type::Any).get_value() & BLACKSHORTCASTLING) == 0)
+                {
                     return true;
                 }
                 false
             }
-            Color::Any => {panic!("rook side color can't be any")}
+            Color::Any => {
+                panic!("rook side color can't be any")
+            }
         }
     }
 
@@ -362,9 +409,11 @@ impl Board {
     pub fn check_promotion(&self, color: Color) -> Bitboard {
         let pawn = self.get_pieces(color, Type::Pawn);
         match color {
-            Color::White => {Bitboard::new(pawn.get_value() & LASTRANK)}
-            Color::Black => {Bitboard::new(pawn.get_value() & FIRSTRANK)}
-            Color::Any => {panic!("color can't be any")}
+            Color::White => Bitboard::new(pawn.get_value() & LASTRANK),
+            Color::Black => Bitboard::new(pawn.get_value() & FIRSTRANK),
+            Color::Any => {
+                panic!("color can't be any")
+            }
         }
     }
 
@@ -379,7 +428,7 @@ impl Board {
             new_board.king = new_board.king.xor(old_pos.clone()).or(new_pos);
         } else if new_board.bishop.and(old_pos.clone()) != Bitboard::empty() {
             new_board.bishop = new_board.bishop.xor(old_pos.clone()).or(new_pos);
-        }else if new_board.pawn.and(old_pos.clone()) != Bitboard::empty() {
+        } else if new_board.pawn.and(old_pos.clone()) != Bitboard::empty() {
             new_board.pawn = new_board.pawn.xor(old_pos.clone()).or(new_pos);
         } else if new_board.knight.and(old_pos.clone()) != Bitboard::empty() {
             new_board.knight = new_board.knight.xor(old_pos.clone()).or(new_pos);
@@ -396,17 +445,17 @@ impl Board {
 
     // to string function
     pub fn to_string(&self) -> String {
-        let mut string = String::from("■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■");
+        let mut string =
+            String::from("■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■");
         // add pieces to the board
 
         // white pieces
-        let white_pawns =  self.get_pieces(Color::White, Type::Pawn).to_string();
+        let white_pawns = self.get_pieces(Color::White, Type::Pawn).to_string();
         let white_rooks = self.get_pieces(Color::White, Type::Rook).to_string();
         let white_queens = self.get_pieces(Color::White, Type::Queen).to_string();
         let white_kings = self.get_pieces(Color::White, Type::King).to_string();
         let white_bishops = self.get_pieces(Color::White, Type::Bishop).to_string();
         let white_knights = self.get_pieces(Color::White, Type::Knight).to_string();
-
 
         // black pieces
         let black_pawns = self.get_pieces(Color::Black, Type::Pawn).to_string();
@@ -466,8 +515,8 @@ impl Board {
             }
         }
 
-
-        string = string.chars()
+        string = string
+            .chars()
             .enumerate()
             .flat_map(|(i, c)| {
                 if i != 0 && i % 1 == 0 {
@@ -475,12 +524,13 @@ impl Board {
                 } else {
                     None
                 }
-                    .into_iter()
-                    .chain(std::iter::once(c))
+                .into_iter()
+                .chain(std::iter::once(c))
             })
             .collect::<String>();
 
-        let iter_with_newlines = string.chars()
+        let iter_with_newlines = string
+            .chars()
             .enumerate()
             .flat_map(|(i, c)| {
                 if i % 16 == 0 {

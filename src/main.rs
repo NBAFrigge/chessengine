@@ -1,7 +1,7 @@
 use crate::chess::table::{Color, Type};
-
-mod chess;
+use crate::engine::perft::{self, perft};
 mod bitboard;
+mod chess;
 mod engine;
 
 fn main() {
@@ -13,14 +13,6 @@ fn main() {
     // println!("------------------------------");
     // let bb2 = Bitboard::Bitboard::Bitboard::new(bb.lsb());
     // println!("{}", bb2.to_string());
-
-    println!("{}", b.to_string());
-    let mut move_vec = b.get_move(Color::White, Type::Pawn);
-    println!("{}", move_vec.len());
-    for m in move_vec.iter() {
-        println!("________________________________________");
-        println!("{}", m.to_formatted_string());
-    }
-
-    
+    let total_moves = perft(&b, 2);
+    println!("{}", total_moves)
 }

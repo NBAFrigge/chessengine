@@ -7,3 +7,5 @@ edition = "2024"
 either = "1.15.0"
 strum = "0.27.2"
 strum_macros = "0.27.2"
+tree-ds = "0.1"
+
