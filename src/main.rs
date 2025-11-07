@@ -1,5 +1,4 @@
-use crate::chess::table::{Color, Type};
-use crate::engine::perft::{self, perft};
+use crate::engine::perft::{perft, perft_divide};
 mod bitboard;
 mod chess;
 mod engine;
@@ -13,6 +12,6 @@ fn main() {
     // println!("------------------------------");
     // let bb2 = Bitboard::Bitboard::Bitboard::new(bb.lsb());
     // println!("{}", bb2.to_string());
-    let total_moves = perft(&b, 2);
-    println!("{}", total_moves)
+    perft_divide(&b, 4);
+    // println!("{}", total_moves)
 }

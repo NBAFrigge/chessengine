@@ -185,12 +185,21 @@ impl Board {
     pub fn get_legal_moves(&self, color: Color) -> Vec<Moves> {
         let mut legal_moves = Vec::new();
         let pseudo = self.get_all_moves_bitboard(color);
+
         for p in pseudo {
-            if p.new_pos.and(self.get_pieces(color, Type::Any)).get_value() > 0 {
+            if p.move_type == MoveType::Simple
+                && p.new_pos.and(self.get_pieces(color, Type::Any)).get_value() > 0
+            {
                 continue;
             }
-            legal_moves.push(p);
+            let mut test_board = self.clone();
+            test_board.perform_move(p.old_pos, p.new_pos);
+
+            if !test_board.is_king_in_check(color) {
+                legal_moves.push(p);
+            }
         }
+
         legal_moves
     }
 
@@ -228,10 +237,10 @@ impl Board {
         match color {
             Color::White => {
                 for p in bitboard.get_single_ones() {
-                    let temp_bitboard = Bitboard::new(moves_gen::pawn::white_moves(
-                        p.get_value(),
-                        empty.get_value(),
-                    ));
+                    let temp_bitboard = Bitboard::new(
+                        moves_gen::pawn::white_moves(p.get_value(), empty.get_value())
+                            | moves_gen::pawn::white_attack(p.get_value(), self.black.get_value()),
+                    );
                     for new_mv in temp_bitboard.get_single_ones() {
                         let temp_move = Moves::new(p.clone(), new_mv);
                         m.push(temp_move);
@@ -240,10 +249,10 @@ impl Board {
             }
             Color::Black => {
                 for p in bitboard.get_single_ones() {
-                    let temp_bitboard = Bitboard::new(moves_gen::pawn::black_moves(
-                        p.get_value(),
-                        empty.get_value(),
-                    ));
+                    let temp_bitboard = Bitboard::new(
+                        moves_gen::pawn::black_moves(p.get_value(), empty.get_value())
+                            | moves_gen::pawn::black_attack(p.get_value(), self.white.get_value()),
+                    );
                     for new_mv in temp_bitboard.get_single_ones() {
                         let temp_move = Moves::new(p.clone(), new_mv);
                         m.push(temp_move);
@@ -281,11 +290,14 @@ impl Board {
         m
     }
 
-    fn get_rook_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
+    fn get_bishop_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
         for p in bitboard.get_single_ones() {
-            let temp_bitboard =
-                Bitboard::new(moves_gen::rook::moves(p.get_value(), occupied.get_value()));
+            let occ_without_piece = occupied.and(p.not());
+            let temp_bitboard = Bitboard::new(moves_gen::bishop::moves(
+                p.get_value(),
+                occ_without_piece.get_value(),
+            ));
             for new_mv in temp_bitboard.get_single_ones() {
                 let temp_move = Moves::new(p.clone(), new_mv);
                 m.push(temp_move);
@@ -294,12 +306,13 @@ impl Board {
         m
     }
 
-    fn get_bishop_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
+    fn get_rook_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
         for p in bitboard.get_single_ones() {
-            let temp_bitboard = Bitboard::new(moves_gen::bishop::moves(
+            let occ_without_piece = occupied.and(p.not());
+            let temp_bitboard = Bitboard::new(moves_gen::rook::moves(
                 p.get_value(),
-                occupied.get_value(),
+                occ_without_piece.get_value(),
             ));
             for new_mv in temp_bitboard.get_single_ones() {
                 let temp_move = Moves::new(p.clone(), new_mv);
@@ -312,14 +325,72 @@ impl Board {
     fn get_queen_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
         for p in bitboard.get_single_ones() {
-            let temp_bitboard =
-                Bitboard::new(moves_gen::queen::moves(p.get_value(), occupied.get_value()));
+            let occ_without_piece = occupied.and(p.not());
+            let temp_bitboard = Bitboard::new(moves_gen::queen::moves(
+                p.get_value(),
+                occ_without_piece.get_value(),
+            ));
             for new_mv in temp_bitboard.get_single_ones() {
                 let temp_move = Moves::new(p.clone(), new_mv);
                 m.push(temp_move);
             }
         }
         m
+    }
+
+    // get all attack
+    pub fn get_all_attacks(&self, color: Color) -> Bitboard {
+        let mut attacks = Bitboard::empty();
+        let occupied = self.get_occupied_pos();
+
+        let pawns = self.get_pieces(color, Type::Pawn);
+        for p in pawns.get_single_ones() {
+            let att = match color {
+                Color::White => Bitboard::new(moves_gen::pawn::white_attack(p.get_value(), !0)),
+                Color::Black => Bitboard::new(moves_gen::pawn::black_attack(p.get_value(), !0)),
+                _ => panic!(),
+            };
+            attacks = attacks.or(att);
+        }
+
+        let knights = self.get_pieces(color, Type::Knight);
+        for k in knights.get_single_ones() {
+            attacks = attacks.or(Bitboard::new(moves_gen::knight::moves(k.get_value())));
+        }
+
+        let bishops = self.get_pieces(color, Type::Bishop);
+        for b in bishops.get_single_ones() {
+            let occ_without_piece = occupied.and(b.not());
+            attacks = attacks.or(Bitboard::new(moves_gen::bishop::moves(
+                b.get_value(),
+                occ_without_piece.get_value(),
+            )));
+        }
+
+        let rooks = self.get_pieces(color, Type::Rook);
+        for r in rooks.get_single_ones() {
+            let occ_without_piece = occupied.and(r.not());
+            attacks = attacks.or(Bitboard::new(moves_gen::rook::moves(
+                r.get_value(),
+                occ_without_piece.get_value(),
+            )));
+        }
+
+        let queens = self.get_pieces(color, Type::Queen);
+        for q in queens.get_single_ones() {
+            let occ_without_piece = occupied.and(q.not());
+            attacks = attacks.or(Bitboard::new(moves_gen::queen::moves(
+                q.get_value(),
+                occ_without_piece.get_value(),
+            )));
+        }
+
+        let king = self.get_pieces(color, Type::King);
+        for k in king.get_single_ones() {
+            attacks = attacks.or(Bitboard::new(moves_gen::king::moves(k.get_value())));
+        }
+
+        attacks
     }
 
     // castling
@@ -366,6 +437,7 @@ impl Board {
             }
         }
     }
+
     fn can_castle_short_side(&self, color: Color) -> bool {
         match color {
             Color::White => {
@@ -392,21 +464,35 @@ impl Board {
         }
     }
 
-    fn check(&self, color: Color, moves: Vec<Bitboard>) -> bool {
-        let king = self.get_pieces(color, Type::King);
-        for m in moves {
-            if m.and(king.clone()).get_value() > 0 {
-                return true;
-            }
-        }
-        false
+    pub fn is_king_in_check(&self, color: Color) -> bool {
+        let king_pos = self.get_pieces(color, Type::King);
+        let opponent_color = match color {
+            Color::White => Color::Black,
+            Color::Black => Color::White,
+            _ => panic!("Invalid color"),
+        };
+
+        let opponent_attacks = self.get_all_attacks(opponent_color);
+
+        king_pos.and(opponent_attacks).get_value() > 0
     }
 
     //TODO checkmate
     // checkmate
 
     // promotion
-    pub fn check_promotion(&self, color: Color) -> Bitboard {
+    fn promotion(&self, color: Color) {
+        let promotion_ready = self.check_promotion(color);
+        if promotion_ready.get_value() == 0 {
+            return;
+        }
+        for pawn in promotion_ready.get_single_ones() {
+            self.pawn.xor(pawn);
+            self.queen.or(pawn);
+        }
+    }
+
+    fn check_promotion(&self, color: Color) -> Bitboard {
         let pawn = self.get_pieces(color, Type::Pawn);
         match color {
             Color::White => Bitboard::new(pawn.get_value() & LASTRANK),
@@ -417,32 +503,53 @@ impl Board {
         }
     }
 
-    //TODO perform move implement attack
     // move
     pub fn perform_move(&mut self, old_pos: Bitboard, new_pos: Bitboard) -> &Board {
-        let new_board = self;
+        let (current_color_bb, opponent_color_bb) = if self.is_white_turn {
+            (&mut self.white, &mut self.black)
+        } else {
+            (&mut self.black, &mut self.white)
+        };
 
-        if new_board.queen.and(old_pos.clone()) != Bitboard::empty() {
-            new_board.queen = new_board.queen.xor(old_pos.clone()).or(new_pos);
-        } else if new_board.king.and(old_pos.clone()) != Bitboard::empty() {
-            new_board.king = new_board.king.xor(old_pos.clone()).or(new_pos);
-        } else if new_board.bishop.and(old_pos.clone()) != Bitboard::empty() {
-            new_board.bishop = new_board.bishop.xor(old_pos.clone()).or(new_pos);
-        } else if new_board.pawn.and(old_pos.clone()) != Bitboard::empty() {
-            new_board.pawn = new_board.pawn.xor(old_pos.clone()).or(new_pos);
-        } else if new_board.knight.and(old_pos.clone()) != Bitboard::empty() {
-            new_board.knight = new_board.knight.xor(old_pos.clone()).or(new_pos);
+        let new_pos_value = new_pos.get_value();
+        let old_pos_value = old_pos.get_value();
+
+        if (opponent_color_bb.get_value() & new_pos_value) != 0 {
+            self.queen = self.queen.and(new_pos.not());
+            self.rook = self.rook.and(new_pos.not());
+            self.bishop = self.bishop.and(new_pos.not());
+            self.knight = self.knight.and(new_pos.not());
+            self.pawn = self.pawn.and(new_pos.not());
+            self.king = self.king.and(new_pos.not());
+
+            *opponent_color_bb = opponent_color_bb.and(new_pos.not());
         }
 
-        if new_board.white.and(old_pos.clone()) != Bitboard::empty() {
-            new_board.white = new_board.white.xor(old_pos.clone()).or(new_pos);
-        } else if new_board.black.and(old_pos.clone()) != Bitboard::empty() {
-            new_board.black = new_board.black.xor(old_pos.clone()).or(new_pos);
+        if (self.queen.get_value() & old_pos_value) != 0 {
+            self.queen = self.queen.xor(old_pos).or(new_pos);
+        } else if (self.rook.get_value() & old_pos_value) != 0 {
+            self.rook = self.rook.xor(old_pos).or(new_pos);
+        } else if (self.bishop.get_value() & old_pos_value) != 0 {
+            self.bishop = self.bishop.xor(old_pos).or(new_pos);
+        } else if (self.knight.get_value() & old_pos_value) != 0 {
+            self.knight = self.knight.xor(old_pos).or(new_pos);
+        } else if (self.pawn.get_value() & old_pos_value) != 0 {
+            self.pawn = self.pawn.xor(old_pos).or(new_pos);
+        } else if (self.king.get_value() & old_pos_value) != 0 {
+            self.king = self.king.xor(old_pos).or(new_pos);
         }
-        new_board.is_white_turn = !new_board.is_white_turn;
-        new_board
+
+        *current_color_bb = current_color_bb.and(old_pos.not()).or(new_pos);
+
+        if self.is_white_turn {
+            self.promotion(Color::White);
+        } else {
+            self.promotion(Color::Black);
+        }
+
+        self.is_white_turn = !self.is_white_turn;
+        self
     }
-
     // to string function
     pub fn to_string(&self) -> String {
         let mut string =

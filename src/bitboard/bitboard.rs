@@ -1,27 +1,21 @@
 use std::string;
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Bitboard {
-    pub board: u64
+    pub board: u64,
 }
 
 impl Bitboard {
-    pub fn new(value :u64) -> Self {
-        Bitboard {
-            board: value
-        }
+    pub fn new(value: u64) -> Self {
+        Bitboard { board: value }
     }
-    
+
     pub fn new_from_index(value: u64) -> Self {
-        Bitboard {
-            board: 1 << value,
-        }
+        Bitboard { board: 1 << value }
     }
-    
+
     pub fn empty() -> Self {
-        Bitboard {
-            board: 0
-        }
+        Bitboard { board: 0 }
     }
 
     pub fn lsb(&self) -> u64 {
@@ -39,9 +33,8 @@ impl Bitboard {
 
     pub fn to_formatted_string(&self) -> String {
         let string = format!("{:064b}", self.board);
-        
-        let s = string.chars()
-            .collect::<Vec<char>>();
+
+        let s = string.chars().collect::<Vec<char>>();
 
         let mut bitboard = string::String::from("");
 
@@ -88,9 +81,10 @@ impl Bitboard {
         let mut temp = self.clone();
         while temp.count_ones() > 0 {
             v.push(Bitboard::new(temp.lsb()));
-            temp = temp.subtract(v.get(v.len()-1))
+            temp = temp.subtract(v.get(v.len() - 1))
         }
 
         v
     }
 }
+

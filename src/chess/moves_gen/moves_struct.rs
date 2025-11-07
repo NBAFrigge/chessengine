@@ -1,5 +1,7 @@
 use crate::bitboard::bitboard::Bitboard;
-pub enum   MoveType {
+
+#[derive(Clone, Copy, PartialEq)]
+pub enum MoveType {
     Simple,
     LongCastle,
     ShortCastle,
@@ -12,19 +14,20 @@ pub struct Moves {
 }
 
 impl Moves {
-    pub fn new(old : Bitboard, new : Bitboard) -> Self {
+    pub fn new(old: Bitboard, new: Bitboard) -> Self {
         Moves {
-            old_pos : old,
-            new_pos : new,
-            move_type : MoveType::Simple,
+            old_pos: old,
+            new_pos: new,
+            move_type: MoveType::Simple,
         }
     }
 
     pub fn castling(castle_type: MoveType) -> Self {
         Moves {
-            old_pos : Bitboard::empty(),
-            new_pos : Bitboard::empty(),
-            move_type : castle_type,
+            old_pos: Bitboard::empty(),
+            new_pos: Bitboard::empty(),
+            move_type: castle_type,
         }
     }
 }
+
