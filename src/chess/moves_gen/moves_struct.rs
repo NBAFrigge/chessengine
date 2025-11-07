@@ -5,6 +5,7 @@ pub enum MoveType {
     Simple,
     LongCastle,
     ShortCastle,
+    Enpassant,
 }
 
 pub struct Moves {
@@ -29,5 +30,12 @@ impl Moves {
             move_type: castle_type,
         }
     }
-}
 
+    pub fn enpassant(old: Bitboard, new: Bitboard) -> Self {
+        Moves {
+            old_pos: old,
+            new_pos: new,
+            move_type: MoveType::Enpassant,
+        }
+    }
+}

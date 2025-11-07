@@ -2,16 +2,16 @@ use crate::engine::perft::{perft, perft_divide};
 mod bitboard;
 mod chess;
 mod engine;
+use std::time::Instant;
 
 fn main() {
-    let b = chess::table::Board::new();
+    let board = chess::table::Board::new();
+    let depth = 7;
+    let start = Instant::now();
+    let result = perft(&board, depth);
+    let duration = start.elapsed();
 
-    // let bb = Bitboard::Bitboard::Bitboard::new(258);
-    //
-    // println!("{}", bb.to_string());
-    // println!("------------------------------");
-    // let bb2 = Bitboard::Bitboard::Bitboard::new(bb.lsb());
-    // println!("{}", bb2.to_string());
-    perft_divide(&b, 4);
-    // println!("{}", total_moves)
+    println!("perft({}) = {}", depth, result);
+    println!("elapsed time: {:?}", duration);
+    println!("elapsed time (ms): {}", duration.as_millis());
 }

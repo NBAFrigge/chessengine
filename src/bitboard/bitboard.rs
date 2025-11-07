@@ -52,33 +52,37 @@ impl Bitboard {
         self.board
     }
 
+    pub fn set_empty(&mut self) {
+        self.board = 0
+    }
+    #[inline]
     pub fn clone(&self) -> Bitboard {
         Bitboard::new(self.get_value())
     }
-
+    #[inline]
     pub fn and(&self, other: Bitboard) -> Bitboard {
         Bitboard::new(self.board & other.board)
     }
-
+    #[inline]
     pub fn or(&self, other: Bitboard) -> Bitboard {
         Bitboard::new(self.board | other.board)
     }
-
+    #[inline]
     pub fn not(&self) -> Bitboard {
         Bitboard::new(!self.get_value())
     }
-
+    #[inline]
     pub fn xor(&self, other: Bitboard) -> Bitboard {
         Bitboard::new(self.board ^ other.get_value())
     }
-
+    #[inline]
     pub fn subtract(&self, other: Option<&Bitboard>) -> Bitboard {
         Bitboard::new(self.board - other.unwrap().board)
     }
 
     pub fn get_single_ones(&self) -> Vec<Bitboard> {
         let mut v = Vec::new();
-        let mut temp = self.clone();
+        let mut temp = *self;
         while temp.count_ones() > 0 {
             v.push(Bitboard::new(temp.lsb()));
             temp = temp.subtract(v.get(v.len() - 1))
@@ -87,4 +91,3 @@ impl Bitboard {
         v
     }
 }
-
