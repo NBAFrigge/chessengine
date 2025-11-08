@@ -1,93 +1,98 @@
-use std::string;
 
-#[derive(Clone, Copy, PartialEq, Debug)]
-pub struct Bitboard {
-    pub board: u64,
-}
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(transparent)]
+pub struct Bitboard(pub u64);
 
 impl Bitboard {
-    pub fn new(value: u64) -> Self {
-        Bitboard { board: value }
+    #[inline(always)]
+    pub const fn new(value: u64) -> Self {
+        Bitboard(value)
     }
 
-    pub fn new_from_index(value: u64) -> Self {
-        Bitboard { board: 1 << value }
+    #[inline(always)]
+    pub const fn new_from_index(value: u64) -> Self {
+        Bitboard(1 << value)
     }
 
-    pub fn empty() -> Self {
-        Bitboard { board: 0 }
+    #[inline(always)]
+    pub const fn empty() -> Self {
+        Bitboard(0)
     }
 
-    pub fn lsb(&self) -> u64 {
-        let index = self.board.trailing_zeros() as u64;
-        1 << index
+    #[inline(always)]
+    pub const fn get_value(&self) -> u64 {
+        self.0
     }
 
-    pub fn count_ones(&self) -> u64 {
-        self.board.count_ones() as u64
-    }
-
-    pub fn to_string(&self) -> String {
-        format!("{:064b}", self.board)
-    }
-
-    pub fn to_formatted_string(&self) -> String {
-        let string = format!("{:064b}", self.board);
-
-        let s = string.chars().collect::<Vec<char>>();
-
-        let mut bitboard = string::String::from("");
-
-        for chunk in s.chunks(8) {
-            let mut s = chunk.iter().collect::<String>();
-            s = s.chars().rev().collect::<String>();
-            s.push_str("\n");
-            bitboard.push_str(s.as_str());
-        }
-
-        bitboard.to_string()
-    }
-
-    pub fn get_value(&self) -> u64 {
-        self.board
-    }
-
+    #[inline(always)]
     pub fn set_empty(&mut self) {
-        self.board = 0
-    }
-    #[inline]
-    pub fn clone(&self) -> Bitboard {
-        Bitboard::new(self.get_value())
-    }
-    #[inline]
-    pub fn and(&self, other: Bitboard) -> Bitboard {
-        Bitboard::new(self.board & other.board)
-    }
-    #[inline]
-    pub fn or(&self, other: Bitboard) -> Bitboard {
-        Bitboard::new(self.board | other.board)
-    }
-    #[inline]
-    pub fn not(&self) -> Bitboard {
-        Bitboard::new(!self.get_value())
-    }
-    #[inline]
-    pub fn xor(&self, other: Bitboard) -> Bitboard {
-        Bitboard::new(self.board ^ other.get_value())
-    }
-    #[inline]
-    pub fn subtract(&self, other: Option<&Bitboard>) -> Bitboard {
-        Bitboard::new(self.board - other.unwrap().board)
+        self.0 = 0;
     }
 
-    pub fn get_single_ones(&self) -> Vec<Bitboard> {
-        let mut v = Vec::new();
-        let mut temp = *self;
-        while temp.count_ones() > 0 {
-            v.push(Bitboard::new(temp.lsb()));
-            temp = temp.subtract(v.get(v.len() - 1))
+    #[inline(always)]
+    pub fn count_ones(&self) -> u64 {
+        self.0.count_ones() as u64
+    }
+
+    #[inline(always)]
+    pub fn lsb(&self) -> u64 {
+        self.0 & (!self.0 + 1)
+    }
+
+    #[inline(always)]
+    pub fn pop_lsb(&mut self) -> Option<u32> {
+        if self.0 == 0 {
+            None
+        } else {
+            let idx = self.0.trailing_zeros();
+            self.0 &= self.0 - 1;
+            Some(idx)
         }
+    }
 
-        v
+    #[inline(always)]
+    pub fn and(&self, other: Bitboard) -> Bitboard {
+        Bitboard(self.0 & other.0)
+    }
+
+    #[inline(always)]
+    pub fn or(&self, other: Bitboard) -> Bitboard {
+        Bitboard(self.0 | other.0)
+    }
+
+    #[inline(always)]
+    pub fn xor(&self, other: Bitboard) -> Bitboard {
+        Bitboard(self.0 ^ other.0)
+    }
+
+    #[inline(always)]
+    pub fn not(&self) -> Bitboard {
+        Bitboard(!self.0)
+    }
+
+    #[inline(always)]
+    pub fn iter_bits(self) -> impl Iterator<Item = Bitboard> {
+        let mut bb = self;
+        std::iter::from_fn(move || bb.pop_lsb().map(|idx| Bitboard::new_from_index(idx as u64)))
+    }
+
+
+    pub fn to_string(&self) -> String { format!("{:064b}", self.0) }
+
+    // For debugging only
+    pub fn to_formatted_string(&self) -> String {
+        let s = format!("{:064b}", self.0);
+        s.as_bytes()
+            .chunks(8)
+            .rev()
+            .map(|chunk| {
+                let mut part = String::new();
+                for &b in chunk.iter().rev() {
+                    part.push(b as char);
+                }
+                part.push('\n');
+                part
+            })
+            .collect()
     }
 }

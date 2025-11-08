@@ -8,7 +8,7 @@ use std::time::Instant;
 fn main() {
     magic_bitboards::init();
     let board = chess::table::Board::new();
-    let depth = 5;
+    let depth = 7;
     let start = Instant::now();
     let result = perft(&board, depth);
     let duration = start.elapsed();

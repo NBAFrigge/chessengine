@@ -243,13 +243,13 @@ impl Board {
 
         match color {
             Color::White => {
-                for p in bitboard.get_single_ones() {
+                for p in bitboard.iter_bits() {
                     let temp_bitboard = Bitboard::new(
                         moves_gen::pawn::white_moves(p.get_value(), empty.get_value())
                             | moves_gen::pawn::white_attack(p.get_value(), self.black.get_value()),
                     );
 
-                    for new_mv in temp_bitboard.get_single_ones() {
+                    for new_mv in temp_bitboard.iter_bits() {
                         m.push(Moves::new(p, new_mv));
                     }
 
@@ -268,14 +268,13 @@ impl Board {
             }
 
             Color::Black => {
-                for p in bitboard.get_single_ones() {
-                    // mosse e catture normali
+                for p in bitboard.iter_bits() {
                     let temp_bitboard = Bitboard::new(
                         moves_gen::pawn::black_moves(p.get_value(), empty.get_value())
                             | moves_gen::pawn::black_attack(p.get_value(), self.white.get_value()),
                     );
 
-                    for new_mv in temp_bitboard.get_single_ones() {
+                    for new_mv in temp_bitboard.iter_bits() {
                         m.push(Moves::new(p, new_mv));
                     }
 
@@ -301,9 +300,9 @@ impl Board {
 
     fn get_knight_move(&self, bitboard: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
-        for p in bitboard.get_single_ones() {
+        for p in bitboard.iter_bits() {
             let temp_bitboard = Bitboard::new(moves_gen::knight::moves(p.get_value()));
-            for new_mv in temp_bitboard.get_single_ones() {
+            for new_mv in temp_bitboard.iter_bits() {
                 let temp_move = Moves::new(p, new_mv);
                 m.push(temp_move);
             }
@@ -313,9 +312,9 @@ impl Board {
 
     fn get_king_move(&self, bitboard: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
-        for p in bitboard.get_single_ones() {
+        for p in bitboard.iter_bits() {
             let temp_bitboard = Bitboard::new(moves_gen::king::moves(p.get_value()));
-            for new_mv in temp_bitboard.get_single_ones() {
+            for new_mv in temp_bitboard.iter_bits() {
                 let temp_move = Moves::new(p, new_mv);
                 m.push(temp_move);
             }
@@ -325,13 +324,13 @@ impl Board {
 
     fn get_bishop_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
-        for p in bitboard.get_single_ones() {
+        for p in bitboard.iter_bits() {
             let occ_without_piece = occupied.and(p.not());
             let temp_bitboard = Bitboard::new(moves_gen::bishop::moves(
                 p.get_value(),
                 occ_without_piece.get_value(),
             ));
-            for new_mv in temp_bitboard.get_single_ones() {
+            for new_mv in temp_bitboard.iter_bits() {
                 let temp_move = Moves::new(p, new_mv);
                 m.push(temp_move);
             }
@@ -341,13 +340,13 @@ impl Board {
 
     fn get_rook_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
-        for p in bitboard.get_single_ones() {
+        for p in bitboard.iter_bits() {
             let occ_without_piece = occupied.and(p.not());
             let temp_bitboard = Bitboard::new(moves_gen::rook::moves(
                 p.get_value(),
                 occ_without_piece.get_value(),
             ));
-            for new_mv in temp_bitboard.get_single_ones() {
+            for new_mv in temp_bitboard.iter_bits() {
                 let temp_move = Moves::new(p, new_mv);
                 m.push(temp_move);
             }
@@ -357,13 +356,13 @@ impl Board {
 
     fn get_queen_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
         let mut m = Vec::new();
-        for p in bitboard.get_single_ones() {
+        for p in bitboard.iter_bits() {
             let occ_without_piece = occupied.and(p.not());
             let temp_bitboard = Bitboard::new(moves_gen::queen::moves(
                 p.get_value(),
                 occ_without_piece.get_value(),
             ));
-            for new_mv in temp_bitboard.get_single_ones() {
+            for new_mv in temp_bitboard.iter_bits() {
                 let temp_move = Moves::new(p, new_mv);
                 m.push(temp_move);
             }
@@ -378,7 +377,7 @@ impl Board {
 
         // Pawns
         let pawns = self.get_pieces(color, Type::Pawn);
-        for p in pawns.get_single_ones() {
+        for p in pawns.iter_bits() {
             attacks |= match color {
                 Color::White => moves_gen::pawn::white_attack(p.get_value(), !0),
                 Color::Black => moves_gen::pawn::black_attack(p.get_value(), !0),
@@ -388,34 +387,34 @@ impl Board {
 
         // Knights
         let knights = self.get_pieces(color, Type::Knight);
-        for k in knights.get_single_ones() {
+        for k in knights.iter_bits() {
             attacks |= moves_gen::knight::moves(k.get_value());
         }
 
         // Bishops
         let bishops = self.get_pieces(color, Type::Bishop);
-        for b in bishops.get_single_ones() {
+        for b in bishops.iter_bits() {
             let occ_without_piece = occupied & !b.get_value();
             attacks |= moves_gen::bishop::moves(b.get_value(), occ_without_piece);
         }
 
         // Rooks
         let rooks = self.get_pieces(color, Type::Rook);
-        for r in rooks.get_single_ones() {
+        for r in rooks.iter_bits() {
             let occ_without_piece = occupied & !r.get_value();
             attacks |= moves_gen::rook::moves(r.get_value(), occ_without_piece);
         }
 
         // Queens
         let queens = self.get_pieces(color, Type::Queen);
-        for q in queens.get_single_ones() {
+        for q in queens.iter_bits() {
             let occ_without_piece = occupied & !q.get_value();
             attacks |= moves_gen::queen::moves(q.get_value(), occ_without_piece);
         }
 
         // King
         let king = self.get_pieces(color, Type::King);
-        for k in king.get_single_ones() {
+        for k in king.iter_bits() {
             attacks |= moves_gen::king::moves(k.get_value());
         }
 
@@ -528,7 +527,7 @@ impl Board {
         if promotion_ready.get_value() == 0 {
             return;
         }
-        for pawn in promotion_ready.get_single_ones() {
+        for pawn in promotion_ready.iter_bits() {
             self.pawn.xor(pawn);
             self.queen.or(pawn);
         }
