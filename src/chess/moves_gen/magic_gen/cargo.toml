@@ -1,0 +1,17 @@
+[package]
+name = "magic_from_scratch"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8"
+
+[[bin]]
+name = "generator"
+path = "generator.rs"
+
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

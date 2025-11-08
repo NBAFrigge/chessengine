@@ -1,8 +1,9 @@
-pub mod pawn;
-pub mod knight;
-pub mod king;
-pub mod rook;
 pub mod bishop;
-pub mod queen;
 mod hyperbola_quint;
+pub mod king;
+pub mod knight;
+pub mod magic_bitboards;
 pub mod moves_struct;
+pub mod pawn;
+pub mod queen;
+pub mod rook;
