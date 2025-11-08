@@ -1,26 +1,19 @@
-use crate::chess::table::{Color, Type};
-
-mod chess;
+use crate::engine::perft::{perft, perft_divide};
 mod bitboard;
+mod chess;
 mod engine;
+use chess::moves_gen::magic_bitboards;
+use std::time::Instant;
 
 fn main() {
-    let b = chess::table::Board::new();
+    magic_bitboards::init();
+    let board = chess::table::Board::new();
+    let depth = 7;
+    let start = Instant::now();
+    let result = perft(&board, depth);
+    let duration = start.elapsed();
 
-    // let bb = Bitboard::Bitboard::Bitboard::new(258);
-    //
-    // println!("{}", bb.to_string());
-    // println!("------------------------------");
-    // let bb2 = Bitboard::Bitboard::Bitboard::new(bb.lsb());
-    // println!("{}", bb2.to_string());
-
-    println!("{}", b.to_string());
-    let mut move_vec = b.get_move(Color::White, Type::Pawn);
-    println!("{}", move_vec.len());
-    for m in move_vec.iter() {
-        println!("________________________________________");
-        println!("{}", m.to_formatted_string());
-    }
-
-    
+    println!("perft({}) = {}", depth, result);
+    println!("elapsed time: {:?}", duration);
+    println!("elapsed time (ms): {}", duration.as_millis());
 }
