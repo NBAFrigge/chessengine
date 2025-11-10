@@ -8,7 +8,7 @@ use std::time::Instant;
 fn main() {
     magic_bitboards::init();
     let mut board = chess::table::Board::new();
-    let depth = 7;
+    let depth = 6;
     let start = Instant::now();
     let mut move_buffer: Vec<moves_struct::Moves> = Vec::with_capacity(218);
     let result = perft(&mut board, depth, &mut move_buffer);
@@ -21,5 +21,8 @@ fn main() {
     //);
     println!("elapsed time: {:?}", duration);
     println!("elapsed time (ms): {}", duration.as_millis());
-    println!("{} N/S", result as f64 / duration.as_secs_f64())
+    println!(
+        "{} MNodes/S",
+        (result as f64 / duration.as_secs_f64()) / 1_000_000 as f64
+    )
 }

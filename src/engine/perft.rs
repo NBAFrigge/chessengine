@@ -1,3 +1,5 @@
+use core::num;
+
 use crate::chess::moves_gen::moves_struct::{FLAG_CAPTURE, FLAG_CASTLE, FLAG_EN_PASSANT, Moves};
 use crate::chess::table::Board;
 use crate::chess::table::Color;
@@ -40,27 +42,20 @@ pub fn perft(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) -> u64 {
         Color::Black
     };
 
-    let moves = b.get_all_moves_bitboard(turn, move_buffer);
+    let legal_moves = b.get_legal_moves(turn, move_buffer);
 
     if depth == 1 {
-        let mut count = 0;
-        for mv in moves {
-            let undo = b.make_move_with_undo(&mv);
-            if !b.is_king_in_check(turn) {
-                count += 1;
-            }
-            b.unmake_move(&mv, undo);
-        }
-        return count;
+        return legal_moves.len() as u64;
     }
 
-    let moves_to_iterate = moves.to_vec();
+    let moves_to_iterate = legal_moves.to_vec();
+
     let mut total_moves = 0;
     for mv in moves_to_iterate {
         let undo = b.make_move_with_undo(&mv);
-        if !b.is_king_in_check(turn) {
-            total_moves += perft(b, depth - 1, move_buffer);
-        }
+
+        total_moves += perft(b, depth - 1, move_buffer);
+
         b.unmake_move(&mv, undo);
     }
 
