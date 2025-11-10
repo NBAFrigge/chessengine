@@ -157,32 +157,41 @@ impl Board {
         self.white.or(self.black)
     }
 
-    pub fn get_legal_moves(&mut self, color: Color) -> Vec<Moves> {
-        let pseudo: Vec<Moves> = self.get_all_moves_bitboard(color);
-        let mut legal_moves: Vec<Moves> = Vec::with_capacity(pseudo.len());
+    pub fn get_legal_moves<'a>(&mut self, color: Color, buffer: &'a mut Vec<Moves>) -> &'a [Moves] {
+        buffer.clear();
+        self.get_all_moves_bitboard(color, buffer);
 
-        for mv in pseudo.iter().copied() {
+        let mut legal_index = 0;
+        for i in 0..buffer.len() {
+            let mv = buffer[i];
             let undo = self.make_move_with_undo(&mv);
             if !self.is_king_in_check(color) {
-                legal_moves.push(mv);
+                buffer[legal_index] = mv;
+                legal_index += 1;
             }
             self.unmake_move(&mv, undo);
         }
-        legal_moves
+
+        buffer.truncate(legal_index);
+        &buffer[..]
     }
 
-    pub fn get_all_moves_bitboard(&self, color: Color) -> Vec<Moves> {
-        let mut moves = Vec::with_capacity(256);
+    pub fn get_all_moves_bitboard<'a>(
+        &self,
+        color: Color,
+        buffer: &'a mut Vec<Moves>,
+    ) -> &'a [Moves] {
+        buffer.clear();
         let context = self.create_move_context(color);
 
         for piece_type in Type::iter() {
             if piece_type == Type::Any {
                 continue;
             }
-            moves.extend(self.get_moves(color, piece_type, &context));
+            self.get_moves(color, piece_type, &context, buffer);
         }
-        moves.extend(self.castle(color));
-        moves
+        self.castle(color, buffer);
+        &buffer[..]
     }
 
     #[inline]
@@ -202,17 +211,23 @@ impl Board {
         }
     }
 
-    pub fn get_moves(&self, color: Color, piece_type: Type, context: &MoveContext) -> Vec<Moves> {
+    pub fn get_moves(
+        &self,
+        color: Color,
+        piece_type: Type,
+        context: &MoveContext,
+        buffer: &mut Vec<Moves>,
+    ) {
         let piece_bitboard = self.get_pieces(color, piece_type);
 
         match piece_type {
             Type::Any => panic!("get_move called on type Any"),
-            Type::Pawn => self.get_pawn_moves(piece_bitboard, color, context),
-            Type::King => self.get_king_move(piece_bitboard, context),
-            Type::Bishop => self.get_bishop_move(piece_bitboard, context),
-            Type::Knight => self.get_knight_move(piece_bitboard, context),
-            Type::Rook => self.get_rook_move(piece_bitboard, context),
-            Type::Queen => self.get_queen_moves(piece_bitboard, context),
+            Type::Pawn => self.get_pawn_moves(piece_bitboard, color, context, buffer),
+            Type::King => self.get_king_move(piece_bitboard, context, buffer),
+            Type::Bishop => self.get_bishop_move(piece_bitboard, context, buffer),
+            Type::Knight => self.get_knight_move(piece_bitboard, context, buffer),
+            Type::Rook => self.get_rook_move(piece_bitboard, context, buffer),
+            Type::Queen => self.get_queen_moves(piece_bitboard, context, buffer),
         }
     }
 
@@ -221,10 +236,10 @@ impl Board {
         bitboard: Bitboard,
         color: Color,
         context: &MoveContext,
-    ) -> Vec<Moves> {
+        buffer: &mut Vec<Moves>,
+    ) {
         let empty = self.white.or(self.black).not().get_value();
         let enpassant = self.enpassant.get_value();
-        let mut moves = Vec::with_capacity(bitboard.count_ones() as usize * 4);
 
         for p in bitboard.iter_bits() {
             let from_square = p.lsb() as u8;
@@ -250,17 +265,17 @@ impl Board {
                             } else {
                                 FLAG_NORMAL
                             };
-                            moves.push(Moves::new(from_square, to_square, PROMOTE_QUEEN, flag));
-                            moves.push(Moves::new(from_square, to_square, PROMOTE_ROOK, flag));
-                            moves.push(Moves::new(from_square, to_square, PROMOTE_BISHOP, flag));
-                            moves.push(Moves::new(from_square, to_square, PROMOTE_KNIGHT, flag));
+                            buffer.push(Moves::new(from_square, to_square, PROMOTE_QUEEN, flag));
+                            buffer.push(Moves::new(from_square, to_square, PROMOTE_ROOK, flag));
+                            buffer.push(Moves::new(from_square, to_square, PROMOTE_BISHOP, flag));
+                            buffer.push(Moves::new(from_square, to_square, PROMOTE_KNIGHT, flag));
                         } else {
                             let flag = if is_capture {
                                 FLAG_CAPTURE
                             } else {
                                 FLAG_NORMAL
                             };
-                            moves.push(Moves::new(from_square, to_square, 0, flag));
+                            buffer.push(Moves::new(from_square, to_square, 0, flag));
                         }
                     }
 
@@ -271,7 +286,7 @@ impl Board {
 
                         if left_hit != 0 || right_hit != 0 {
                             let to_square = landing.trailing_zeros() as u8;
-                            moves.push(Moves::new(from_square, to_square, 0, FLAG_EN_PASSANT));
+                            buffer.push(Moves::new(from_square, to_square, 0, FLAG_EN_PASSANT));
                         }
                     }
                 }
@@ -294,17 +309,17 @@ impl Board {
                             } else {
                                 FLAG_NORMAL
                             };
-                            moves.push(Moves::new(from_square, to_square, PROMOTE_QUEEN, flag));
-                            moves.push(Moves::new(from_square, to_square, PROMOTE_ROOK, flag));
-                            moves.push(Moves::new(from_square, to_square, PROMOTE_BISHOP, flag));
-                            moves.push(Moves::new(from_square, to_square, PROMOTE_KNIGHT, flag));
+                            buffer.push(Moves::new(from_square, to_square, PROMOTE_QUEEN, flag));
+                            buffer.push(Moves::new(from_square, to_square, PROMOTE_ROOK, flag));
+                            buffer.push(Moves::new(from_square, to_square, PROMOTE_BISHOP, flag));
+                            buffer.push(Moves::new(from_square, to_square, PROMOTE_KNIGHT, flag));
                         } else {
                             let flag = if is_capture {
                                 FLAG_CAPTURE
                             } else {
                                 FLAG_NORMAL
                             };
-                            moves.push(Moves::new(from_square, to_square, 0, flag));
+                            buffer.push(Moves::new(from_square, to_square, 0, flag));
                         }
                     }
 
@@ -315,19 +330,16 @@ impl Board {
 
                         if left_hit != 0 || right_hit != 0 {
                             let to_square = landing.trailing_zeros() as u8;
-                            moves.push(Moves::new(from_square, to_square, 0, FLAG_EN_PASSANT));
+                            buffer.push(Moves::new(from_square, to_square, 0, FLAG_EN_PASSANT));
                         }
                     }
                 }
                 Color::Any => panic!("get_pawn_move called with Color::Any"),
             }
         }
-        moves
     }
 
-    fn get_knight_move(&self, bitboard: Bitboard, context: &MoveContext) -> Vec<Moves> {
-        let mut moves = Vec::with_capacity(bitboard.count_ones() as usize * 8);
-
+    fn get_knight_move(&self, bitboard: Bitboard, context: &MoveContext, buffer: &mut Vec<Moves>) {
         for p in bitboard.iter_bits() {
             let from_square = p.lsb() as u8;
             let temp_moves = moves_gen::knight::moves(p.get_value()) & !context.own_pieces;
@@ -344,15 +356,12 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                moves.push(Moves::new(from_square, to_square, 0, flag));
+                buffer.push(Moves::new(from_square, to_square, 0, flag));
             }
         }
-        moves
     }
 
-    fn get_queen_moves(&self, bitboard: Bitboard, context: &MoveContext) -> Vec<Moves> {
-        let mut moves = Vec::with_capacity(bitboard.count_ones() as usize * 28);
-
+    fn get_queen_moves(&self, bitboard: Bitboard, context: &MoveContext, buffer: &mut Vec<Moves>) {
         for p in bitboard.iter_bits() {
             let from_square = p.lsb() as u8;
             let occ_without_piece = context.occupied & !p.get_value();
@@ -371,15 +380,12 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                moves.push(Moves::new(from_square, to_square, 0, flag));
+                buffer.push(Moves::new(from_square, to_square, 0, flag));
             }
         }
-        moves
     }
 
-    fn get_bishop_move(&self, bitboard: Bitboard, context: &MoveContext) -> Vec<Moves> {
-        let mut moves = Vec::with_capacity(bitboard.count_ones() as usize * 14);
-
+    fn get_bishop_move(&self, bitboard: Bitboard, context: &MoveContext, buffer: &mut Vec<Moves>) {
         for p in bitboard.iter_bits() {
             let from_square = p.lsb() as u8;
             let occ_without_piece = context.occupied & !p.get_value();
@@ -398,15 +404,12 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                moves.push(Moves::new(from_square, to_square, 0, flag));
+                buffer.push(Moves::new(from_square, to_square, 0, flag));
             }
         }
-        moves
     }
 
-    fn get_rook_move(&self, bitboard: Bitboard, context: &MoveContext) -> Vec<Moves> {
-        let mut moves = Vec::with_capacity(bitboard.count_ones() as usize * 14);
-
+    fn get_rook_move(&self, bitboard: Bitboard, context: &MoveContext, buffer: &mut Vec<Moves>) {
         for p in bitboard.iter_bits() {
             let from_square = p.lsb() as u8;
             let occ_without_piece = context.occupied & !p.get_value();
@@ -425,15 +428,12 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                moves.push(Moves::new(from_square, to_square, 0, flag));
+                buffer.push(Moves::new(from_square, to_square, 0, flag));
             }
         }
-        moves
     }
 
-    fn get_king_move(&self, bitboard: Bitboard, context: &MoveContext) -> Vec<Moves> {
-        let mut moves = Vec::with_capacity(8);
-
+    fn get_king_move(&self, bitboard: Bitboard, context: &MoveContext, buffer: &mut Vec<Moves>) {
         for p in bitboard.iter_bits() {
             let from_square = p.lsb() as u8;
             let temp_moves = moves_gen::king::moves(p.get_value()) & !context.own_pieces;
@@ -450,34 +450,31 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                moves.push(Moves::new(from_square, to_square, 0, flag));
+                buffer.push(Moves::new(from_square, to_square, 0, flag));
             }
         }
-        moves
     }
 
-    fn castle(&self, color: Color) -> Vec<Moves> {
-        let mut m = Vec::with_capacity(2);
+    fn castle(&self, color: Color, buffer: &mut Vec<Moves>) {
         match color {
             Color::White => {
                 if self.can_castle(color, Side::Long) {
-                    m.push(Moves::new(4, 2, 0, FLAG_CASTLE));
+                    buffer.push(Moves::new(4, 2, 0, FLAG_CASTLE));
                 }
                 if self.can_castle(color, Side::Short) {
-                    m.push(Moves::new(4, 6, 0, FLAG_CASTLE));
+                    buffer.push(Moves::new(4, 6, 0, FLAG_CASTLE));
                 }
             }
             Color::Black => {
                 if self.can_castle(color, Side::Long) {
-                    m.push(Moves::new(60, 58, 0, FLAG_CASTLE));
+                    buffer.push(Moves::new(60, 58, 0, FLAG_CASTLE));
                 }
                 if self.can_castle(color, Side::Short) {
-                    m.push(Moves::new(60, 62, 0, FLAG_CASTLE));
+                    buffer.push(Moves::new(60, 62, 0, FLAG_CASTLE));
                 }
             }
             _ => {}
         }
-        m
     }
 
     fn can_castle(&self, color: Color, side: Side) -> bool {
@@ -488,6 +485,12 @@ impl Board {
     }
 
     fn can_castle_long_side(&self, color: Color) -> bool {
+        let opponent_color = match color {
+            Color::White => Color::Black,
+            Color::Black => Color::White,
+            Color::Any => return false,
+        };
+
         match color {
             Color::White => {
                 if !self.white_king || !self.white_rook_long_side {
@@ -499,13 +502,10 @@ impl Board {
                 if self.is_king_in_check(color) {
                     return false;
                 }
-                for pos in [0x10, 0x08, 0x04] {
-                    let mut temp = *self;
-                    temp.king = temp.king.xor(Bitboard::new(0x10)).xor(Bitboard::new(pos));
-                    temp.white = temp.white.xor(Bitboard::new(0x10)).xor(Bitboard::new(pos));
-                    if temp.is_king_in_check(Color::White) {
-                        return false;
-                    }
+                if self.is_square_attacked_by(3, opponent_color)
+                    || self.is_square_attacked_by(2, opponent_color)
+                {
+                    return false;
                 }
                 true
             }
@@ -519,19 +519,10 @@ impl Board {
                 if self.is_king_in_check(color) {
                     return false;
                 }
-                for pos in [0x1000000000000000, 0x0800000000000000, 0x0400000000000000] {
-                    let mut temp = *self;
-                    temp.king = temp
-                        .king
-                        .xor(Bitboard::new(0x1000000000000000))
-                        .xor(Bitboard::new(pos));
-                    temp.black = temp
-                        .black
-                        .xor(Bitboard::new(0x1000000000000000))
-                        .xor(Bitboard::new(pos));
-                    if temp.is_king_in_check(Color::Black) {
-                        return false;
-                    }
+                if self.is_square_attacked_by(59, opponent_color)
+                    || self.is_square_attacked_by(58, opponent_color)
+                {
+                    return false;
                 }
                 true
             }
@@ -540,6 +531,12 @@ impl Board {
     }
 
     fn can_castle_short_side(&self, color: Color) -> bool {
+        let opponent_color = match color {
+            Color::White => Color::Black,
+            Color::Black => Color::White,
+            Color::Any => return false,
+        };
+
         match color {
             Color::White => {
                 if !self.white_king || !self.white_rook_short_side {
@@ -551,13 +548,10 @@ impl Board {
                 if self.is_king_in_check(color) {
                     return false;
                 }
-                for pos in [0x10, 0x20, 0x40] {
-                    let mut temp = *self;
-                    temp.king = temp.king.xor(Bitboard::new(0x10)).xor(Bitboard::new(pos));
-                    temp.white = temp.white.xor(Bitboard::new(0x10)).xor(Bitboard::new(pos));
-                    if temp.is_king_in_check(Color::White) {
-                        return false;
-                    }
+                if self.is_square_attacked_by(5, opponent_color)
+                    || self.is_square_attacked_by(6, opponent_color)
+                {
+                    return false;
                 }
                 true
             }
@@ -571,19 +565,10 @@ impl Board {
                 if self.is_king_in_check(color) {
                     return false;
                 }
-                for pos in [0x1000000000000000, 0x2000000000000000, 0x4000000000000000] {
-                    let mut temp = *self;
-                    temp.king = temp
-                        .king
-                        .xor(Bitboard::new(0x1000000000000000))
-                        .xor(Bitboard::new(pos));
-                    temp.black = temp
-                        .black
-                        .xor(Bitboard::new(0x1000000000000000))
-                        .xor(Bitboard::new(pos));
-                    if temp.is_king_in_check(Color::Black) {
-                        return false;
-                    }
+                if self.is_square_attacked_by(61, opponent_color)
+                    || self.is_square_attacked_by(62, opponent_color)
+                {
+                    return false;
                 }
                 true
             }

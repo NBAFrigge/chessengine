@@ -1,4 +1,4 @@
-use crate::chess::moves_gen::moves_struct::{FLAG_CAPTURE, FLAG_CASTLE, FLAG_EN_PASSANT};
+use crate::chess::moves_gen::moves_struct::{FLAG_CAPTURE, FLAG_CASTLE, FLAG_EN_PASSANT, Moves};
 use crate::chess::table::Board;
 use crate::chess::table::Color;
 
@@ -29,7 +29,7 @@ impl PerftResult {
     }
 }
 
-pub fn perft(b: &mut Board, depth: u8) -> u64 {
+pub fn perft(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) -> u64 {
     if depth == 0 {
         return 1;
     }
@@ -40,7 +40,7 @@ pub fn perft(b: &mut Board, depth: u8) -> u64 {
         Color::Black
     };
 
-    let moves = b.get_all_moves_bitboard(turn);
+    let moves = b.get_all_moves_bitboard(turn, move_buffer);
 
     if depth == 1 {
         let mut count = 0;
@@ -54,11 +54,12 @@ pub fn perft(b: &mut Board, depth: u8) -> u64 {
         return count;
     }
 
+    let moves_to_iterate = moves.to_vec();
     let mut total_moves = 0;
-    for mv in moves {
+    for mv in moves_to_iterate {
         let undo = b.make_move_with_undo(&mv);
         if !b.is_king_in_check(turn) {
-            total_moves += perft(b, depth - 1);
+            total_moves += perft(b, depth - 1, move_buffer);
         }
         b.unmake_move(&mv, undo);
     }
@@ -66,21 +67,26 @@ pub fn perft(b: &mut Board, depth: u8) -> u64 {
     total_moves
 }
 
-pub fn perft_divide(b: &mut Board, depth: u8) {
+pub fn perft_divide(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) {
     let turn = if b.is_white_turn {
         Color::White
     } else {
         Color::Black
     };
 
-    let moves = b.get_all_moves_bitboard(turn);
+    let moves = b.get_all_moves_bitboard(turn, move_buffer);
     let mut total = 0;
 
-    for mv in moves {
+    let moves_to_iterate = moves.to_vec();
+    for mv in moves_to_iterate {
         let undo = b.make_move_with_undo(&mv);
 
         if !b.is_king_in_check(turn) {
-            let count = if depth <= 1 { 1 } else { perft(b, depth - 1) };
+            let count = if depth <= 1 {
+                1
+            } else {
+                perft(b, depth - 1, move_buffer)
+            };
             println!("{} -> {}: {}", mv.from(), mv.to(), count);
             total += count;
         }
@@ -90,7 +96,7 @@ pub fn perft_divide(b: &mut Board, depth: u8) {
     println!("Total: {}", total);
 }
 
-pub fn perft_plus(b: &mut Board, depth: u8) -> PerftResult {
+pub fn perft_plus(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) -> PerftResult {
     if depth == 0 {
         return PerftResult {
             nodes: 1,
@@ -107,7 +113,7 @@ pub fn perft_plus(b: &mut Board, depth: u8) -> PerftResult {
         Color::Black
     };
 
-    let moves = b.get_all_moves_bitboard(turn);
+    let moves = b.get_all_moves_bitboard(turn, move_buffer);
     let mut result = PerftResult::new();
 
     if moves.is_empty() {
@@ -115,7 +121,7 @@ pub fn perft_plus(b: &mut Board, depth: u8) -> PerftResult {
     }
 
     if depth == 1 {
-        for mv in &moves {
+        for mv in moves {
             let undo = b.make_move_with_undo(&mv);
 
             if !b.is_king_in_check(turn) {
@@ -145,11 +151,12 @@ pub fn perft_plus(b: &mut Board, depth: u8) -> PerftResult {
         return result;
     }
 
-    for mv in moves {
+    let moves_to_iterate = moves.to_vec();
+    for mv in moves_to_iterate {
         let undo = b.make_move_with_undo(&mv);
 
         if !b.is_king_in_check(turn) {
-            let sub_result = perft_plus(b, depth - 1);
+            let sub_result = perft_plus(b, depth - 1, move_buffer);
             result.add(&sub_result);
         }
 
