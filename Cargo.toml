@@ -3,9 +3,11 @@ name = "chessengine"
 version = "0.1.0"
 edition = "2024"
 
+[profile.release]
+debug = true
+
 [dependencies]
 either = "1.15.0"
 strum = "0.27.2"
 strum_macros = "0.27.2"
 tree-ds = "0.1"
-

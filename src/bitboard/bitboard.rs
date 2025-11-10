@@ -1,4 +1,3 @@
-
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[repr(transparent)]
 pub struct Bitboard(pub u64);
@@ -10,7 +9,7 @@ impl Bitboard {
     }
 
     #[inline(always)]
-    pub const fn new_from_index(value: u64) -> Self {
+    pub const fn new_from_index(value: u8) -> Self {
         Bitboard(1 << value)
     }
 
@@ -35,8 +34,8 @@ impl Bitboard {
     }
 
     #[inline(always)]
-    pub fn lsb(&self) -> u64 {
-        self.0 & (!self.0 + 1)
+    pub fn lsb(&self) -> u32 {
+        self.0.trailing_zeros()
     }
 
     #[inline(always)]
@@ -73,11 +72,12 @@ impl Bitboard {
     #[inline(always)]
     pub fn iter_bits(self) -> impl Iterator<Item = Bitboard> {
         let mut bb = self;
-        std::iter::from_fn(move || bb.pop_lsb().map(|idx| Bitboard::new_from_index(idx as u64)))
+        std::iter::from_fn(move || bb.pop_lsb().map(|idx| Bitboard::new_from_index(idx as u8)))
     }
 
-
-    pub fn to_string(&self) -> String { format!("{:064b}", self.0) }
+    pub fn to_string(&self) -> String {
+        format!("{:064b}", self.0)
+    }
 
     // For debugging only
     pub fn to_formatted_string(&self) -> String {

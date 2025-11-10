@@ -7,13 +7,17 @@ use std::time::Instant;
 
 fn main() {
     magic_bitboards::init();
-    let board = chess::table::Board::new();
+    let mut board = chess::table::Board::new();
     let depth = 7;
     let start = Instant::now();
-    let result = perft(&board, depth);
+    let result = perft(&mut board, depth);
     let duration = start.elapsed();
 
     println!("perft({}) = {}", depth, result);
+    //println!(
+    //    "perft({}): \nnodes: {}\ncaptures: {}\ncastles: {}\nep: {}\nchecks: {}",
+    //    depth, result.nodes, result.captures, result.castles, result.en_passant, result.checks
+    //);
     println!("elapsed time: {:?}", duration);
     println!("elapsed time (ms): {}", duration.as_millis());
 }

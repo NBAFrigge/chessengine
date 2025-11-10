@@ -1,5 +1,4 @@
 pub mod bishop;
-mod hyperbola_quint;
 pub mod king;
 pub mod knight;
 pub mod magic_bitboards;

@@ -1,7 +1,9 @@
 use crate::bitboard::bitboard::Bitboard;
 use crate::chess::moves_gen;
-use crate::chess::moves_gen::moves_struct::MoveType;
-use crate::chess::moves_gen::moves_struct::Moves;
+use crate::chess::moves_gen::moves_struct::{
+    FLAG_CAPTURE, FLAG_CASTLE, FLAG_EN_PASSANT, FLAG_NORMAL, Moves, PROMOTE_BISHOP, PROMOTE_KNIGHT,
+    PROMOTE_QUEEN, PROMOTE_ROOK,
+};
 use either::Either;
 use std::cmp::PartialEq;
 use strum::IntoEnumIterator;
@@ -11,10 +13,6 @@ const FIRSTRANK: u64 = 0xff;
 const LASTRANK: u64 = 0xff00000000000000;
 pub const FILE_A: u64 = 0x0101010101010101;
 pub const FILE_H: u64 = 0x8080808080808080;
-const WHITESHORTCASTLING: u64 = 0x60;
-const WHITELONGCASTLING: u64 = 0xe;
-const BLACKSHORTCASTLING: u64 = 0x600000000000000;
-const BLACKLONGCASTLING: u64 = 0x7000000000000000;
 
 #[derive(Clone, Copy)]
 pub enum Color {
@@ -22,6 +20,7 @@ pub enum Color {
     Black,
     Any,
 }
+
 #[derive(Debug, EnumIter, Copy, Clone, PartialEq)]
 pub enum Type {
     Pawn,
@@ -38,6 +37,12 @@ pub enum Side {
     Short,
 }
 
+struct MoveContext {
+    own_pieces: u64,
+    enemy_pieces: u64,
+    occupied: u64,
+}
+
 #[derive(Clone, Copy)]
 pub struct Board {
     pawn: Bitboard,
@@ -48,18 +53,28 @@ pub struct Board {
     king: Bitboard,
     white: Bitboard,
     black: Bitboard,
-
     pub is_white_turn: bool,
     white_rook_long_side: bool,
     white_rook_short_side: bool,
-
     black_rook_long_side: bool,
     black_rook_short_side: bool,
-
     white_king: bool,
     black_king: bool,
-
     enpassant: Bitboard,
+}
+
+#[derive(Clone, Copy)]
+pub struct UndoInfo {
+    captured_piece_type: u8,
+    captured_on_white: bool,
+    white_rook_long_side: bool,
+    white_rook_short_side: bool,
+    black_rook_long_side: bool,
+    black_rook_short_side: bool,
+    white_king: bool,
+    black_king: bool,
+    old_enpassant: u64,
+    was_white_turn: bool,
 }
 
 impl Board {
@@ -74,19 +89,17 @@ impl Board {
             white: Bitboard::new(0xffff),
             black: Bitboard::new(0xffff000000000000),
             is_white_turn: true,
-
             white_rook_long_side: true,
             white_rook_short_side: true,
             black_rook_long_side: true,
             black_rook_short_side: true,
-
             white_king: true,
             black_king: true,
             enpassant: Bitboard::new(0),
         }
     }
 
-    // get method
+    #[inline]
     pub fn get_pieces(&self, color: Color, piece_type: Type) -> Bitboard {
         match color {
             Color::White => self.get_piece_white(piece_type),
@@ -95,6 +108,7 @@ impl Board {
         }
     }
 
+    #[inline]
     fn get_piece_any(&self, piece_type: Type) -> Bitboard {
         match piece_type {
             Type::Any => self.white.or(self.black),
@@ -107,6 +121,7 @@ impl Board {
         }
     }
 
+    #[inline]
     fn get_piece_white(&self, piece_type: Type) -> Bitboard {
         match piece_type {
             Type::Any => self.white,
@@ -119,6 +134,7 @@ impl Board {
         }
     }
 
+    #[inline]
     fn get_piece_black(&self, piece_type: Type) -> Bitboard {
         match piece_type {
             Type::Any => self.black,
@@ -131,308 +147,339 @@ impl Board {
         }
     }
 
+    #[inline]
     pub fn get_free_pos(&self) -> Bitboard {
-        self.get_pieces(Color::White, Type::Any)
-            .or(self.get_pieces(Color::Black, Type::Any))
-            .not()
+        self.white.or(self.black).not()
     }
 
+    #[inline]
     pub fn get_occupied_pos(&self) -> Bitboard {
-        self.get_free_pos().not()
+        self.white.or(self.black)
     }
 
-    // count pieces
-    pub fn count_pieces(&self, color: Color, piece_type: Type) -> u64 {
-        match color {
-            Color::White => self.count_white(piece_type),
-            Color::Black => self.count_black(piece_type),
-            Color::Any => self.count_any(piece_type),
-        }
-    }
+    pub fn get_legal_moves(&mut self, color: Color) -> Vec<Moves> {
+        let pseudo: Vec<Moves> = self.get_all_moves_bitboard(color);
+        let mut legal_moves: Vec<Moves> = Vec::with_capacity(pseudo.len());
 
-    fn count_any(&self, piece_type: Type) -> u64 {
-        match piece_type {
-            Type::Any => self.white.or(self.black).count_ones(),
-            Type::Pawn => self.pawn.count_ones(),
-            Type::Bishop => self.bishop.count_ones(),
-            Type::Knight => self.knight.count_ones(),
-            Type::Rook => self.rook.count_ones(),
-            Type::Queen => self.queen.count_ones(),
-            Type::King => self.king.count_ones(),
-        }
-    }
-
-    fn count_white(&self, piece_type: Type) -> u64 {
-        match piece_type {
-            Type::Any => self.white.count_ones(),
-            Type::Pawn => self.pawn.and(self.white.clone()).count_ones(),
-            Type::Bishop => self.bishop.and(self.white.clone()).count_ones(),
-            Type::Knight => self.knight.and(self.white.clone()).count_ones(),
-            Type::Rook => self.rook.and(self.white.clone()).count_ones(),
-            Type::Queen => self.queen.and(self.white.clone()).count_ones(),
-            Type::King => self.king.and(self.white.clone()).count_ones(),
-        }
-    }
-
-    fn count_black(&self, piece_type: Type) -> u64 {
-        match piece_type {
-            Type::Any => self.black.count_ones(),
-            Type::Pawn => self.pawn.and(self.black.clone()).count_ones(),
-            Type::Bishop => self.bishop.and(self.black.clone()).count_ones(),
-            Type::Knight => self.knight.and(self.black.clone()).count_ones(),
-            Type::Rook => self.rook.and(self.black.clone()).count_ones(),
-            Type::Queen => self.queen.and(self.black.clone()).count_ones(),
-            Type::King => self.king.and(self.black.clone()).count_ones(),
-        }
-    }
-
-    // legal moves clearing
-    pub fn get_legal_moves(&self, color: Color) -> Vec<Moves> {
-        let pseudo = self.get_all_moves_bitboard(color);
-
-        let mut legal_moves = Vec::with_capacity(pseudo.len());
-
-        for p in pseudo {
-            if p.move_type == MoveType::Simple
-                && p.new_pos.and(self.get_pieces(color, Type::Any)).get_value() != 0
-            {
-                continue;
+        for mv in pseudo.iter().copied() {
+            let undo = self.make_move_with_undo(&mv);
+            if !self.is_king_in_check(color) {
+                legal_moves.push(mv);
             }
-            let mut test_board = *self;
-            test_board.perform_move(p.old_pos, p.new_pos, p.move_type);
-
-            if !test_board.is_king_in_check(color) {
-                legal_moves.push(p);
-            }
+            self.unmake_move(&mv, undo);
         }
-
         legal_moves
     }
 
-    // pseudo-legal moves_gen gen
-    fn get_all_moves_bitboard(&self, color: Color) -> Vec<Moves> {
-        let mut vec = Vec::new();
-        for t in Type::iter() {
-            if t == Type::Any {
+    pub fn get_all_moves_bitboard(&self, color: Color) -> Vec<Moves> {
+        let mut moves = Vec::with_capacity(256);
+        let context = self.create_move_context(color);
+
+        for piece_type in Type::iter() {
+            if piece_type == Type::Any {
                 continue;
             }
-            vec.append(self.get_move(color, t).as_mut())
+            moves.extend(self.get_moves(color, piece_type, &context));
         }
-
-        vec.append(self.castle(color).as_mut());
-
-        vec
+        moves.extend(self.castle(color));
+        moves
     }
 
-    pub fn get_move(&self, color: Color, piece_type: Type) -> Vec<Moves> {
+    #[inline]
+    fn create_move_context(&self, color: Color) -> MoveContext {
+        match color {
+            Color::White => MoveContext {
+                own_pieces: self.white.get_value(),
+                enemy_pieces: self.black.get_value(),
+                occupied: self.white.or(self.black).get_value(),
+            },
+            Color::Black => MoveContext {
+                own_pieces: self.black.get_value(),
+                enemy_pieces: self.white.get_value(),
+                occupied: self.white.or(self.black).get_value(),
+            },
+            _ => panic!("Invalid color"),
+        }
+    }
+
+    pub fn get_moves(&self, color: Color, piece_type: Type, context: &MoveContext) -> Vec<Moves> {
         let piece_bitboard = self.get_pieces(color, piece_type);
+
         match piece_type {
             Type::Any => panic!("get_move called on type Any"),
-            Type::Pawn => self.get_pawn_move(piece_bitboard, color),
-            Type::King => self.get_king_move(piece_bitboard),
-            Type::Bishop => self.get_bishop_move(piece_bitboard, self.get_occupied_pos()),
-            Type::Knight => self.get_knight_move(piece_bitboard),
-            Type::Rook => self.get_rook_move(piece_bitboard, self.get_occupied_pos()),
-            Type::Queen => self.get_queen_move(piece_bitboard, self.get_occupied_pos()),
+            Type::Pawn => self.get_pawn_moves(piece_bitboard, color, context),
+            Type::King => self.get_king_move(piece_bitboard, context),
+            Type::Bishop => self.get_bishop_move(piece_bitboard, context),
+            Type::Knight => self.get_knight_move(piece_bitboard, context),
+            Type::Rook => self.get_rook_move(piece_bitboard, context),
+            Type::Queen => self.get_queen_moves(piece_bitboard, context),
         }
     }
 
-    fn get_pawn_move(&self, bitboard: Bitboard, color: Color) -> Vec<Moves> {
-        let mut m = Vec::new();
-        let empty = self.get_free_pos();
+    fn get_pawn_moves(
+        &self,
+        bitboard: Bitboard,
+        color: Color,
+        context: &MoveContext,
+    ) -> Vec<Moves> {
+        let empty = self.white.or(self.black).not().get_value();
+        let enpassant = self.enpassant.get_value();
+        let mut moves = Vec::with_capacity(bitboard.count_ones() as usize * 4);
 
+        for p in bitboard.iter_bits() {
+            let from_square = p.lsb() as u8;
+            let p_val = p.get_value();
+
+            match color {
+                Color::White => {
+                    let temp_moves = moves_gen::pawn::white_moves(p_val, empty)
+                        | moves_gen::pawn::white_attack(p_val, context.enemy_pieces);
+
+                    let mut temp_bb = temp_moves;
+                    while temp_bb != 0 {
+                        let to_square = temp_bb.trailing_zeros() as u8;
+                        let to_bit = 1u64 << to_square;
+                        temp_bb &= temp_bb - 1;
+
+                        let is_capture = (to_bit & context.enemy_pieces) != 0;
+                        let is_promotion = (to_bit & LASTRANK) != 0;
+
+                        if is_promotion {
+                            let flag = if is_capture {
+                                FLAG_CAPTURE
+                            } else {
+                                FLAG_NORMAL
+                            };
+                            moves.push(Moves::new(from_square, to_square, PROMOTE_QUEEN, flag));
+                            moves.push(Moves::new(from_square, to_square, PROMOTE_ROOK, flag));
+                            moves.push(Moves::new(from_square, to_square, PROMOTE_BISHOP, flag));
+                            moves.push(Moves::new(from_square, to_square, PROMOTE_KNIGHT, flag));
+                        } else {
+                            let flag = if is_capture {
+                                FLAG_CAPTURE
+                            } else {
+                                FLAG_NORMAL
+                            };
+                            moves.push(Moves::new(from_square, to_square, 0, flag));
+                        }
+                    }
+
+                    if enpassant != 0 {
+                        let landing = enpassant << 8;
+                        let left_hit = (p_val << 7) & landing & !FILE_H;
+                        let right_hit = (p_val << 9) & landing & !FILE_A;
+
+                        if left_hit != 0 || right_hit != 0 {
+                            let to_square = landing.trailing_zeros() as u8;
+                            moves.push(Moves::new(from_square, to_square, 0, FLAG_EN_PASSANT));
+                        }
+                    }
+                }
+                Color::Black => {
+                    let temp_moves = moves_gen::pawn::black_moves(p_val, empty)
+                        | moves_gen::pawn::black_attack(p_val, context.enemy_pieces);
+
+                    let mut temp_bb = temp_moves;
+                    while temp_bb != 0 {
+                        let to_square = temp_bb.trailing_zeros() as u8;
+                        let to_bit = 1u64 << to_square;
+                        temp_bb &= temp_bb - 1;
+
+                        let is_capture = (to_bit & context.enemy_pieces) != 0;
+                        let is_promotion = (to_bit & FIRSTRANK) != 0;
+
+                        if is_promotion {
+                            let flag = if is_capture {
+                                FLAG_CAPTURE
+                            } else {
+                                FLAG_NORMAL
+                            };
+                            moves.push(Moves::new(from_square, to_square, PROMOTE_QUEEN, flag));
+                            moves.push(Moves::new(from_square, to_square, PROMOTE_ROOK, flag));
+                            moves.push(Moves::new(from_square, to_square, PROMOTE_BISHOP, flag));
+                            moves.push(Moves::new(from_square, to_square, PROMOTE_KNIGHT, flag));
+                        } else {
+                            let flag = if is_capture {
+                                FLAG_CAPTURE
+                            } else {
+                                FLAG_NORMAL
+                            };
+                            moves.push(Moves::new(from_square, to_square, 0, flag));
+                        }
+                    }
+
+                    if enpassant != 0 {
+                        let landing = enpassant >> 8;
+                        let left_hit = (p_val >> 9) & landing & !FILE_H;
+                        let right_hit = (p_val >> 7) & landing & !FILE_A;
+
+                        if left_hit != 0 || right_hit != 0 {
+                            let to_square = landing.trailing_zeros() as u8;
+                            moves.push(Moves::new(from_square, to_square, 0, FLAG_EN_PASSANT));
+                        }
+                    }
+                }
+                Color::Any => panic!("get_pawn_move called with Color::Any"),
+            }
+        }
+        moves
+    }
+
+    fn get_knight_move(&self, bitboard: Bitboard, context: &MoveContext) -> Vec<Moves> {
+        let mut moves = Vec::with_capacity(bitboard.count_ones() as usize * 8);
+
+        for p in bitboard.iter_bits() {
+            let from_square = p.lsb() as u8;
+            let temp_moves = moves_gen::knight::moves(p.get_value()) & !context.own_pieces;
+
+            let mut temp_bb = temp_moves;
+            while temp_bb != 0 {
+                let to_square = temp_bb.trailing_zeros() as u8;
+                let to_bit = 1u64 << to_square;
+                temp_bb &= temp_bb - 1;
+
+                let flag = if (to_bit & context.enemy_pieces) != 0 {
+                    FLAG_CAPTURE
+                } else {
+                    FLAG_NORMAL
+                };
+
+                moves.push(Moves::new(from_square, to_square, 0, flag));
+            }
+        }
+        moves
+    }
+
+    fn get_queen_moves(&self, bitboard: Bitboard, context: &MoveContext) -> Vec<Moves> {
+        let mut moves = Vec::with_capacity(bitboard.count_ones() as usize * 28);
+
+        for p in bitboard.iter_bits() {
+            let from_square = p.lsb() as u8;
+            let occ_without_piece = context.occupied & !p.get_value();
+            let temp_moves =
+                moves_gen::queen::moves(p.get_value(), occ_without_piece) & !context.own_pieces;
+
+            let mut temp_bb = temp_moves;
+            while temp_bb != 0 {
+                let to_square = temp_bb.trailing_zeros() as u8;
+                let to_bit = 1u64 << to_square;
+                temp_bb &= temp_bb - 1;
+
+                let flag = if (to_bit & context.enemy_pieces) != 0 {
+                    FLAG_CAPTURE
+                } else {
+                    FLAG_NORMAL
+                };
+
+                moves.push(Moves::new(from_square, to_square, 0, flag));
+            }
+        }
+        moves
+    }
+
+    fn get_bishop_move(&self, bitboard: Bitboard, context: &MoveContext) -> Vec<Moves> {
+        let mut moves = Vec::with_capacity(bitboard.count_ones() as usize * 14);
+
+        for p in bitboard.iter_bits() {
+            let from_square = p.lsb() as u8;
+            let occ_without_piece = context.occupied & !p.get_value();
+            let temp_moves =
+                moves_gen::bishop::moves(p.get_value(), occ_without_piece) & !context.own_pieces;
+
+            let mut temp_bb = temp_moves;
+            while temp_bb != 0 {
+                let to_square = temp_bb.trailing_zeros() as u8;
+                let to_bit = 1u64 << to_square;
+                temp_bb &= temp_bb - 1;
+
+                let flag = if (to_bit & context.enemy_pieces) != 0 {
+                    FLAG_CAPTURE
+                } else {
+                    FLAG_NORMAL
+                };
+
+                moves.push(Moves::new(from_square, to_square, 0, flag));
+            }
+        }
+        moves
+    }
+
+    fn get_rook_move(&self, bitboard: Bitboard, context: &MoveContext) -> Vec<Moves> {
+        let mut moves = Vec::with_capacity(bitboard.count_ones() as usize * 14);
+
+        for p in bitboard.iter_bits() {
+            let from_square = p.lsb() as u8;
+            let occ_without_piece = context.occupied & !p.get_value();
+            let temp_moves =
+                moves_gen::rook::moves(p.get_value(), occ_without_piece) & !context.own_pieces;
+
+            let mut temp_bb = temp_moves;
+            while temp_bb != 0 {
+                let to_square = temp_bb.trailing_zeros() as u8;
+                let to_bit = 1u64 << to_square;
+                temp_bb &= temp_bb - 1;
+
+                let flag = if (to_bit & context.enemy_pieces) != 0 {
+                    FLAG_CAPTURE
+                } else {
+                    FLAG_NORMAL
+                };
+
+                moves.push(Moves::new(from_square, to_square, 0, flag));
+            }
+        }
+        moves
+    }
+
+    fn get_king_move(&self, bitboard: Bitboard, context: &MoveContext) -> Vec<Moves> {
+        let mut moves = Vec::with_capacity(8);
+
+        for p in bitboard.iter_bits() {
+            let from_square = p.lsb() as u8;
+            let temp_moves = moves_gen::king::moves(p.get_value()) & !context.own_pieces;
+
+            let mut temp_bb = temp_moves;
+            while temp_bb != 0 {
+                let to_square = temp_bb.trailing_zeros() as u8;
+                let to_bit = 1u64 << to_square;
+                temp_bb &= temp_bb - 1;
+
+                let flag = if (to_bit & context.enemy_pieces) != 0 {
+                    FLAG_CAPTURE
+                } else {
+                    FLAG_NORMAL
+                };
+
+                moves.push(Moves::new(from_square, to_square, 0, flag));
+            }
+        }
+        moves
+    }
+
+    fn castle(&self, color: Color) -> Vec<Moves> {
+        let mut m = Vec::with_capacity(2);
         match color {
             Color::White => {
-                for p in bitboard.iter_bits() {
-                    let temp_bitboard = Bitboard::new(
-                        moves_gen::pawn::white_moves(p.get_value(), empty.get_value())
-                            | moves_gen::pawn::white_attack(p.get_value(), self.black.get_value()),
-                    );
-
-                    for new_mv in temp_bitboard.iter_bits() {
-                        m.push(Moves::new(p, new_mv));
-                    }
-
-                    if self.enpassant != Bitboard::empty() {
-                        let ep_val = self.enpassant.get_value();
-                        let landing = ep_val << 8;
-
-                        let left_hit = (p.get_value() << 7) & landing & !FILE_H;
-                        let right_hit = (p.get_value() << 9) & landing & !FILE_A;
-
-                        if left_hit != 0 || right_hit != 0 {
-                            m.push(Moves::enpassant(p, Bitboard::new(landing)));
-                        }
-                    }
+                if self.can_castle(color, Side::Long) {
+                    m.push(Moves::new(4, 2, 0, FLAG_CASTLE));
+                }
+                if self.can_castle(color, Side::Short) {
+                    m.push(Moves::new(4, 6, 0, FLAG_CASTLE));
                 }
             }
-
             Color::Black => {
-                for p in bitboard.iter_bits() {
-                    let temp_bitboard = Bitboard::new(
-                        moves_gen::pawn::black_moves(p.get_value(), empty.get_value())
-                            | moves_gen::pawn::black_attack(p.get_value(), self.white.get_value()),
-                    );
-
-                    for new_mv in temp_bitboard.iter_bits() {
-                        m.push(Moves::new(p, new_mv));
-                    }
-
-                    if self.enpassant != Bitboard::empty() {
-                        let ep_val = self.enpassant.get_value();
-                        let landing = ep_val >> 8;
-
-                        let left_hit = (p.get_value() >> 9) & landing & !FILE_H;
-                        let right_hit = (p.get_value() >> 7) & landing & !FILE_A;
-
-                        if left_hit != 0 || right_hit != 0 {
-                            m.push(Moves::enpassant(p, Bitboard::new(landing)));
-                        }
-                    }
+                if self.can_castle(color, Side::Long) {
+                    m.push(Moves::new(60, 58, 0, FLAG_CASTLE));
+                }
+                if self.can_castle(color, Side::Short) {
+                    m.push(Moves::new(60, 62, 0, FLAG_CASTLE));
                 }
             }
-
-            Color::Any => panic!("get_pawn_move called with Color::Any"),
-        }
-
-        m
-    }
-
-    fn get_knight_move(&self, bitboard: Bitboard) -> Vec<Moves> {
-        let mut m = Vec::new();
-        for p in bitboard.iter_bits() {
-            let temp_bitboard = Bitboard::new(moves_gen::knight::moves(p.get_value()));
-            for new_mv in temp_bitboard.iter_bits() {
-                let temp_move = Moves::new(p, new_mv);
-                m.push(temp_move);
-            }
+            _ => {}
         }
         m
     }
 
-    fn get_king_move(&self, bitboard: Bitboard) -> Vec<Moves> {
-        let mut m = Vec::new();
-        for p in bitboard.iter_bits() {
-            let temp_bitboard = Bitboard::new(moves_gen::king::moves(p.get_value()));
-            for new_mv in temp_bitboard.iter_bits() {
-                let temp_move = Moves::new(p, new_mv);
-                m.push(temp_move);
-            }
-        }
-        m
-    }
-
-    fn get_bishop_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
-        let mut m = Vec::new();
-        for p in bitboard.iter_bits() {
-            let occ_without_piece = occupied.and(p.not());
-            let temp_bitboard = Bitboard::new(moves_gen::bishop::moves(
-                p.get_value(),
-                occ_without_piece.get_value(),
-            ));
-            for new_mv in temp_bitboard.iter_bits() {
-                let temp_move = Moves::new(p, new_mv);
-                m.push(temp_move);
-            }
-        }
-        m
-    }
-
-    fn get_rook_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
-        let mut m = Vec::new();
-        for p in bitboard.iter_bits() {
-            let occ_without_piece = occupied.and(p.not());
-            let temp_bitboard = Bitboard::new(moves_gen::rook::moves(
-                p.get_value(),
-                occ_without_piece.get_value(),
-            ));
-            for new_mv in temp_bitboard.iter_bits() {
-                let temp_move = Moves::new(p, new_mv);
-                m.push(temp_move);
-            }
-        }
-        m
-    }
-
-    fn get_queen_move(&self, bitboard: Bitboard, occupied: Bitboard) -> Vec<Moves> {
-        let mut m = Vec::new();
-        for p in bitboard.iter_bits() {
-            let occ_without_piece = occupied.and(p.not());
-            let temp_bitboard = Bitboard::new(moves_gen::queen::moves(
-                p.get_value(),
-                occ_without_piece.get_value(),
-            ));
-            for new_mv in temp_bitboard.iter_bits() {
-                let temp_move = Moves::new(p, new_mv);
-                m.push(temp_move);
-            }
-        }
-        m
-    }
-
-    // get all attack
-    pub fn get_all_attacks(&self, color: Color) -> Bitboard {
-        let mut attacks = 0u64;
-        let occupied = self.get_occupied_pos().get_value();
-
-        // Pawns
-        let pawns = self.get_pieces(color, Type::Pawn);
-        for p in pawns.iter_bits() {
-            attacks |= match color {
-                Color::White => moves_gen::pawn::white_attack(p.get_value(), !0),
-                Color::Black => moves_gen::pawn::black_attack(p.get_value(), !0),
-                _ => panic!(),
-            };
-        }
-
-        // Knights
-        let knights = self.get_pieces(color, Type::Knight);
-        for k in knights.iter_bits() {
-            attacks |= moves_gen::knight::moves(k.get_value());
-        }
-
-        // Bishops
-        let bishops = self.get_pieces(color, Type::Bishop);
-        for b in bishops.iter_bits() {
-            let occ_without_piece = occupied & !b.get_value();
-            attacks |= moves_gen::bishop::moves(b.get_value(), occ_without_piece);
-        }
-
-        // Rooks
-        let rooks = self.get_pieces(color, Type::Rook);
-        for r in rooks.iter_bits() {
-            let occ_without_piece = occupied & !r.get_value();
-            attacks |= moves_gen::rook::moves(r.get_value(), occ_without_piece);
-        }
-
-        // Queens
-        let queens = self.get_pieces(color, Type::Queen);
-        for q in queens.iter_bits() {
-            let occ_without_piece = occupied & !q.get_value();
-            attacks |= moves_gen::queen::moves(q.get_value(), occ_without_piece);
-        }
-
-        // King
-        let king = self.get_pieces(color, Type::King);
-        for k in king.iter_bits() {
-            attacks |= moves_gen::king::moves(k.get_value());
-        }
-
-        Bitboard::new(attacks)
-    }
-
-    // castling
-    fn castle(&self, color: Color) -> Vec<Moves> {
-        let mut m = Vec::new();
-        if self.can_castle(color, Side::Long) {
-            m.push(Moves::castling(MoveType::LongCastle));
-        }
-        if self.can_castle(color, Side::Short) {
-            m.push(Moves::castling(MoveType::ShortCastle));
-        }
-
-        m
-    }
     fn can_castle(&self, color: Color, side: Side) -> bool {
         match side {
             Side::Long => self.can_castle_long_side(color),
@@ -443,268 +490,574 @@ impl Board {
     fn can_castle_long_side(&self, color: Color) -> bool {
         match color {
             Color::White => {
-                if self.white_rook_long_side
-                    && self.white_king
-                    && ((self.get_piece_any(Type::Any).get_value() & WHITELONGCASTLING) == 0)
-                {
-                    return true;
+                if !self.white_king || !self.white_rook_long_side {
+                    return false;
                 }
-                false
+                if (self.get_occupied_pos().get_value() & 0x0E) != 0 {
+                    return false;
+                }
+                if self.is_king_in_check(color) {
+                    return false;
+                }
+                for pos in [0x10, 0x08, 0x04] {
+                    let mut temp = *self;
+                    temp.king = temp.king.xor(Bitboard::new(0x10)).xor(Bitboard::new(pos));
+                    temp.white = temp.white.xor(Bitboard::new(0x10)).xor(Bitboard::new(pos));
+                    if temp.is_king_in_check(Color::White) {
+                        return false;
+                    }
+                }
+                true
             }
             Color::Black => {
-                if self.black_rook_long_side
-                    && self.black_king
-                    && ((self.get_piece_any(Type::Any).get_value() & BLACKLONGCASTLING) == 0)
-                {
-                    return true;
+                if !self.black_king || !self.black_rook_long_side {
+                    return false;
                 }
-                false
+                if (self.get_occupied_pos().get_value() & 0x0E00000000000000) != 0 {
+                    return false;
+                }
+                if self.is_king_in_check(color) {
+                    return false;
+                }
+                for pos in [0x1000000000000000, 0x0800000000000000, 0x0400000000000000] {
+                    let mut temp = *self;
+                    temp.king = temp
+                        .king
+                        .xor(Bitboard::new(0x1000000000000000))
+                        .xor(Bitboard::new(pos));
+                    temp.black = temp
+                        .black
+                        .xor(Bitboard::new(0x1000000000000000))
+                        .xor(Bitboard::new(pos));
+                    if temp.is_king_in_check(Color::Black) {
+                        return false;
+                    }
+                }
+                true
             }
-            Color::Any => {
-                panic!("rook side color can't be any")
-            }
+            Color::Any => panic!("rook side color can't be any"),
         }
     }
 
     fn can_castle_short_side(&self, color: Color) -> bool {
         match color {
             Color::White => {
-                if self.white_rook_short_side
-                    && self.white_king
-                    && ((self.get_piece_any(Type::Any).get_value() & WHITESHORTCASTLING) == 0)
-                {
-                    return true;
+                if !self.white_king || !self.white_rook_short_side {
+                    return false;
                 }
-                false
+                if (self.get_occupied_pos().get_value() & 0x60) != 0 {
+                    return false;
+                }
+                if self.is_king_in_check(color) {
+                    return false;
+                }
+                for pos in [0x10, 0x20, 0x40] {
+                    let mut temp = *self;
+                    temp.king = temp.king.xor(Bitboard::new(0x10)).xor(Bitboard::new(pos));
+                    temp.white = temp.white.xor(Bitboard::new(0x10)).xor(Bitboard::new(pos));
+                    if temp.is_king_in_check(Color::White) {
+                        return false;
+                    }
+                }
+                true
             }
             Color::Black => {
-                if self.black_rook_short_side
-                    && self.black_king
-                    && ((self.get_piece_any(Type::Any).get_value() & BLACKSHORTCASTLING) == 0)
-                {
-                    return true;
+                if !self.black_king || !self.black_rook_short_side {
+                    return false;
                 }
-                false
+                if (self.get_occupied_pos().get_value() & 0x6000000000000000) != 0 {
+                    return false;
+                }
+                if self.is_king_in_check(color) {
+                    return false;
+                }
+                for pos in [0x1000000000000000, 0x2000000000000000, 0x4000000000000000] {
+                    let mut temp = *self;
+                    temp.king = temp
+                        .king
+                        .xor(Bitboard::new(0x1000000000000000))
+                        .xor(Bitboard::new(pos));
+                    temp.black = temp
+                        .black
+                        .xor(Bitboard::new(0x1000000000000000))
+                        .xor(Bitboard::new(pos));
+                    if temp.is_king_in_check(Color::Black) {
+                        return false;
+                    }
+                }
+                true
             }
-            Color::Any => {
-                panic!("rook side color can't be any")
-            }
+            Color::Any => panic!("rook side color can't be any"),
         }
     }
 
+    #[inline(always)]
     pub fn is_king_in_check(&self, color: Color) -> bool {
-        let king_pos = self.get_pieces(color, Type::King);
-        let opponent_color = match color {
-            Color::White => Color::Black,
-            Color::Black => Color::White,
-            _ => panic!("Invalid color"),
-        };
+        let king_bb = self.get_pieces(color, Type::King);
+        let king_square = king_bb.get_value().trailing_zeros() as u8;
 
-        let opponent_attacks = self.get_all_attacks(opponent_color);
-
-        king_pos.and(opponent_attacks).get_value() > 0
+        self.is_square_attacked_by(
+            king_square,
+            match color {
+                Color::White => Color::Black,
+                Color::Black => Color::White,
+                _ => panic!(),
+            },
+        )
     }
 
-    // checkmate
-    fn is_checkmate(&self, color: Color) -> bool {
-        if !self.is_king_in_check(color) {
-            return false;
+    fn is_square_attacked_by(&self, square: u8, by_color: Color) -> bool {
+        let square_bb = 1u64 << square;
+        let occupied = self.get_occupied_pos().get_value();
+
+        let enemy_pawns = self.get_pieces(by_color, Type::Pawn).get_value();
+        if self.pawn_attacks_square(square, by_color, enemy_pawns) {
+            return true;
         }
-        let moves = self.get_legal_moves(color);
-        for mv in moves {
-            let mut board_copy = *self;
-            board_copy.perform_move(mv.old_pos, mv.new_pos, mv.move_type);
-            if !board_copy.is_king_in_check(color) {
-                return false;
+
+        let knight_attacks = moves_gen::knight::moves(square_bb);
+        let enemy_knights = self.get_pieces(by_color, Type::Knight).get_value();
+        if knight_attacks & enemy_knights != 0 {
+            return true;
+        }
+
+        let king_attacks = moves_gen::king::moves(square_bb);
+        let enemy_king = self.get_pieces(by_color, Type::King).get_value();
+        if king_attacks & enemy_king != 0 {
+            return true;
+        }
+
+        if self.sliding_attacks_square(square, by_color, occupied) {
+            return true;
+        }
+
+        false
+    }
+
+    #[inline(always)]
+    fn pawn_attacks_square(&self, square: u8, by_color: Color, enemy_pawns: u64) -> bool {
+        match by_color {
+            Color::White => {
+                let attacks = if square >= 8 {
+                    let mut att = 0u64;
+                    if square % 8 != 0 {
+                        att |= 1u64 << (square - 9);
+                    }
+                    if square % 8 != 7 {
+                        att |= 1u64 << (square - 7);
+                    }
+                    att
+                } else {
+                    0
+                };
+                attacks & enemy_pawns != 0
             }
-        }
-
-        return true;
-    }
-    // promotion
-    fn promotion(&mut self, color: Color) {
-        let promotion_ready = self.check_promotion(color);
-        if promotion_ready.get_value() == 0 {
-            return;
-        }
-        for pawn in promotion_ready.iter_bits() {
-            self.pawn.xor(pawn);
-            self.queen.or(pawn);
-        }
-    }
-
-    fn check_promotion(&self, color: Color) -> Bitboard {
-        let pawn = self.get_pieces(color, Type::Pawn);
-        match color {
-            Color::White => Bitboard::new(pawn.get_value() & LASTRANK),
-            Color::Black => Bitboard::new(pawn.get_value() & FIRSTRANK),
-            Color::Any => {
-                panic!("color can't be any")
+            Color::Black => {
+                let attacks = if square < 56 {
+                    let mut att = 0u64;
+                    if square % 8 != 0 {
+                        att |= 1u64 << (square + 7);
+                    }
+                    if square % 8 != 7 {
+                        att |= 1u64 << (square + 9);
+                    }
+                    att
+                } else {
+                    0
+                };
+                attacks & enemy_pawns != 0
             }
+            _ => false,
         }
     }
 
-    // move
-    pub fn perform_move(
-        &mut self,
-        old_pos: Bitboard,
-        new_pos: Bitboard,
-        move_type: MoveType,
-    ) -> &Board {
+    #[inline(always)]
+    fn sliding_attacks_square(&self, square: u8, by_color: Color, occupied: u64) -> bool {
+        let square_bb = 1u64 << square;
+
+        let rook_attacks = moves_gen::rook::moves(square_bb, occupied);
+        let enemy_rooks = self.get_pieces(by_color, Type::Rook).get_value();
+        let enemy_queens = self.get_pieces(by_color, Type::Queen).get_value();
+
+        if rook_attacks & (enemy_rooks | enemy_queens) != 0 {
+            return true;
+        }
+
+        let bishop_attacks = moves_gen::bishop::moves(square_bb, occupied);
+        let enemy_bishops = self.get_pieces(by_color, Type::Bishop).get_value();
+
+        if bishop_attacks & (enemy_bishops | enemy_queens) != 0 {
+            return true;
+        }
+
+        false
+    }
+
+    pub fn perform_move(&mut self, mv: &Moves) -> &Board {
         let old_enpassant = self.enpassant;
         self.enpassant.set_empty();
 
-        match move_type {
-            // castling
-            MoveType::ShortCastle => {
-                if self.is_white_turn {
-                    self.king = self.king.xor(Bitboard::new(0x10)).xor(Bitboard::new(0x40));
-                    self.white = self.white.xor(Bitboard::new(0x10)).xor(Bitboard::new(0x40));
-                    self.rook = self.rook.xor(Bitboard::new(0x80)).xor(Bitboard::new(0x20));
-                    self.white = self.white.xor(Bitboard::new(0x80)).xor(Bitboard::new(0x20));
-                    self.white_king = false;
-                    self.white_rook_short_side = false;
-                } else {
-                    self.king = self
-                        .king
-                        .xor(Bitboard::new(0x1000000000000000))
-                        .xor(Bitboard::new(0x4000000000000000));
-                    self.black = self
-                        .black
-                        .xor(Bitboard::new(0x1000000000000000))
-                        .xor(Bitboard::new(0x4000000000000000));
-                    self.rook = self
-                        .rook
-                        .xor(Bitboard::new(0x8000000000000000))
-                        .xor(Bitboard::new(0x2000000000000000));
-                    self.black = self
-                        .black
-                        .xor(Bitboard::new(0x8000000000000000))
-                        .xor(Bitboard::new(0x2000000000000000));
-                    self.black_king = false;
-                    self.black_rook_short_side = false;
-                }
+        match mv.flags() {
+            FLAG_CASTLE => {
+                self.perform_castle_move(mv);
             }
-
-            MoveType::LongCastle => {
-                if self.is_white_turn {
-                    self.king = self.king.xor(Bitboard::new(0x10)).xor(Bitboard::new(0x4));
-                    self.white = self.white.xor(Bitboard::new(0x10)).xor(Bitboard::new(0x4));
-                    self.rook = self.rook.xor(Bitboard::new(0x1)).xor(Bitboard::new(0x8));
-                    self.white = self.white.xor(Bitboard::new(0x1)).xor(Bitboard::new(0x8));
-                    self.white_king = false;
-                    self.white_rook_long_side = false;
-                } else {
-                    self.king = self
-                        .king
-                        .xor(Bitboard::new(0x1000000000000000))
-                        .xor(Bitboard::new(0x400000000000000));
-                    self.black = self
-                        .black
-                        .xor(Bitboard::new(0x1000000000000000))
-                        .xor(Bitboard::new(0x400000000000000));
-                    self.rook = self
-                        .rook
-                        .xor(Bitboard::new(0x100000000000000))
-                        .xor(Bitboard::new(0x800000000000000));
-                    self.black = self
-                        .black
-                        .xor(Bitboard::new(0x100000000000000))
-                        .xor(Bitboard::new(0x800000000000000));
-                    self.black_king = false;
-                    self.black_rook_long_side = false;
-                }
+            FLAG_EN_PASSANT => {
+                self.perform_enpassant_move(mv, old_enpassant);
             }
-
-            // enpassant move
-            MoveType::Enpassant => {
-                self.pawn = self.pawn.xor(old_enpassant);
-
-                if self.is_white_turn {
-                    self.black = self.black.xor(old_enpassant);
-
-                    self.pawn = self.pawn.xor(old_pos).xor(new_pos);
-                    self.white = self.white.xor(old_pos).xor(new_pos);
-                } else {
-                    self.white = self.white.xor(old_enpassant);
-
-                    self.pawn = self.pawn.xor(old_pos).xor(new_pos);
-                    self.black = self.black.xor(old_pos).xor(new_pos);
-                }
-            }
-
-            MoveType::Simple => {
-                self.queen = self.queen.and(new_pos.not());
-                self.rook = self.rook.and(new_pos.not());
-                self.bishop = self.bishop.and(new_pos.not());
-                self.knight = self.knight.and(new_pos.not());
-                self.pawn = self.pawn.and(new_pos.not());
-                self.king = self.king.and(new_pos.not());
-
-                if self.queen.and(old_pos) != Bitboard::empty() {
-                    self.queen = self.queen.xor(old_pos).xor(new_pos);
-                } else if self.rook.and(old_pos) != Bitboard::empty() {
-                    self.rook = self.rook.xor(old_pos).xor(new_pos);
-
-                    let old_val = old_pos.get_value();
-                    if old_val == 0x1 {
-                        self.white_rook_long_side = false;
-                    } else if old_val == 0x80 {
-                        self.white_rook_short_side = false;
-                    } else if old_val == 0x100000000000000 {
-                        self.black_rook_long_side = false;
-                    } else if old_val == 0x8000000000000000 {
-                        self.black_rook_short_side = false;
-                    }
-                } else if self.bishop.and(old_pos) != Bitboard::empty() {
-                    self.bishop = self.bishop.xor(old_pos).xor(new_pos);
-                } else if self.knight.and(old_pos) != Bitboard::empty() {
-                    self.knight = self.knight.xor(old_pos).xor(new_pos);
-                } else if self.pawn.and(old_pos) != Bitboard::empty() {
-                    let white_double_move = (old_pos.get_value() & 0xFF00) != 0
-                        && (new_pos.get_value() & 0xFF000000) != 0;
-                    let black_double_move = (old_pos.get_value() & 0xFF000000000000) != 0
-                        && (new_pos.get_value() & 0xFF00000000) != 0;
-
-                    if white_double_move || black_double_move {
-                        self.enpassant = new_pos;
-                    }
-
-                    self.pawn = self.pawn.xor(old_pos).xor(new_pos);
-                } else if self.king.and(old_pos) != Bitboard::empty() {
-                    self.king = self.king.xor(old_pos).xor(new_pos);
-
-                    if self.is_white_turn {
-                        self.white_king = false;
-                    } else {
-                        self.black_king = false;
-                    }
-                }
-
-                // Aggiorna i bitboard dei colori
-                self.white = self.white.and(new_pos.not());
-                self.black = self.black.and(new_pos.not());
-
-                if self.is_white_turn {
-                    self.white = self.white.xor(old_pos).xor(new_pos);
-                    self.promotion(Color::White);
-                } else {
-                    self.black = self.black.xor(old_pos).xor(new_pos);
-                    self.promotion(Color::Black);
-                }
+            _ => {
+                self.perform_normal_move(mv);
             }
         }
 
         self.is_white_turn = !self.is_white_turn;
         self
     }
-    // to string function
+
+    #[inline]
+    fn perform_castle_move(&mut self, mv: &Moves) {
+        match (mv.from(), mv.to()) {
+            (4, 6) => {
+                self.king = self.king.xor(Bitboard::new(0x50));
+                self.white = self.white.xor(Bitboard::new(0x50));
+                self.rook = self.rook.xor(Bitboard::new(0xA0));
+                self.white = self.white.xor(Bitboard::new(0xA0));
+                self.white_king = false;
+                self.white_rook_short_side = false;
+            }
+            (4, 2) => {
+                self.king = self.king.xor(Bitboard::new(0x14));
+                self.white = self.white.xor(Bitboard::new(0x14));
+                self.rook = self.rook.xor(Bitboard::new(0x09));
+                self.white = self.white.xor(Bitboard::new(0x09));
+                self.white_king = false;
+                self.white_rook_long_side = false;
+            }
+            (60, 62) => {
+                self.king = self.king.xor(Bitboard::new(0x5000000000000000));
+                self.black = self.black.xor(Bitboard::new(0x5000000000000000));
+                self.rook = self.rook.xor(Bitboard::new(0xA000000000000000));
+                self.black = self.black.xor(Bitboard::new(0xA000000000000000));
+                self.black_king = false;
+                self.black_rook_short_side = false;
+            }
+            (60, 58) => {
+                self.king = self.king.xor(Bitboard::new(0x1400000000000000));
+                self.black = self.black.xor(Bitboard::new(0x1400000000000000));
+                self.rook = self.rook.xor(Bitboard::new(0x0900000000000000));
+                self.black = self.black.xor(Bitboard::new(0x0900000000000000));
+                self.black_king = false;
+                self.black_rook_long_side = false;
+            }
+            _ => {}
+        }
+    }
+
+    #[inline]
+    fn perform_enpassant_move(&mut self, mv: &Moves, old_enpassant: Bitboard) {
+        let from_bb = 1u64 << mv.from();
+        let to_bb = 1u64 << mv.to();
+
+        self.pawn = self.pawn.xor(old_enpassant);
+
+        if self.is_white_turn {
+            self.black = self.black.xor(old_enpassant);
+            self.pawn = self.pawn.xor(Bitboard::new(from_bb | to_bb));
+            self.white = self.white.xor(Bitboard::new(from_bb | to_bb));
+        } else {
+            self.white = self.white.xor(old_enpassant);
+            self.pawn = self.pawn.xor(Bitboard::new(from_bb | to_bb));
+            self.black = self.black.xor(Bitboard::new(from_bb | to_bb));
+        }
+    }
+
+    #[inline]
+    fn perform_normal_move(&mut self, mv: &Moves) {
+        let from_bb = 1u64 << mv.from();
+        let to_bb = 1u64 << mv.to();
+
+        self.queen = self.queen.and(Bitboard::new(!to_bb));
+        self.rook = self.rook.and(Bitboard::new(!to_bb));
+        self.bishop = self.bishop.and(Bitboard::new(!to_bb));
+        self.knight = self.knight.and(Bitboard::new(!to_bb));
+        self.pawn = self.pawn.and(Bitboard::new(!to_bb));
+        self.king = self.king.and(Bitboard::new(!to_bb));
+
+        let old_pos_bb = Bitboard::new(from_bb);
+        let new_pos_bb = Bitboard::new(to_bb);
+
+        if self.queen.and(old_pos_bb).get_value() != 0 {
+            self.queen = self.queen.xor(Bitboard::new(from_bb | to_bb));
+        } else if self.rook.and(old_pos_bb).get_value() != 0 {
+            self.rook = self.rook.xor(Bitboard::new(from_bb | to_bb));
+            match from_bb {
+                0x1 => self.white_rook_long_side = false,
+                0x80 => self.white_rook_short_side = false,
+                0x100000000000000 => self.black_rook_long_side = false,
+                0x8000000000000000 => self.black_rook_short_side = false,
+                _ => {}
+            }
+        } else if self.bishop.and(old_pos_bb).get_value() != 0 {
+            self.bishop = self.bishop.xor(Bitboard::new(from_bb | to_bb));
+        } else if self.knight.and(old_pos_bb).get_value() != 0 {
+            self.knight = self.knight.xor(Bitboard::new(from_bb | to_bb));
+        } else if self.pawn.and(old_pos_bb).get_value() != 0 {
+            let white_double_move = (from_bb & 0xFF00) != 0 && (to_bb & 0xFF000000) != 0;
+            let black_double_move =
+                (from_bb & 0xFF000000000000) != 0 && (to_bb & 0xFF00000000) != 0;
+
+            if white_double_move || black_double_move {
+                self.enpassant = new_pos_bb;
+            }
+
+            if mv.promotion() > 0 {
+                self.pawn = self.pawn.and(Bitboard::new(!from_bb));
+                match mv.promotion() {
+                    PROMOTE_QUEEN => self.queen = self.queen.or(new_pos_bb),
+                    PROMOTE_ROOK => self.rook = self.rook.or(new_pos_bb),
+                    PROMOTE_BISHOP => self.bishop = self.bishop.or(new_pos_bb),
+                    PROMOTE_KNIGHT => self.knight = self.knight.or(new_pos_bb),
+                    _ => {}
+                }
+            } else {
+                self.pawn = self.pawn.xor(Bitboard::new(from_bb | to_bb));
+            }
+        } else if self.king.and(old_pos_bb).get_value() != 0 {
+            self.king = self.king.xor(Bitboard::new(from_bb | to_bb));
+            if self.is_white_turn {
+                self.white_king = false;
+            } else {
+                self.black_king = false;
+            }
+        }
+
+        self.white = self.white.and(Bitboard::new(!to_bb));
+        self.black = self.black.and(Bitboard::new(!to_bb));
+
+        if self.is_white_turn {
+            self.white = self.white.xor(Bitboard::new(from_bb | to_bb));
+        } else {
+            self.black = self.black.xor(Bitboard::new(from_bb | to_bb));
+        }
+    }
+
+    #[inline(always)]
+    pub fn make_move_with_undo(&mut self, mv: &Moves) -> UndoInfo {
+        let undo_info = UndoInfo {
+            captured_piece_type: self.get_piece_type_at_square(mv.to()),
+            captured_on_white: (self.white.get_value() & (1u64 << mv.to())) != 0,
+            white_rook_long_side: self.white_rook_long_side,
+            white_rook_short_side: self.white_rook_short_side,
+            black_rook_long_side: self.black_rook_long_side,
+            black_rook_short_side: self.black_rook_short_side,
+            white_king: self.white_king,
+            black_king: self.black_king,
+            old_enpassant: self.enpassant.get_value(),
+            was_white_turn: self.is_white_turn,
+        };
+
+        self.perform_move(mv);
+        undo_info
+    }
+    #[inline(always)]
+    pub fn unmake_move(&mut self, mv: &Moves, undo_info: UndoInfo) {
+        self.is_white_turn = undo_info.was_white_turn;
+        self.enpassant = Bitboard::new(undo_info.old_enpassant);
+        self.white_rook_long_side = undo_info.white_rook_long_side;
+        self.white_rook_short_side = undo_info.white_rook_short_side;
+        self.black_rook_long_side = undo_info.black_rook_long_side;
+        self.black_rook_short_side = undo_info.black_rook_short_side;
+        self.white_king = undo_info.white_king;
+        self.black_king = undo_info.black_king;
+
+        match mv.flags() {
+            FLAG_NORMAL | FLAG_CAPTURE => {
+                self.unmake_simple_move(mv, &undo_info);
+            }
+            FLAG_CASTLE => {
+                self.unmake_castle(mv, &undo_info);
+            }
+            FLAG_EN_PASSANT => {
+                self.unmake_enpassant_move(mv, &undo_info);
+            }
+            _ => {}
+        }
+    }
+
+    #[inline]
+    fn get_piece_type_at_square(&self, square: u8) -> u8 {
+        let bb = 1u64 << square;
+        if self.pawn.get_value() & bb != 0 {
+            return 0;
+        }
+        if self.knight.get_value() & bb != 0 {
+            return 1;
+        }
+        if self.bishop.get_value() & bb != 0 {
+            return 2;
+        }
+        if self.rook.get_value() & bb != 0 {
+            return 3;
+        }
+        if self.queen.get_value() & bb != 0 {
+            return 4;
+        }
+        if self.king.get_value() & bb != 0 {
+            return 5;
+        }
+        255
+    }
+
+    fn unmake_simple_move(&mut self, mv: &Moves, undo_info: &UndoInfo) {
+        let from_bb = 1u64 << mv.from();
+        let to_bb = 1u64 << mv.to();
+
+        if mv.promotion() > 0 {
+            match mv.promotion() {
+                PROMOTE_QUEEN => self.queen = self.queen.and(Bitboard::new(!to_bb)),
+                PROMOTE_ROOK => self.rook = self.rook.and(Bitboard::new(!to_bb)),
+                PROMOTE_BISHOP => self.bishop = self.bishop.and(Bitboard::new(!to_bb)),
+                PROMOTE_KNIGHT => self.knight = self.knight.and(Bitboard::new(!to_bb)),
+                _ => {}
+            }
+            self.pawn = self.pawn.or(Bitboard::new(from_bb));
+        } else {
+            let moving_piece_type = self.get_piece_type_at_square(mv.to());
+
+            match moving_piece_type {
+                0 => {
+                    self.pawn = self
+                        .pawn
+                        .and(Bitboard::new(!to_bb))
+                        .or(Bitboard::new(from_bb))
+                }
+                1 => {
+                    self.knight = self
+                        .knight
+                        .and(Bitboard::new(!to_bb))
+                        .or(Bitboard::new(from_bb))
+                }
+                2 => {
+                    self.bishop = self
+                        .bishop
+                        .and(Bitboard::new(!to_bb))
+                        .or(Bitboard::new(from_bb))
+                }
+                3 => {
+                    self.rook = self
+                        .rook
+                        .and(Bitboard::new(!to_bb))
+                        .or(Bitboard::new(from_bb))
+                }
+                4 => {
+                    self.queen = self
+                        .queen
+                        .and(Bitboard::new(!to_bb))
+                        .or(Bitboard::new(from_bb))
+                }
+                5 => {
+                    self.king = self
+                        .king
+                        .and(Bitboard::new(!to_bb))
+                        .or(Bitboard::new(from_bb))
+                }
+                _ => {}
+            }
+        }
+
+        self.white = self.white.and(Bitboard::new(!to_bb));
+        self.black = self.black.and(Bitboard::new(!to_bb));
+
+        if undo_info.was_white_turn {
+            self.white = self.white.or(Bitboard::new(from_bb));
+        } else {
+            self.black = self.black.or(Bitboard::new(from_bb));
+        }
+
+        if undo_info.captured_piece_type != 255 {
+            match undo_info.captured_piece_type {
+                0 => self.pawn = self.pawn.or(Bitboard::new(to_bb)),
+                1 => self.knight = self.knight.or(Bitboard::new(to_bb)),
+                2 => self.bishop = self.bishop.or(Bitboard::new(to_bb)),
+                3 => self.rook = self.rook.or(Bitboard::new(to_bb)),
+                4 => self.queen = self.queen.or(Bitboard::new(to_bb)),
+                5 => self.king = self.king.or(Bitboard::new(to_bb)),
+                _ => {}
+            }
+
+            if undo_info.captured_on_white {
+                self.white = self.white.or(Bitboard::new(to_bb));
+            } else {
+                self.black = self.black.or(Bitboard::new(to_bb));
+            }
+        }
+    }
+
+    fn unmake_castle(&mut self, mv: &Moves, undo_info: &UndoInfo) {
+        match (mv.from(), mv.to()) {
+            // White short castle
+            (4, 6) => {
+                self.king = self.king.xor(Bitboard::new(0x50));
+                self.white = self.white.xor(Bitboard::new(0x50));
+                self.rook = self.rook.xor(Bitboard::new(0xA0));
+                self.white = self.white.xor(Bitboard::new(0xA0));
+            }
+            // White long castle
+            (4, 2) => {
+                self.king = self.king.xor(Bitboard::new(0x14));
+                self.white = self.white.xor(Bitboard::new(0x14));
+                self.rook = self.rook.xor(Bitboard::new(0x09));
+                self.white = self.white.xor(Bitboard::new(0x09));
+            }
+            // Black short castle
+            (60, 62) => {
+                self.king = self.king.xor(Bitboard::new(0x5000000000000000));
+                self.black = self.black.xor(Bitboard::new(0x5000000000000000));
+                self.rook = self.rook.xor(Bitboard::new(0xA000000000000000));
+                self.black = self.black.xor(Bitboard::new(0xA000000000000000));
+            }
+            // Black long castle
+            (60, 58) => {
+                self.king = self.king.xor(Bitboard::new(0x1400000000000000));
+                self.black = self.black.xor(Bitboard::new(0x1400000000000000));
+                self.rook = self.rook.xor(Bitboard::new(0x0900000000000000));
+                self.black = self.black.xor(Bitboard::new(0x0900000000000000));
+            }
+            _ => {}
+        }
+    }
+
+    fn unmake_enpassant_move(&mut self, mv: &Moves, undo_info: &UndoInfo) {
+        let from_bb = 1u64 << mv.from();
+        let to_bb = 1u64 << mv.to();
+
+        self.pawn = self
+            .pawn
+            .and(Bitboard::new(!to_bb))
+            .or(Bitboard::new(from_bb));
+
+        if undo_info.was_white_turn {
+            self.white = self
+                .white
+                .and(Bitboard::new(!to_bb))
+                .or(Bitboard::new(from_bb));
+            let captured_pawn_pos = to_bb >> 8;
+            self.pawn = self.pawn.or(Bitboard::new(captured_pawn_pos));
+            self.black = self.black.or(Bitboard::new(captured_pawn_pos));
+        } else {
+            self.black = self
+                .black
+                .and(Bitboard::new(!to_bb))
+                .or(Bitboard::new(from_bb));
+            let captured_pawn_pos = to_bb << 8;
+            self.pawn = self.pawn.or(Bitboard::new(captured_pawn_pos));
+            self.white = self.white.or(Bitboard::new(captured_pawn_pos));
+        }
+    }
+
     pub fn to_string(&self) -> String {
         let mut string =
             String::from("■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■");
-        // add pieces to the board
 
-        // white pieces
         let white_pawns = self.get_pieces(Color::White, Type::Pawn).to_string();
         let white_rooks = self.get_pieces(Color::White, Type::Rook).to_string();
         let white_queens = self.get_pieces(Color::White, Type::Queen).to_string();
@@ -712,7 +1065,6 @@ impl Board {
         let white_bishops = self.get_pieces(Color::White, Type::Bishop).to_string();
         let white_knights = self.get_pieces(Color::White, Type::Knight).to_string();
 
-        // black pieces
         let black_pawns = self.get_pieces(Color::Black, Type::Pawn).to_string();
         let black_kings = self.get_pieces(Color::Black, Type::Rook).to_string();
         let black_queens = self.get_pieces(Color::Black, Type::Queen).to_string();
@@ -797,7 +1149,6 @@ impl Board {
             .skip(1);
 
         let string: String = iter_with_newlines.collect();
-
         string
     }
 }
