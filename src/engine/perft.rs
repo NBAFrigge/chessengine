@@ -1,10 +1,10 @@
-use core::num;
-
+use crate::chess::moves_gen::moves_struct;
 use crate::chess::moves_gen::moves_struct::{FLAG_CAPTURE, FLAG_CASTLE, FLAG_EN_PASSANT, Moves};
 use crate::chess::table::Board;
 use crate::chess::table::Color;
+use std::time::Instant;
 
-pub struct PerftResult {
+struct PerftResult {
     pub nodes: u64,
     pub captures: u64,
     pub en_passant: u64,
@@ -31,7 +31,7 @@ impl PerftResult {
     }
 }
 
-pub fn perft(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) -> u64 {
+fn perft(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) -> u64 {
     if depth == 0 {
         return 1;
     }
@@ -62,7 +62,7 @@ pub fn perft(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) -> u64 {
     total_moves
 }
 
-pub fn perft_divide(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) {
+fn perft_divide(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) -> u64 {
     let turn = if b.is_white_turn {
         Color::White
     } else {
@@ -88,10 +88,10 @@ pub fn perft_divide(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) {
 
         b.unmake_move(&mv, undo);
     }
-    println!("Total: {}", total);
+    return total;
 }
 
-pub fn perft_plus(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) -> PerftResult {
+fn perft_plus(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) -> PerftResult {
     if depth == 0 {
         return PerftResult {
             nodes: 1,
@@ -159,4 +159,52 @@ pub fn perft_plus(b: &mut Board, depth: u8, move_buffer: &mut Vec<Moves>) -> Per
     }
 
     result
+}
+
+pub fn start_perft(depth: u8) {
+    let mut board = Board::new();
+    let start = Instant::now();
+    let mut move_buffer: Vec<moves_struct::Moves> = Vec::with_capacity(218);
+    let result = perft(&mut board, depth, &mut move_buffer);
+    let duration = start.elapsed();
+
+    println!("perft({}) = {}", depth, result);
+    println!("elapsed time: {:?}", duration);
+    println!("elapsed time (ms): {}", duration.as_millis());
+    println!(
+        "{} MNodes/S",
+        (result as f64 / duration.as_secs_f64()) / 1_000_000 as f64
+    )
+}
+
+pub fn start_perft_divide(depth: u8) {
+    let mut board = Board::new();
+    let start = Instant::now();
+    let mut move_buffer: Vec<moves_struct::Moves> = Vec::with_capacity(218);
+    let duration = start.elapsed();
+    let result = perft_divide(&mut board, depth, &mut move_buffer);
+    println!("elapsed time: {:?}", duration);
+    println!("elapsed time (ms): {}", duration.as_millis());
+    println!(
+        "{} MNodes/S",
+        (result as f64 / duration.as_secs_f64()) / 1_000_000 as f64
+    )
+}
+
+pub fn start_perft_plus(depth: u8) {
+    let mut board = Board::new();
+    let start = Instant::now();
+    let mut move_buffer: Vec<moves_struct::Moves> = Vec::with_capacity(218);
+    let duration = start.elapsed();
+    let result = perft_plus(&mut board, depth, &mut move_buffer);
+    println!("elapsed time: {:?}", duration);
+    println!("elapsed time (ms): {}", duration.as_millis());
+    println!(
+        "{} MNodes/S",
+        (result.nodes as f64 / duration.as_secs_f64()) / 1_000_000 as f64
+    );
+    println!(
+        "perft({}): \nnodes: {}\ncaptures: {}\ncastles: {}\nep: {}\nchecks: {}",
+        depth, result.nodes, result.captures, result.castles, result.en_passant, result.checks
+    );
 }

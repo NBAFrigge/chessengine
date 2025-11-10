@@ -1,28 +1,54 @@
-use crate::engine::perft::{perft, perft_divide};
+use crate::engine::perft::{start_perft, start_perft_divide, start_perft_plus};
 mod bitboard;
 mod chess;
 mod engine;
 use chess::moves_gen::{magic_bitboards, moves_struct};
+use std::env;
 use std::time::Instant;
 
 fn main() {
     magic_bitboards::init();
-    let mut board = chess::table::Board::new();
-    let depth = 6;
-    let start = Instant::now();
-    let mut move_buffer: Vec<moves_struct::Moves> = Vec::with_capacity(218);
-    let result = perft(&mut board, depth, &mut move_buffer);
-    let duration = start.elapsed();
+    let args: Vec<String> = env::args().collect();
 
-    println!("perft({}) = {}", depth, result);
-    //println!(
-    //    "perft({}): \nnodes: {}\ncaptures: {}\ncastles: {}\nep: {}\nchecks: {}",
-    //    depth, result.nodes, result.captures, result.castles, result.en_passant, result.checks
-    //);
-    println!("elapsed time: {:?}", duration);
-    println!("elapsed time (ms): {}", duration.as_millis());
-    println!(
-        "{} MNodes/S",
-        (result as f64 / duration.as_secs_f64()) / 1_000_000 as f64
-    )
+    if args.len() < 2 {
+        panic!("no arguments")
+    }
+
+    let command = &args[1];
+    match command.as_str() {
+        "perft" => {
+            if args.len() < 3 {
+                panic!("depth not found")
+            }
+            let mut flag = String::new();
+            let mut depth_index = 2;
+            match args[2].as_str() {
+                "p" | "v" => {
+                    flag = args[2].to_string();
+                    depth_index = 3
+                }
+                _ => {}
+            }
+            let depth: u8 = match args[depth_index].parse() {
+                Ok(n) => n,
+                Err(_) => {
+                    eprintln!("'{}' not a valid depth", args[depth_index]);
+                    return;
+                }
+            };
+            start_perft_analyses(flag, depth);
+        }
+
+        _ => {
+            panic!("unknow argument {}", command.as_str())
+        }
+    }
+}
+
+fn start_perft_analyses(flag: String, depth: u8) {
+    match flag.as_str() {
+        "p" => start_perft_plus(depth),
+        "v" => start_perft_divide(depth),
+        _ => start_perft(depth),
+    }
 }
