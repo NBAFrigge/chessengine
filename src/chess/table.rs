@@ -211,7 +211,7 @@ impl Board {
         }
     }
 
-    pub fn get_moves(
+    fn get_moves(
         &self,
         color: Color,
         piece_type: Type,
@@ -766,6 +766,14 @@ impl Board {
         self.knight = self.knight.and(Bitboard::new(!to_bb));
         self.pawn = self.pawn.and(Bitboard::new(!to_bb));
         self.king = self.king.and(Bitboard::new(!to_bb));
+
+        match to_bb {
+            0x1 => self.white_rook_long_side = false,
+            0x80 => self.white_rook_short_side = false,
+            0x100000000000000 => self.black_rook_long_side = false,
+            0x8000000000000000 => self.black_rook_short_side = false,
+            _ => {}
+        }
 
         let old_pos_bb = Bitboard::new(from_bb);
         let new_pos_bb = Bitboard::new(to_bb);
