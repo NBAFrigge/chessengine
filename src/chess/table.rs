@@ -32,6 +32,32 @@ pub enum Type {
     Any,
 }
 
+impl Type {
+    pub fn id(self) -> u8 {
+        match self {
+            Type::Pawn => 0,
+            Type::Knight => 1,
+            Type::Bishop => 2,
+            Type::Rook => 3,
+            Type::Queen => 4,
+            Type::King => 5,
+            Type::Any => 255,
+        }
+    }
+
+    pub fn from_id(id: u8) -> Option<Type> {
+        match id {
+            0 => Some(Type::Pawn),
+            1 => Some(Type::Knight),
+            2 => Some(Type::Bishop),
+            3 => Some(Type::Rook),
+            4 => Some(Type::Queen),
+            5 => Some(Type::King),
+            _ => None,
+        }
+    }
+}
+
 pub enum Side {
     Long,
     Short,
@@ -65,6 +91,7 @@ pub struct Board {
 
 #[derive(Clone, Copy)]
 pub struct UndoInfo {
+    moving_piece_type: u8,
     captured_piece_type: u8,
     captured_on_white: bool,
     white_rook_long_side: bool,
@@ -106,6 +133,30 @@ impl Board {
             Color::Black => self.get_piece_black(piece_type),
             Color::Any => self.get_piece_any(piece_type),
         }
+    }
+
+    #[inline]
+    fn get_piece_type_at_square(&self, square: u8) -> Option<Type> {
+        let bb = 1u64 << square;
+        if self.pawn.get_value() & bb != 0 {
+            return Some(Type::Pawn);
+        }
+        if self.knight.get_value() & bb != 0 {
+            return Some(Type::Knight);
+        }
+        if self.bishop.get_value() & bb != 0 {
+            return Some(Type::Bishop);
+        }
+        if self.rook.get_value() & bb != 0 {
+            return Some(Type::Rook);
+        }
+        if self.queen.get_value() & bb != 0 {
+            return Some(Type::Queen);
+        }
+        if self.king.get_value() & bb != 0 {
+            return Some(Type::King);
+        }
+        None
     }
 
     #[inline]
@@ -835,8 +886,17 @@ impl Board {
 
     #[inline(always)]
     pub fn make_move_with_undo(&mut self, mv: &Moves) -> UndoInfo {
+        let from_piece = self
+            .get_piece_type_at_square(mv.from())
+            .map_or(255, |t| t.id());
+
+        let captured_piece = self
+            .get_piece_type_at_square(mv.to())
+            .map_or(255, |t| t.id());
+
         let undo_info = UndoInfo {
-            captured_piece_type: self.get_piece_type_at_square(mv.to()),
+            moving_piece_type: from_piece,
+            captured_piece_type: captured_piece,
             captured_on_white: (self.white.get_value() & (1u64 << mv.to())) != 0,
             white_rook_long_side: self.white_rook_long_side,
             white_rook_short_side: self.white_rook_short_side,
@@ -876,33 +936,10 @@ impl Board {
         }
     }
 
-    #[inline]
-    fn get_piece_type_at_square(&self, square: u8) -> u8 {
-        let bb = 1u64 << square;
-        if self.pawn.get_value() & bb != 0 {
-            return 0;
-        }
-        if self.knight.get_value() & bb != 0 {
-            return 1;
-        }
-        if self.bishop.get_value() & bb != 0 {
-            return 2;
-        }
-        if self.rook.get_value() & bb != 0 {
-            return 3;
-        }
-        if self.queen.get_value() & bb != 0 {
-            return 4;
-        }
-        if self.king.get_value() & bb != 0 {
-            return 5;
-        }
-        255
-    }
-
     fn unmake_simple_move(&mut self, mv: &Moves, undo_info: &UndoInfo) {
         let from_bb = 1u64 << mv.from();
         let to_bb = 1u64 << mv.to();
+        let move_xor_bb = Bitboard::new(from_bb | to_bb);
 
         if mv.promotion() > 0 {
             match mv.promotion() {
@@ -913,74 +950,44 @@ impl Board {
                 _ => {}
             }
             self.pawn = self.pawn.or(Bitboard::new(from_bb));
-        } else {
-            let moving_piece_type = self.get_piece_type_at_square(mv.to());
-
-            match moving_piece_type {
-                0 => {
-                    self.pawn = self
-                        .pawn
-                        .and(Bitboard::new(!to_bb))
-                        .or(Bitboard::new(from_bb))
-                }
-                1 => {
-                    self.knight = self
-                        .knight
-                        .and(Bitboard::new(!to_bb))
-                        .or(Bitboard::new(from_bb))
-                }
-                2 => {
-                    self.bishop = self
-                        .bishop
-                        .and(Bitboard::new(!to_bb))
-                        .or(Bitboard::new(from_bb))
-                }
-                3 => {
-                    self.rook = self
-                        .rook
-                        .and(Bitboard::new(!to_bb))
-                        .or(Bitboard::new(from_bb))
-                }
-                4 => {
-                    self.queen = self
-                        .queen
-                        .and(Bitboard::new(!to_bb))
-                        .or(Bitboard::new(from_bb))
-                }
-                5 => {
-                    self.king = self
-                        .king
-                        .and(Bitboard::new(!to_bb))
-                        .or(Bitboard::new(from_bb))
-                }
-                _ => {}
+        } else if let Some(p_type) = Type::from_id(undo_info.moving_piece_type) {
+            match p_type {
+                Type::Pawn => self.pawn = self.pawn.xor(move_xor_bb),
+                Type::Knight => self.knight = self.knight.xor(move_xor_bb),
+                Type::Bishop => self.bishop = self.bishop.xor(move_xor_bb),
+                Type::Rook => self.rook = self.rook.xor(move_xor_bb),
+                Type::Queen => self.queen = self.queen.xor(move_xor_bb),
+                Type::King => self.king = self.king.xor(move_xor_bb),
+                Type::Any => {} // Non dovrebbe succedere
             }
         }
 
-        self.white = self.white.and(Bitboard::new(!to_bb));
-        self.black = self.black.and(Bitboard::new(!to_bb));
-
         if undo_info.was_white_turn {
-            self.white = self.white.or(Bitboard::new(from_bb));
+            self.white = self.white.xor(move_xor_bb);
         } else {
-            self.black = self.black.or(Bitboard::new(from_bb));
+            self.black = self.black.xor(move_xor_bb);
         }
 
         if undo_info.captured_piece_type != 255 {
-            match undo_info.captured_piece_type {
-                0 => self.pawn = self.pawn.or(Bitboard::new(to_bb)),
-                1 => self.knight = self.knight.or(Bitboard::new(to_bb)),
-                2 => self.bishop = self.bishop.or(Bitboard::new(to_bb)),
-                3 => self.rook = self.rook.or(Bitboard::new(to_bb)),
-                4 => self.queen = self.queen.or(Bitboard::new(to_bb)),
-                5 => self.king = self.king.or(Bitboard::new(to_bb)),
-                _ => {}
-            }
+            if let Some(c_type) = Type::from_id(undo_info.captured_piece_type) {
+                let captured_bb = Bitboard::new(to_bb);
 
-            if undo_info.captured_on_white {
-                self.white = self.white.or(Bitboard::new(to_bb));
-            } else {
-                self.black = self.black.or(Bitboard::new(to_bb));
+                match c_type {
+                    Type::Pawn => self.pawn = self.pawn.or(captured_bb),
+                    Type::Knight => self.knight = self.knight.or(captured_bb),
+                    Type::Bishop => self.bishop = self.bishop.or(captured_bb),
+                    Type::Rook => self.rook = self.rook.or(captured_bb),
+                    Type::Queen => self.queen = self.queen.or(captured_bb),
+                    Type::King => self.king = self.king.or(captured_bb),
+                    Type::Any => {}
+                }
+
+                // Ripristina il colore del pezzo catturato (OR)
+                if undo_info.captured_on_white {
+                    self.white = self.white.or(captured_bb);
+                } else {
+                    self.black = self.black.or(captured_bb);
+                }
             }
         }
     }
