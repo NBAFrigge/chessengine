@@ -29,6 +29,13 @@ impl Bitboard {
     }
 
     #[inline(always)]
+    pub fn set_bit(&mut self, index: u8) {
+        let mask: u64 = 1u64 << index;
+
+        self.0 |= mask;
+    }
+
+    #[inline(always)]
     pub fn count_ones(&self) -> u64 {
         self.0.count_ones() as u64
     }

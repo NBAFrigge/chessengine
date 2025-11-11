@@ -126,6 +126,149 @@ impl Board {
         }
     }
 
+    pub fn new_from_fen(fen: &str) -> Result<Self, String> {
+        let mut board = Board {
+            pawn: Bitboard::new(0),
+            bishop: Bitboard::new(0),
+            knight: Bitboard::new(0),
+            rook: Bitboard::new(0),
+            queen: Bitboard::new(0),
+            king: Bitboard::new(0),
+            white: Bitboard::new(0),
+            black: Bitboard::new(0),
+            is_white_turn: true,
+            white_rook_long_side: false,
+            white_rook_short_side: false,
+            black_rook_long_side: false,
+            black_rook_short_side: false,
+            white_king: false,
+            black_king: false,
+            enpassant: Bitboard::new(0),
+        };
+
+        let parts: Vec<&str> = fen.split(' ').collect();
+        if parts.len() < 4 {
+            return Err("FEN string must have at least 4 fields.".to_string());
+        }
+
+        let piece_placement = parts[0];
+        let mut square_index: u8 = 0;
+
+        let mut rank_start_index: u8 = 56;
+
+        for rank_str in piece_placement.split('/') {
+            let mut file_index: u8 = 0;
+
+            for piece_char in rank_str.chars() {
+                if piece_char.is_digit(10) {
+                    let skip = piece_char.to_digit(10).unwrap() as u8;
+                    file_index += skip;
+                } else {
+                    square_index = rank_start_index + file_index;
+                    let bit: u64 = 1u64 << square_index;
+
+                    match piece_char {
+                        'P' => {
+                            board.pawn.set_bit(square_index);
+                            board.white.set_bit(square_index);
+                        }
+                        'N' => {
+                            board.knight.set_bit(square_index);
+                            board.white.set_bit(square_index);
+                        }
+                        'B' => {
+                            board.bishop.set_bit(square_index);
+                            board.white.set_bit(square_index);
+                        }
+                        'R' => {
+                            board.rook.set_bit(square_index);
+                            board.white.set_bit(square_index);
+                        }
+                        'Q' => {
+                            board.queen.set_bit(square_index);
+                            board.white.set_bit(square_index);
+                        }
+                        'K' => {
+                            board.king.set_bit(square_index);
+                            board.white.set_bit(square_index);
+                            board.white_king = true;
+                        }
+
+                        'p' => {
+                            board.pawn.set_bit(square_index);
+                            board.black.set_bit(square_index);
+                        }
+                        'n' => {
+                            board.knight.set_bit(square_index);
+                            board.black.set_bit(square_index);
+                        }
+                        'b' => {
+                            board.bishop.set_bit(square_index);
+                            board.black.set_bit(square_index);
+                        }
+                        'r' => {
+                            board.rook.set_bit(square_index);
+                            board.black.set_bit(square_index);
+                        }
+                        'q' => {
+                            board.queen.set_bit(square_index);
+                            board.black.set_bit(square_index);
+                        }
+                        'k' => {
+                            board.king.set_bit(square_index);
+                            board.black.set_bit(square_index);
+                            board.black_king = true;
+                        } // Flag Re
+                        _ => return Err(format!("Unknown piece character: {}", piece_char)),
+                    }
+                    file_index += 1;
+                }
+            }
+            rank_start_index -= 8;
+        }
+
+        board.is_white_turn = match parts[1] {
+            "w" => true,
+            "b" => false,
+            _ => return Err("Invalid side to move field.".to_string()),
+        };
+
+        let castling_rights = parts[2];
+        if castling_rights != "-" {
+            if castling_rights.contains('K') {
+                board.white_rook_short_side = true
+            }
+            if castling_rights.contains('Q') {
+                board.white_rook_long_side = true
+            }
+            if castling_rights.contains('k') {
+                board.black_rook_short_side = true
+            }
+            if castling_rights.contains('q') {
+                board.black_rook_long_side = true
+            }
+        }
+
+        let en_passant_square = parts[3];
+        if en_passant_square != "-" {
+            if let Some(sq_index) = algebraic_to_index(en_passant_square) {
+                board.enpassant.set_bit(sq_index);
+            } else {
+                return Err(format!("Invalid en passant square: {}", en_passant_square));
+            }
+        }
+
+        Ok(board)
+    }
+
+    #[inline]
+    pub fn get_side(&self) -> Color {
+        if self.is_white_turn {
+            return Color::White;
+        }
+        Color::Black
+    }
+
     #[inline]
     pub fn get_pieces(&self, color: Color, piece_type: Type) -> Bitboard {
         match color {
@@ -1159,4 +1302,18 @@ fn change_char_in_string(s: String, index: usize, new_char: char) -> String {
         chars[index] = new_char;
     }
     String::from_iter(chars)
+}
+
+fn algebraic_to_index(alg: &str) -> Option<u8> {
+    if alg.len() != 2 {
+        return None;
+    }
+    let chars: Vec<char> = alg.chars().collect();
+    let file_char = chars[0];
+    let rank_char = chars[1];
+
+    let file = file_char.to_ascii_lowercase() as u8 - 'a' as u8;
+    let rank = rank_char.to_digit(10)? as u8 - 1;
+
+    Some(rank * 8 + file)
 }
