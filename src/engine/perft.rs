@@ -280,8 +280,14 @@ pub fn start_perft_plus(depth: u8) {
         (result.nodes as f64 / duration.as_secs_f64()) / 1_000_000.0
     );
     println!(
-        "perft({}):\nnodes: {}\ncaptures: {}\ncastles: {}\nep: {}\nchecks: {}",
-        depth, result.nodes, result.captures, result.castles, result.en_passant, result.checks
+        "perft({}):\nnodes: {}\ncaptures: {}\ncastles: {}\nep: {}\npromotion: {}\nchecks: {}",
+        depth,
+        result.nodes,
+        result.captures,
+        result.castles,
+        result.en_passant,
+        result.promotion,
+        result.checks
     );
 }
 
@@ -306,7 +312,13 @@ pub fn start_perft_fen(fen: &str, depth: u8) {
         (result.nodes as f64 / duration.as_secs_f64()) / 1_000_000.0
     );
     println!(
-        "perft({}):\nnodes: {}\ncaptures: {}\nep: {}\ncastels: {} \nchecks: {}",
-        depth, result.nodes, result.captures, result.en_passant, result.castles, result.checks
+        "perft({}):\nnodes: {}\ncaptures: {}\ncastles: {}\nep: {}\npromotion: {}\nchecks: {}",
+        depth,
+        result.nodes,
+        result.captures,
+        result.castles,
+        result.en_passant,
+        result.promotion,
+        result.checks
     );
 }
