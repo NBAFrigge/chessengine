@@ -929,7 +929,7 @@ pub fn rook_attacks(square: usize, occupancy: u64) -> u64 {
 pub fn bishop_attacks(square: usize, occupancy: u64) -> u64 {
     unsafe {
         let magic = BISHOP_MAGICS.get_unchecked(square);
-        let relevant = occupancy & magic.mask;
+        let relevant = occupancy & magic.mask & !(1u64 << square);
         let hash = relevant.wrapping_mul(magic.magic);
         let index = (hash >> magic.shift) as usize;
 

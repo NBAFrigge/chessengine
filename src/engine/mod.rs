@@ -1,3 +1,4 @@
 mod evaluate;
+pub mod find_best_move;
 pub mod perft;
-pub mod search;
+mod search;

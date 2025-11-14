@@ -10,6 +10,7 @@ struct PerftResult {
     pub en_passant: u64,
     pub castles: u64,
     pub checks: u64,
+    pub promotion: u64,
 }
 
 impl PerftResult {
@@ -21,6 +22,7 @@ impl PerftResult {
             en_passant: 0,
             castles: 0,
             checks: 0,
+            promotion: 0,
         }
     }
 
@@ -31,6 +33,7 @@ impl PerftResult {
         self.en_passant += other.en_passant;
         self.castles += other.castles;
         self.checks += other.checks;
+        self.promotion += other.promotion;
     }
 }
 
@@ -145,6 +148,7 @@ fn perft_plus_inner(b: &mut Board, depth: u8, move_buffers: &mut [Vec<Moves>]) -
             en_passant: 0,
             castles: 0,
             checks: 0,
+            promotion: 0,
         };
     }
 
@@ -176,21 +180,27 @@ fn perft_plus_inner(b: &mut Board, depth: u8, move_buffers: &mut [Vec<Moves>]) -
                 result.nodes += 1;
 
                 let flags = mv.flags();
+
                 if flags == FLAG_CAPTURE {
                     result.captures += 1;
                 } else if flags == FLAG_EN_PASSANT {
                     result.en_passant += 1;
+                    result.captures += 1;
                 } else if flags == FLAG_CASTLE {
                     result.castles += 1;
                 }
 
-                let opponent_color = if b.is_white_turn {
-                    Color::Black
-                } else {
+                if mv.is_promotion() {
+                    result.promotion += 1;
+                }
+
+                let opponent_in_check = if b.is_white_turn {
                     Color::White
+                } else {
+                    Color::Black
                 };
 
-                if b.is_king_in_check(opponent_color) {
+                if b.is_king_in_check(opponent_in_check) {
                     result.checks += 1;
                 }
             }
@@ -214,7 +224,6 @@ fn perft_plus_inner(b: &mut Board, depth: u8, move_buffers: &mut [Vec<Moves>]) -
 
     result
 }
-
 pub fn perft_plus(b: &mut Board, depth: u8) -> PerftResult {
     let mut move_buffers: Vec<Vec<Moves>> =
         (0..=depth).map(|_| Vec::with_capacity(MAX_MOVES)).collect();
@@ -273,5 +282,31 @@ pub fn start_perft_plus(depth: u8) {
     println!(
         "perft({}):\nnodes: {}\ncaptures: {}\ncastles: {}\nep: {}\nchecks: {}",
         depth, result.nodes, result.captures, result.castles, result.en_passant, result.checks
+    );
+}
+
+pub fn start_perft_fen(fen: &str, depth: u8) {
+    let mut board = Board::new_from_fen(fen).unwrap();
+    let start = Instant::now();
+
+    let result = perft_plus(&mut board, depth);
+
+    let duration = start.elapsed();
+
+    println!("{}", fen);
+    //println!("perft({}) = {}", depth, result);
+    println!("elapsed time: {:?}", duration);
+    println!("elapsed time (ms): {}", duration.as_millis());
+    //println!(
+    //    "{:.2} MNodes/s",
+    //    (result as f64 / duration.as_secs_f64()) / 1_000_000.0
+    //)
+    println!(
+        "{:.2} MNodes/s",
+        (result.nodes as f64 / duration.as_secs_f64()) / 1_000_000.0
+    );
+    println!(
+        "perft({}):\nnodes: {}\ncaptures: {}\nep: {}\ncastels: {} \nchecks: {}",
+        depth, result.nodes, result.captures, result.en_passant, result.castles, result.checks
     );
 }

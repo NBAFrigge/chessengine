@@ -14,7 +14,7 @@ const LASTRANK: u64 = 0xff00000000000000;
 pub const FILE_A: u64 = 0x0101010101010101;
 pub const FILE_H: u64 = 0x8080808080808080;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum Color {
     White,
     Black,
@@ -218,7 +218,7 @@ impl Board {
                             board.king.set_bit(square_index);
                             board.black.set_bit(square_index);
                             board.black_king = true;
-                        } // Flag Re
+                        }
                         _ => return Err(format!("Unknown piece character: {}", piece_char)),
                     }
                     file_index += 1;
@@ -459,17 +459,41 @@ impl Board {
                             } else {
                                 FLAG_NORMAL
                             };
-                            buffer.push(Moves::new(from_square, to_square, PROMOTE_QUEEN, flag));
-                            buffer.push(Moves::new(from_square, to_square, PROMOTE_ROOK, flag));
-                            buffer.push(Moves::new(from_square, to_square, PROMOTE_BISHOP, flag));
-                            buffer.push(Moves::new(from_square, to_square, PROMOTE_KNIGHT, flag));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_QUEEN,
+                                flag,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_ROOK,
+                                flag,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_BISHOP,
+                                flag,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_KNIGHT,
+                                flag,
+                                true,
+                            ));
                         } else {
                             let flag = if is_capture {
                                 FLAG_CAPTURE
                             } else {
                                 FLAG_NORMAL
                             };
-                            buffer.push(Moves::new(from_square, to_square, 0, flag));
+                            buffer.push(Moves::new(from_square, to_square, 0, flag, false));
                         }
                     }
 
@@ -480,7 +504,13 @@ impl Board {
 
                         if left_hit != 0 || right_hit != 0 {
                             let to_square = landing.trailing_zeros() as u8;
-                            buffer.push(Moves::new(from_square, to_square, 0, FLAG_EN_PASSANT));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                0,
+                                FLAG_EN_PASSANT,
+                                false,
+                            ));
                         }
                     }
                 }
@@ -503,17 +533,41 @@ impl Board {
                             } else {
                                 FLAG_NORMAL
                             };
-                            buffer.push(Moves::new(from_square, to_square, PROMOTE_QUEEN, flag));
-                            buffer.push(Moves::new(from_square, to_square, PROMOTE_ROOK, flag));
-                            buffer.push(Moves::new(from_square, to_square, PROMOTE_BISHOP, flag));
-                            buffer.push(Moves::new(from_square, to_square, PROMOTE_KNIGHT, flag));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_QUEEN,
+                                flag,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_ROOK,
+                                flag,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_BISHOP,
+                                flag,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_KNIGHT,
+                                flag,
+                                true,
+                            ));
                         } else {
                             let flag = if is_capture {
                                 FLAG_CAPTURE
                             } else {
                                 FLAG_NORMAL
                             };
-                            buffer.push(Moves::new(from_square, to_square, 0, flag));
+                            buffer.push(Moves::new(from_square, to_square, 0, flag, false));
                         }
                     }
 
@@ -524,7 +578,13 @@ impl Board {
 
                         if left_hit != 0 || right_hit != 0 {
                             let to_square = landing.trailing_zeros() as u8;
-                            buffer.push(Moves::new(from_square, to_square, 0, FLAG_EN_PASSANT));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                0,
+                                FLAG_EN_PASSANT,
+                                false,
+                            ));
                         }
                     }
                 }
@@ -550,7 +610,7 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                buffer.push(Moves::new(from_square, to_square, 0, flag));
+                buffer.push(Moves::new(from_square, to_square, 0, flag, false));
             }
         }
     }
@@ -558,9 +618,8 @@ impl Board {
     fn get_queen_moves(&self, bitboard: Bitboard, context: &MoveContext, buffer: &mut Vec<Moves>) {
         for p in bitboard.iter_bits() {
             let from_square = p.lsb() as u8;
-            let occ_without_piece = context.occupied & !p.get_value();
             let temp_moves =
-                moves_gen::queen::moves(p.get_value(), occ_without_piece) & !context.own_pieces;
+                moves_gen::queen::moves(p.get_value(), context.occupied) & !context.own_pieces;
 
             let mut temp_bb = temp_moves;
             while temp_bb != 0 {
@@ -574,7 +633,7 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                buffer.push(Moves::new(from_square, to_square, 0, flag));
+                buffer.push(Moves::new(from_square, to_square, 0, flag, false));
             }
         }
     }
@@ -582,9 +641,8 @@ impl Board {
     fn get_bishop_move(&self, bitboard: Bitboard, context: &MoveContext, buffer: &mut Vec<Moves>) {
         for p in bitboard.iter_bits() {
             let from_square = p.lsb() as u8;
-            let occ_without_piece = context.occupied & !p.get_value();
             let temp_moves =
-                moves_gen::bishop::moves(p.get_value(), occ_without_piece) & !context.own_pieces;
+                moves_gen::bishop::moves(p.get_value(), context.occupied) & !context.own_pieces;
 
             let mut temp_bb = temp_moves;
             while temp_bb != 0 {
@@ -598,7 +656,7 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                buffer.push(Moves::new(from_square, to_square, 0, flag));
+                buffer.push(Moves::new(from_square, to_square, 0, flag, false));
             }
         }
     }
@@ -606,10 +664,8 @@ impl Board {
     fn get_rook_move(&self, bitboard: Bitboard, context: &MoveContext, buffer: &mut Vec<Moves>) {
         for p in bitboard.iter_bits() {
             let from_square = p.lsb() as u8;
-            let occ_without_piece = context.occupied & !p.get_value();
             let temp_moves =
-                moves_gen::rook::moves(p.get_value(), occ_without_piece) & !context.own_pieces;
-
+                moves_gen::rook::moves(p.get_value(), context.occupied) & !context.own_pieces;
             let mut temp_bb = temp_moves;
             while temp_bb != 0 {
                 let to_square = temp_bb.trailing_zeros() as u8;
@@ -622,7 +678,7 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                buffer.push(Moves::new(from_square, to_square, 0, flag));
+                buffer.push(Moves::new(from_square, to_square, 0, flag, false));
             }
         }
     }
@@ -644,27 +700,30 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                buffer.push(Moves::new(from_square, to_square, 0, flag));
+                buffer.push(Moves::new(from_square, to_square, 0, flag, false));
             }
         }
     }
 
     fn castle(&self, color: Color, buffer: &mut Vec<Moves>) {
+        if self.is_king_in_check(color) {
+            return;
+        }
         match color {
             Color::White => {
                 if self.can_castle(color, Side::Long) {
-                    buffer.push(Moves::new(4, 2, 0, FLAG_CASTLE));
+                    buffer.push(Moves::new(4, 2, 0, FLAG_CASTLE, false));
                 }
                 if self.can_castle(color, Side::Short) {
-                    buffer.push(Moves::new(4, 6, 0, FLAG_CASTLE));
+                    buffer.push(Moves::new(4, 6, 0, FLAG_CASTLE, false));
                 }
             }
             Color::Black => {
                 if self.can_castle(color, Side::Long) {
-                    buffer.push(Moves::new(60, 58, 0, FLAG_CASTLE));
+                    buffer.push(Moves::new(60, 58, 0, FLAG_CASTLE, false));
                 }
                 if self.can_castle(color, Side::Short) {
-                    buffer.push(Moves::new(60, 62, 0, FLAG_CASTLE));
+                    buffer.push(Moves::new(60, 62, 0, FLAG_CASTLE, false));
                 }
             }
             _ => {}
@@ -710,9 +769,6 @@ impl Board {
                 if (self.get_occupied_pos().get_value() & 0x0E00000000000000) != 0 {
                     return false;
                 }
-                if self.is_king_in_check(color) {
-                    return false;
-                }
                 if self.is_square_attacked_by(59, opponent_color)
                     || self.is_square_attacked_by(58, opponent_color)
                 {
@@ -739,9 +795,6 @@ impl Board {
                 if (self.get_occupied_pos().get_value() & 0x60) != 0 {
                     return false;
                 }
-                if self.is_king_in_check(color) {
-                    return false;
-                }
                 if self.is_square_attacked_by(5, opponent_color)
                     || self.is_square_attacked_by(6, opponent_color)
                 {
@@ -754,9 +807,6 @@ impl Board {
                     return false;
                 }
                 if (self.get_occupied_pos().get_value() & 0x6000000000000000) != 0 {
-                    return false;
-                }
-                if self.is_king_in_check(color) {
                     return false;
                 }
                 if self.is_square_attacked_by(61, opponent_color)
@@ -996,9 +1046,9 @@ impl Board {
                 self.enpassant = new_pos_bb;
             }
 
-            if mv.promotion() > 0 {
+            if mv.is_promotion() {
                 self.pawn = self.pawn.and(Bitboard::new(!from_bb));
-                match mv.promotion() {
+                match mv.promotion_piece() {
                     PROMOTE_QUEEN => self.queen = self.queen.or(new_pos_bb),
                     PROMOTE_ROOK => self.rook = self.rook.or(new_pos_bb),
                     PROMOTE_BISHOP => self.bishop = self.bishop.or(new_pos_bb),
@@ -1084,8 +1134,8 @@ impl Board {
         let to_bb = 1u64 << mv.to();
         let move_xor_bb = Bitboard::new(from_bb | to_bb);
 
-        if mv.promotion() > 0 {
-            match mv.promotion() {
+        if mv.is_promotion() {
+            match mv.promotion_piece() {
                 PROMOTE_QUEEN => self.queen = self.queen.and(Bitboard::new(!to_bb)),
                 PROMOTE_ROOK => self.rook = self.rook.and(Bitboard::new(!to_bb)),
                 PROMOTE_BISHOP => self.bishop = self.bishop.and(Bitboard::new(!to_bb)),
@@ -1101,7 +1151,7 @@ impl Board {
                 Type::Rook => self.rook = self.rook.xor(move_xor_bb),
                 Type::Queen => self.queen = self.queen.xor(move_xor_bb),
                 Type::King => self.king = self.king.xor(move_xor_bb),
-                Type::Any => {} // Non dovrebbe succedere
+                Type::Any => {}
             }
         }
 
@@ -1125,7 +1175,6 @@ impl Board {
                     Type::Any => {}
                 }
 
-                // Ripristina il colore del pezzo catturato (OR)
                 if undo_info.captured_on_white {
                     self.white = self.white.or(captured_bb);
                 } else {
