@@ -1,4 +1,3 @@
-use crate::chess::moves_gen::moves_struct;
 use crate::chess::moves_gen::moves_struct::{FLAG_CAPTURE, FLAG_CASTLE, FLAG_EN_PASSANT, Moves};
 use crate::chess::table::Board;
 use crate::chess::table::Color;
@@ -224,7 +223,7 @@ fn perft_plus_inner(b: &mut Board, depth: u8, move_buffers: &mut [Vec<Moves>]) -
 
     result
 }
-pub fn perft_plus(b: &mut Board, depth: u8) -> PerftResult {
+fn perft_plus(b: &mut Board, depth: u8) -> PerftResult {
     let mut move_buffers: Vec<Vec<Moves>> =
         (0..=depth).map(|_| Vec::with_capacity(MAX_MOVES)).collect();
 
@@ -300,13 +299,8 @@ pub fn start_perft_fen(fen: &str, depth: u8) {
     let duration = start.elapsed();
 
     println!("{}", fen);
-    //println!("perft({}) = {}", depth, result);
     println!("elapsed time: {:?}", duration);
     println!("elapsed time (ms): {}", duration.as_millis());
-    //println!(
-    //    "{:.2} MNodes/s",
-    //    (result as f64 / duration.as_secs_f64()) / 1_000_000.0
-    //)
     println!(
         "{:.2} MNodes/s",
         (result.nodes as f64 / duration.as_secs_f64()) / 1_000_000.0

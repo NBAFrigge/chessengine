@@ -18,7 +18,6 @@ pub const FILE_H: u64 = 0x8080808080808080;
 pub enum Color {
     White,
     Black,
-    Any,
 }
 
 #[derive(Debug, EnumIter, Copy, Clone, PartialEq)]
@@ -152,7 +151,6 @@ impl Board {
         }
 
         let piece_placement = parts[0];
-        let mut square_index: u8 = 0;
 
         let mut rank_start_index: u8 = 56;
 
@@ -164,8 +162,7 @@ impl Board {
                     let skip = piece_char.to_digit(10).unwrap() as u8;
                     file_index += skip;
                 } else {
-                    square_index = rank_start_index + file_index;
-                    let bit: u64 = 1u64 << square_index;
+                    let square_index = rank_start_index + file_index;
 
                     match piece_char {
                         'P' => {
@@ -274,7 +271,6 @@ impl Board {
         match color {
             Color::White => self.get_piece_white(piece_type),
             Color::Black => self.get_piece_black(piece_type),
-            Color::Any => self.get_piece_any(piece_type),
         }
     }
 
@@ -303,6 +299,7 @@ impl Board {
     }
 
     #[inline]
+    #[allow(dead_code)]
     fn get_piece_any(&self, piece_type: Type) -> Bitboard {
         match piece_type {
             Type::Any => self.white.or(self.black),
@@ -342,6 +339,7 @@ impl Board {
     }
 
     #[inline]
+    #[allow(dead_code)]
     pub fn get_free_pos(&self) -> Bitboard {
         self.white.or(self.black).not()
     }
@@ -401,7 +399,6 @@ impl Board {
                 enemy_pieces: self.white.get_value(),
                 occupied: self.white.or(self.black).get_value(),
             },
-            _ => panic!("Invalid color"),
         }
     }
 
@@ -588,7 +585,6 @@ impl Board {
                         }
                     }
                 }
-                Color::Any => panic!("get_pawn_move called with Color::Any"),
             }
         }
     }
@@ -726,7 +722,6 @@ impl Board {
                     buffer.push(Moves::new(60, 62, 0, FLAG_CASTLE, false));
                 }
             }
-            _ => {}
         }
     }
 
@@ -741,7 +736,6 @@ impl Board {
         let opponent_color = match color {
             Color::White => Color::Black,
             Color::Black => Color::White,
-            Color::Any => return false,
         };
 
         match color {
@@ -776,7 +770,6 @@ impl Board {
                 }
                 true
             }
-            Color::Any => panic!("rook side color can't be any"),
         }
     }
 
@@ -784,7 +777,6 @@ impl Board {
         let opponent_color = match color {
             Color::White => Color::Black,
             Color::Black => Color::White,
-            Color::Any => return false,
         };
 
         match color {
@@ -816,7 +808,6 @@ impl Board {
                 }
                 true
             }
-            Color::Any => panic!("rook side color can't be any"),
         }
     }
 
@@ -830,7 +821,6 @@ impl Board {
             match color {
                 Color::White => Color::Black,
                 Color::Black => Color::White,
-                _ => panic!(),
             },
         )
     }
@@ -896,7 +886,6 @@ impl Board {
                 };
                 attacks & enemy_pawns != 0
             }
-            _ => false,
         }
     }
 
@@ -1120,7 +1109,7 @@ impl Board {
                 self.unmake_simple_move(mv, &undo_info);
             }
             FLAG_CASTLE => {
-                self.unmake_castle(mv, &undo_info);
+                self.unmake_castle(mv);
             }
             FLAG_EN_PASSANT => {
                 self.unmake_enpassant_move(mv, &undo_info);
@@ -1184,7 +1173,7 @@ impl Board {
         }
     }
 
-    fn unmake_castle(&mut self, mv: &Moves, undo_info: &UndoInfo) {
+    fn unmake_castle(&mut self, mv: &Moves) {
         match (mv.from(), mv.to()) {
             // White short castle
             (4, 6) => {
@@ -1245,7 +1234,7 @@ impl Board {
             self.white = self.white.or(Bitboard::new(captured_pawn_pos));
         }
     }
-
+    #[allow(dead_code)]
     pub fn to_string(&self) -> String {
         let mut string =
             String::from("■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■■□■□■□■□□■□■□■□■");
@@ -1345,6 +1334,7 @@ impl Board {
     }
 }
 
+#[allow(dead_code)]
 fn change_char_in_string(s: String, index: usize, new_char: char) -> String {
     let mut chars: Vec<char> = s.chars().collect();
     if index < chars.len() {

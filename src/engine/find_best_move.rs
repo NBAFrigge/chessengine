@@ -1,8 +1,5 @@
 use crate::{
-    chess::{
-        moves_gen::moves_struct::{self, Moves},
-        table::Board,
-    },
+    chess::{moves_gen::moves_struct::Moves, table::Board},
     engine::search::negamax,
 };
 

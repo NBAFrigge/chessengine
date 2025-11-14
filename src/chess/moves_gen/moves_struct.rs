@@ -60,6 +60,7 @@ impl Moves {
         ((self.0 & FLAGS_MASK) >> 15) as u8
     }
 
+    #[allow(dead_code)]
     pub fn to_string(&self) -> String {
         let from = self.index_to_algebraic(self.from());
         let to = self.index_to_algebraic(self.to());
@@ -80,6 +81,7 @@ impl Moves {
         s
     }
 
+    #[allow(dead_code)]
     fn index_to_algebraic(&self, index: u8) -> String {
         let file = (b'a' + (index % 8)) as char;
         let rank = (b'1' + (index / 8)) as char;

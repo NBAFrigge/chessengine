@@ -14,6 +14,7 @@ impl Bitboard {
     }
 
     #[inline(always)]
+    #[allow(dead_code)]
     pub const fn empty() -> Self {
         Bitboard(0)
     }
@@ -82,11 +83,12 @@ impl Bitboard {
         std::iter::from_fn(move || bb.pop_lsb().map(|idx| Bitboard::new_from_index(idx as u8)))
     }
 
+    #[allow(dead_code)]
     pub fn to_string(&self) -> String {
         format!("{:064b}", self.0)
     }
 
-    // For debugging only
+    #[allow(dead_code)]
     pub fn to_formatted_string(&self) -> String {
         let s = format!("{:064b}", self.0);
         s.as_bytes()
