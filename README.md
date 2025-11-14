@@ -1,5 +1,7 @@
 # Chess engine rust
 
+This project is a toy engine for learning Rust and exploring low-level programming concept. It prioritizes learning and speed over competitive strength.
+
 ## Command Line Interface (CLI)
 
 The engine supports two main commands: `perft` and `search`.
