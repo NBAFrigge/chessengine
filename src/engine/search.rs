@@ -1,11 +1,12 @@
 use crate::{
     chess::{moves_gen::moves_struct::Moves, table::Board},
-    engine::evaluate,
+    engine::evaluate::evaluate::{calculate_game_phase, evaluate},
 };
 
 pub fn negamax(b: &mut Board, depth: u8, move_buffers: &mut [Vec<Moves>]) -> i32 {
     if depth == 0 {
-        return evaluate::evaluate(b);
+        let phase = calculate_game_phase(b);
+        return evaluate(b, phase);
     }
 
     let (current_moves_buffer, next_buffers) = move_buffers.split_first_mut().unwrap();

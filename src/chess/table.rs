@@ -275,7 +275,7 @@ impl Board {
     }
 
     #[inline]
-    fn get_piece_type_at_square(&self, square: u8) -> Option<Type> {
+    pub fn get_piece_type_at_square(&self, square: u8) -> Option<Type> {
         let bb = 1u64 << square;
         if self.pawn.get_value() & bb != 0 {
             return Some(Type::Pawn);
@@ -294,6 +294,18 @@ impl Board {
         }
         if self.king.get_value() & bb != 0 {
             return Some(Type::King);
+        }
+        None
+    }
+
+    #[inline]
+    pub fn get_piece_color_at_square(&self, square: u8) -> Option<Color> {
+        let bb = 1u64 << square;
+        if self.black.get_value() & bb != 0 {
+            return Some(Color::White);
+        }
+        if self.white.get_value() & bb != 0 {
+            return Some(Color::Black);
         }
         None
     }
@@ -347,6 +359,31 @@ impl Board {
     #[inline]
     pub fn get_occupied_pos(&self) -> Bitboard {
         self.white.or(self.black)
+    }
+
+    pub fn get_piece_info_from_sq(&self, sq: u8) -> Option<(Color, Type)> {
+        let mut color = Color::White;
+        let mut piece_type = Type::King;
+        let piece = Bitboard::new_from_index(sq);
+        if self.black.and(piece).0 > 0 {
+            color = Color::Black;
+        } else if self.white.and(piece).0 == 0 {
+            return None;
+        }
+
+        if self.pawn.and(piece).0 > 0 {
+            piece_type = Type::Pawn;
+        } else if self.rook.and(piece).0 > 0 {
+            piece_type = Type::Rook;
+        } else if self.bishop.and(piece).0 > 0 {
+            piece_type = Type::Bishop;
+        } else if self.queen.and(piece).0 > 0 {
+            piece_type = Type::Queen;
+        } else if self.knight.and(piece).0 > 0 {
+            piece_type = Type::Knight;
+        }
+
+        Some((color, piece_type))
     }
 
     pub fn get_legal_moves<'a>(&mut self, color: Color, buffer: &'a mut Vec<Moves>) -> &'a [Moves] {
