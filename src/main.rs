@@ -1,20 +1,20 @@
 use crate::chess::table::Board;
 use crate::engine::find_best_move::find_best_move;
 use crate::engine::perft::{start_perft, start_perft_divide, start_perft_fen, start_perft_plus};
+use crate::uci::uci::UciEngine;
 mod bitboard;
 mod chess;
 mod engine;
+mod uci;
 use chess::moves_gen::magic_bitboards;
 use std::env;
 
 fn main() {
     magic_bitboards::init();
     let args: Vec<String> = env::args().collect();
-
     if args.len() < 2 {
         panic!("no arguments")
     }
-
     let command = &args[1];
     match command.as_str() {
         "perft" => {
@@ -30,13 +30,11 @@ fn main() {
                 }
                 _ => {}
             }
-
             let mut fen = String::new();
             if args.len() == 5 && flag == "f" {
                 depth_index += 1;
                 fen = args[3].to_string()
             }
-
             let depth: u8 = match args[depth_index].parse() {
                 Ok(n) => n,
                 Err(_) => {
@@ -46,7 +44,8 @@ fn main() {
             };
             start_perft_analyses(flag, fen, depth);
         }
-        "search" => return start_search(),
+        "search" => start_search(),
+        "uci" => start_uci(),
         _ => {
             panic!("unknow argument {}", command.as_str())
         }
@@ -88,27 +87,21 @@ fn start_search() {
             "5. Mate in 2 (White)",
         ),
     ];
-
     for (fen, name) in test_cases {
         match Board::new_from_fen(fen) {
             Ok(b) => {
                 let start_time = std::time::Instant::now();
-
                 let best_move = find_best_move(&b);
                 let elapsed = start_time.elapsed();
-
                 let from_sq = best_move.from();
                 let to_sq = best_move.to();
                 let promotion_type = best_move.promotion_piece();
                 let is_promo = best_move.is_promotion();
-
                 let from_file = (b'a' + (from_sq % 8)) as char;
                 let from_rank = (b'1' + (from_sq / 8)) as char;
                 let to_file = (b'a' + (to_sq % 8)) as char;
                 let to_rank = (b'1' + (to_sq / 8)) as char;
-
                 let mut move_str = format!("{}{}{}{}", from_file, from_rank, to_file, to_rank);
-
                 if is_promo {
                     let promo_char = match promotion_type {
                         0 => 'q',
@@ -119,7 +112,6 @@ fn start_search() {
                     };
                     move_str.push(promo_char);
                 }
-
                 println!("--- {} ---", name);
                 println!("FEN: {}", fen);
                 println!("Best Move Found: {}", move_str);
@@ -130,4 +122,9 @@ fn start_search() {
             }
         }
     }
+}
+
+fn start_uci() {
+    let mut engine = UciEngine::new();
+    engine.run();
 }
