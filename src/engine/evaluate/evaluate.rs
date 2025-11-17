@@ -1,5 +1,6 @@
 use crate::chess::table::Board;
 use crate::chess::table::{Color, Type};
+use crate::engine::evaluate::pawn_evaluation::evaluate_pawn;
 use crate::engine::evaluate::pst::get_pst_value;
 
 const PAWN_WEIGHT: i32 = 100;
@@ -36,6 +37,9 @@ pub fn evaluate(b: &Board, phase: f32) -> i32 {
             }
         }
     }
+    score += evaluate_pawn(&b.get_pieces(Color::White, Type::Pawn));
+    score -= evaluate_pawn(&b.get_pieces(Color::Black, Type::Pawn));
+
     score
 }
 

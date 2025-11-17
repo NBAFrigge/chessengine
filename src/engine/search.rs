@@ -36,8 +36,7 @@ pub fn negamax(
         let undo_info = b.make_move_with_undo(mv);
 
         let score = -negamax(b, depth - 1, -beta, -alpha, next_buffers);
-        b.unmake_move(mv, undo_info); // ✅ SUBITO dopo la chiamata ricorsiva
-
+        b.unmake_move(mv, undo_info);
         if score > max_score {
             max_score = score;
         }

@@ -1,0 +1,1849 @@
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "1"]
+[White "UciEngine"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:38"]
+[GameEndTime "2025-11-17T20:30:53.187 CET"]
+[GameStartTime "2025-11-17T20:29:14.935 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "24"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.4s} 6. Bxb5+ {5.8s} Qd7 {1.1s}
+7. Bxd7+ {6.2s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.3s} 9. Nxd5 {5.7s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.6s} 11. dxc3 {8.0s} h5 {4.2s} 12. Nb6+ {7.2s}
+Ke8 {1.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "2"]
+[White "UciEngine"]
+[Black "UciEngine"]
+[Result "*"]
+[ECO "A00"]
+[GameDuration "00:01:28"]
+[GameEndTime "2025-11-17T20:32:21.463 CET"]
+[GameStartTime "2025-11-17T20:30:53.187 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "23"]
+[Termination "unterminated"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.7s} Qd7 {1.0s}
+7. Bxd7+ {7.0s} Kd8 {0.67s} 8. Bxc8 {6.7s} e5 {2.8s} 9. Bb7 {6.5s} c4 {3.9s}
+10. Bxa8 {8.0s} g5 {4.0s} 11. Nxa5 {6.2s} d4 {3.6s} 12. Nb5 {7.8s, No result} *
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:37"]
+[GameEndTime "2025-11-17T20:34:11.814 CET"]
+[GameStartTime "2025-11-17T20:32:34.647 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "24"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.7s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s}
+Ke8 {1.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "2"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:39"]
+[GameEndTime "2025-11-17T20:35:51.529 CET"]
+[GameStartTime "2025-11-17T20:34:11.815 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "24"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.9s} 3. Nd4 {2.3s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s}
+c3 {4.4s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "3"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:37"]
+[GameEndTime "2025-11-17T20:37:28.656 CET"]
+[GameStartTime "2025-11-17T20:35:51.530 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "24"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.7s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s}
+Ke8 {1.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "4"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:39"]
+[GameEndTime "2025-11-17T20:39:08.453 CET"]
+[GameStartTime "2025-11-17T20:37:28.657 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "24"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.9s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s}
+c3 {4.4s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "5"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "*"]
+[ECO "A00"]
+[GameDuration "00:00:16"]
+[GameEndTime "2025-11-17T20:39:25.396 CET"]
+[GameStartTime "2025-11-17T20:39:08.453 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "8"]
+[Termination "unterminated"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s, No result} *
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:37"]
+[GameEndTime "2025-11-17T20:41:17.948 CET"]
+[GameStartTime "2025-11-17T20:39:40.745 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "24"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.77s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.7s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s}
+Ke8 {1.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "2"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:28"]
+[GameEndTime "2025-11-17T20:42:46.019 CET"]
+[GameStartTime "2025-11-17T20:41:17.949 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "22"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.9s} 6. Bxb5+ {6.6s} Qd7 {1.0s}
+7. Bxd7+ {7.1s} Kd8 {0.68s} 8. Bxc8 {6.7s} e5 {2.9s} 9. Bb7 {6.6s} c4 {4.0s}
+10. Bxa8 {8.1s} g5 {4.0s} 11. Nxa5 {6.3s} d4 {3.6s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "3"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "*"]
+[ECO "A00"]
+[GameDuration "00:00:12"]
+[GameEndTime "2025-11-17T20:42:58.324 CET"]
+[GameStartTime "2025-11-17T20:42:46.020 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "6"]
+[Termination "unterminated"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s}
+c5 {2.7s, No result} *
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "*"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-17T20:43:53.505 CET"]
+[GameStartTime "2025-11-17T20:43:53.235 CET"]
+[PlyCount "0"]
+[Termination "unterminated"]
+[TimeControl "40/60"]
+
+{No result} *
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "*"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-17T20:44:26.965 CET"]
+[GameStartTime "2025-11-17T20:44:26.587 CET"]
+[PlyCount "0"]
+[Termination "unterminated"]
+[TimeControl "40/120"]
+
+{No result} *
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "*"]
+[ECO "A00"]
+[GameDuration "00:01:36"]
+[GameEndTime "2025-11-17T20:46:25.486 CET"]
+[GameStartTime "2025-11-17T20:44:49.126 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "24"]
+[Termination "unterminated"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s}
+Ke8 {1.2s, No result} *
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T20:48:28.669 CET"]
+[GameStartTime "2025-11-17T20:46:32.507 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.7s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "2"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T20:50:19.281 CET"]
+[GameStartTime "2025-11-17T20:48:28.670 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {4.0s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "3"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T20:52:15.481 CET"]
+[GameStartTime "2025-11-17T20:50:19.282 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.7s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "4"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T20:54:06.028 CET"]
+[GameStartTime "2025-11-17T20:52:15.482 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "5"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T20:56:02.223 CET"]
+[GameStartTime "2025-11-17T20:54:06.029 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.1s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.4s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "6"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T20:57:52.796 CET"]
+[GameStartTime "2025-11-17T20:56:02.224 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.65s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "7"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T20:59:48.962 CET"]
+[GameStartTime "2025-11-17T20:57:52.797 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "8"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:01:39.537 CET"]
+[GameStartTime "2025-11-17T20:59:48.962 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.9s} 3. Nd4 {2.3s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {8.0s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "9"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:03:35.790 CET"]
+[GameStartTime "2025-11-17T21:01:39.538 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "10"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:05:26.376 CET"]
+[GameStartTime "2025-11-17T21:03:35.791 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "11"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:07:22.580 CET"]
+[GameStartTime "2025-11-17T21:05:26.376 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "12"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:09:13.081 CET"]
+[GameStartTime "2025-11-17T21:07:22.581 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "13"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:11:09.246 CET"]
+[GameStartTime "2025-11-17T21:09:13.082 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.7s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "14"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:12:59.807 CET"]
+[GameStartTime "2025-11-17T21:11:09.247 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "15"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:14:55.961 CET"]
+[GameStartTime "2025-11-17T21:12:59.807 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.7s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "16"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:16:46.581 CET"]
+[GameStartTime "2025-11-17T21:14:55.962 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "17"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:18:42.691 CET"]
+[GameStartTime "2025-11-17T21:16:46.581 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "18"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:20:33.176 CET"]
+[GameStartTime "2025-11-17T21:18:42.692 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.7s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "19"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:22:29.356 CET"]
+[GameStartTime "2025-11-17T21:20:33.176 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.1s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "20"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:24:19.895 CET"]
+[GameStartTime "2025-11-17T21:22:29.357 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "21"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:26:16.047 CET"]
+[GameStartTime "2025-11-17T21:24:19.895 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.7s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "22"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:28:06.603 CET"]
+[GameStartTime "2025-11-17T21:26:16.048 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "23"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:30:02.711 CET"]
+[GameStartTime "2025-11-17T21:28:06.604 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.1s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "24"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:31:53.248 CET"]
+[GameStartTime "2025-11-17T21:30:02.711 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "25"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:33:49.352 CET"]
+[GameStartTime "2025-11-17T21:31:53.249 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.8s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "26"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:35:39.875 CET"]
+[GameStartTime "2025-11-17T21:33:49.352 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.9s} 3. Nd4 {2.3s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {8.0s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "27"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:37:36.042 CET"]
+[GameStartTime "2025-11-17T21:35:39.876 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.4s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "28"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:39:26.556 CET"]
+[GameStartTime "2025-11-17T21:37:36.043 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "29"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:41:22.726 CET"]
+[GameStartTime "2025-11-17T21:39:26.557 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "30"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:43:13.334 CET"]
+[GameStartTime "2025-11-17T21:41:22.727 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "31"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:45:09.411 CET"]
+[GameStartTime "2025-11-17T21:43:13.335 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.1s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "32"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:46:59.926 CET"]
+[GameStartTime "2025-11-17T21:45:09.412 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "33"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:48:56.054 CET"]
+[GameStartTime "2025-11-17T21:46:59.927 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "34"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:50:46.553 CET"]
+[GameStartTime "2025-11-17T21:48:56.055 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "35"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:52:42.732 CET"]
+[GameStartTime "2025-11-17T21:50:46.553 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.1s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.4s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "36"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:54:33.245 CET"]
+[GameStartTime "2025-11-17T21:52:42.732 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "37"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T21:56:29.468 CET"]
+[GameStartTime "2025-11-17T21:54:33.246 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.1s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "38"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T21:58:19.991 CET"]
+[GameStartTime "2025-11-17T21:56:29.468 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.9s} 3. Nd4 {2.4s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {1.00s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "39"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:00:16.140 CET"]
+[GameStartTime "2025-11-17T21:58:19.992 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "40"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:02:06.645 CET"]
+[GameStartTime "2025-11-17T22:00:16.141 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.7s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "41"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:04:02.849 CET"]
+[GameStartTime "2025-11-17T22:02:06.645 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "42"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:05:53.399 CET"]
+[GameStartTime "2025-11-17T22:04:02.850 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.65s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.6s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "43"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:07:49.557 CET"]
+[GameStartTime "2025-11-17T22:05:53.400 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "44"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:09:40.126 CET"]
+[GameStartTime "2025-11-17T22:07:49.558 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {8.0s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "45"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:11:36.329 CET"]
+[GameStartTime "2025-11-17T22:09:40.127 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "46"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:13:26.908 CET"]
+[GameStartTime "2025-11-17T22:11:36.330 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "47"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:15:23.036 CET"]
+[GameStartTime "2025-11-17T22:13:26.909 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "48"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:17:13.565 CET"]
+[GameStartTime "2025-11-17T22:15:23.036 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "49"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:19:09.772 CET"]
+[GameStartTime "2025-11-17T22:17:13.565 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "50"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:21:00.284 CET"]
+[GameStartTime "2025-11-17T22:19:09.772 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.65s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "51"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:22:56.464 CET"]
+[GameStartTime "2025-11-17T22:21:00.285 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.7s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.8s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "52"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:24:46.983 CET"]
+[GameStartTime "2025-11-17T22:22:56.464 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "53"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:26:43.095 CET"]
+[GameStartTime "2025-11-17T22:24:46.984 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "54"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:28:33.629 CET"]
+[GameStartTime "2025-11-17T22:26:43.095 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "55"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:30:29.800 CET"]
+[GameStartTime "2025-11-17T22:28:33.630 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.1s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "56"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:32:20.345 CET"]
+[GameStartTime "2025-11-17T22:30:29.801 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "57"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:34:16.540 CET"]
+[GameStartTime "2025-11-17T22:32:20.346 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "58"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:36:07.074 CET"]
+[GameStartTime "2025-11-17T22:34:16.540 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {8.0s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "59"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:38:03.245 CET"]
+[GameStartTime "2025-11-17T22:36:07.075 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "60"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:39:53.769 CET"]
+[GameStartTime "2025-11-17T22:38:03.245 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.7s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "61"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:41:49.923 CET"]
+[GameStartTime "2025-11-17T22:39:53.770 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "62"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:43:40.468 CET"]
+[GameStartTime "2025-11-17T22:41:49.923 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "63"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:45:36.563 CET"]
+[GameStartTime "2025-11-17T22:43:40.468 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.1s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "64"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:47:27.109 CET"]
+[GameStartTime "2025-11-17T22:45:36.564 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "65"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:49:23.212 CET"]
+[GameStartTime "2025-11-17T22:47:27.109 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "66"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:51:13.730 CET"]
+[GameStartTime "2025-11-17T22:49:23.213 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.98s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "67"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:53:09.924 CET"]
+[GameStartTime "2025-11-17T22:51:13.731 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.1s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.76s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "68"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:55:00.473 CET"]
+[GameStartTime "2025-11-17T22:53:09.925 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.4s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "69"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T22:56:56.651 CET"]
+[GameStartTime "2025-11-17T22:55:00.473 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.1s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.8s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "70"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:50"]
+[GameEndTime "2025-11-17T22:58:47.179 CET"]
+[GameStartTime "2025-11-17T22:56:56.651 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "26"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.3s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.66s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s} c4 {3.9s}
+10. Bxa8 {7.9s} g5 {3.9s} 11. Nxa5 {6.2s} d4 {3.5s} 12. Nb5 {7.8s} c3 {4.4s}
+13. dxc3 {8.5s} d3 {4.2s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "71"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:56"]
+[GameEndTime "2025-11-17T23:00:43.329 CET"]
+[GameStartTime "2025-11-17T22:58:47.180 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "28"]
+[Termination "time forfeit"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.2s} a5 {1.6s} 2. Nf3 {1.6s} b5 {2.1s} 3. Nd4 {2.1s} c5 {2.7s}
+4. Nb3 {2.9s} f5 {2.5s} 5. e3 {2.0s} d5 {4.3s} 6. Bxb5+ {5.7s} Qd7 {1.1s}
+7. Bxd7+ {6.1s} Kd8 {0.75s} 8. Bxc8 {5.8s} e5 {3.2s} 9. Nxd5 {5.6s} c4 {3.8s}
+10. Bxf5 {7.0s} c3 {5.5s} 11. dxc3 {7.9s} h5 {4.1s} 12. Nb6+ {7.1s} Ke8 {1.2s}
+13. Nxa8 {9.3s} Bd6 {3.6s} 14. Qxd6 {6.9s} Rh6 {2.0s, White loses on time} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "72"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "*"]
+[ECO "A00"]
+[GameDuration "00:01:04"]
+[GameEndTime "2025-11-17T23:01:48.206 CET"]
+[GameStartTime "2025-11-17T23:00:43.329 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "18"]
+[Termination "unterminated"]
+[TimeControl "60+1"]
+
+1. Nc3 {1.3s} a5 {1.4s} 2. Nf3 {1.8s} b5 {1.8s} 3. Nd4 {2.3s} c5 {2.4s}
+4. Nb3 {3.3s} f5 {2.2s} 5. e3 {2.3s} d5 {3.8s} 6. Bxb5+ {6.5s} Qd7 {0.99s}
+7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s}
+c4 {3.9s, No result} *
+

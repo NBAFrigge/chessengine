@@ -77,8 +77,8 @@ impl UciEngine {
 
     fn handle_uci(&self) -> String {
         let mut response = String::new();
-        response.push_str("swag chess\n");
-        response.push_str("Frigge\n");
+        response.push_str("id name swag chess\n");
+        response.push_str("id author Frigge\n");
         response.push_str("uciok");
         response
     }
@@ -171,4 +171,3 @@ fn algebraic_to_index(alg: &str) -> Option<u8> {
 
     Some(rank * 8 + file)
 }
-

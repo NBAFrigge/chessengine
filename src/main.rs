@@ -13,7 +13,8 @@ fn main() {
     magic_bitboards::init();
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
-        panic!("no arguments")
+        start_uci();
+        return;
     }
     let command = &args[1];
     match command.as_str() {
@@ -45,7 +46,6 @@ fn main() {
             start_perft_analyses(flag, fen, depth);
         }
         "search" => start_search(),
-        "uci" => start_uci(),
         _ => {
             panic!("unknow argument {}", command.as_str())
         }
