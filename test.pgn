@@ -1847,3 +1847,760 @@ Ke8 {1.2s, No result} *
 7. Bxd7+ {6.9s} Kd8 {0.67s} 8. Bxc8 {6.6s} e5 {2.8s} 9. Bb7 {6.4s}
 c4 {3.9s, No result} *
 
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-17T23:58:17.832 CET"]
+[GameStartTime "2025-11-17T23:58:16.670 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "2"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-17T23:58:17.836 CET"]
+[GameStartTime "2025-11-17T23:58:17.832 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "3"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-17T23:58:18.989 CET"]
+[GameStartTime "2025-11-17T23:58:17.836 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.1s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "4"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-17T23:58:18.993 CET"]
+[GameStartTime "2025-11-17T23:58:18.990 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "5"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-17T23:58:20.151 CET"]
+[GameStartTime "2025-11-17T23:58:18.994 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "6"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-17T23:58:20.155 CET"]
+[GameStartTime "2025-11-17T23:58:20.152 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "7"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-17T23:58:21.320 CET"]
+[GameStartTime "2025-11-17T23:58:20.156 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "8"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-17T23:58:21.325 CET"]
+[GameStartTime "2025-11-17T23:58:21.321 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "9"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-17T23:58:22.476 CET"]
+[GameStartTime "2025-11-17T23:58:21.325 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.1s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "10"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-17T23:58:22.480 CET"]
+[GameStartTime "2025-11-17T23:58:22.476 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "11"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-17T23:58:23.641 CET"]
+[GameStartTime "2025-11-17T23:58:22.481 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "12"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-17T23:58:23.646 CET"]
+[GameStartTime "2025-11-17T23:58:23.642 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "13"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-17T23:58:24.807 CET"]
+[GameStartTime "2025-11-17T23:58:23.646 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "14"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-17T23:58:24.811 CET"]
+[GameStartTime "2025-11-17T23:58:24.807 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.17"]
+[Round "15"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "*"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-17T23:58:25.121 CET"]
+[GameStartTime "2025-11-17T23:58:24.811 CET"]
+[PlyCount "0"]
+[Termination "unterminated"]
+[TimeControl "40/60"]
+
+{No result} *
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-18T00:05:20.917 CET"]
+[GameStartTime "2025-11-18T00:05:19.752 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "2"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:20.921 CET"]
+[GameStartTime "2025-11-18T00:05:20.918 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "3"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-18T00:05:22.087 CET"]
+[GameStartTime "2025-11-18T00:05:20.922 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "4"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:22.092 CET"]
+[GameStartTime "2025-11-18T00:05:22.088 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "5"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "*"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:22.770 CET"]
+[GameStartTime "2025-11-18T00:05:22.092 CET"]
+[PlyCount "0"]
+[Termination "unterminated"]
+[TimeControl "40/60"]
+
+{No result} *
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-18T00:05:28.771 CET"]
+[GameStartTime "2025-11-18T00:05:27.612 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "2"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:28.775 CET"]
+[GameStartTime "2025-11-18T00:05:28.771 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "3"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-18T00:05:29.931 CET"]
+[GameStartTime "2025-11-18T00:05:28.775 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "4"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:29.935 CET"]
+[GameStartTime "2025-11-18T00:05:29.932 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "5"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-18T00:05:31.098 CET"]
+[GameStartTime "2025-11-18T00:05:29.936 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "6"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:31.102 CET"]
+[GameStartTime "2025-11-18T00:05:31.099 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "7"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-18T00:05:32.266 CET"]
+[GameStartTime "2025-11-18T00:05:31.103 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "8"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:32.270 CET"]
+[GameStartTime "2025-11-18T00:05:32.266 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "9"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-18T00:05:33.437 CET"]
+[GameStartTime "2025-11-18T00:05:32.270 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "10"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:33.441 CET"]
+[GameStartTime "2025-11-18T00:05:33.438 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "11"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-18T00:05:34.615 CET"]
+[GameStartTime "2025-11-18T00:05:33.442 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "12"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:34.620 CET"]
+[GameStartTime "2025-11-18T00:05:34.616 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "13"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-18T00:05:35.779 CET"]
+[GameStartTime "2025-11-18T00:05:34.620 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "14"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:35.783 CET"]
+[GameStartTime "2025-11-18T00:05:35.779 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "15"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "1-0"]
+[ECO "A00"]
+[GameDuration "00:00:01"]
+[GameEndTime "2025-11-18T00:05:36.952 CET"]
+[GameStartTime "2025-11-18T00:05:35.783 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "1"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s, Black makes an illegal move: a1a1} 1-0
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "16"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "0-1"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:36.956 CET"]
+[GameStartTime "2025-11-18T00:05:36.953 CET"]
+[PlyCount "0"]
+[Termination "illegal move"]
+[TimeControl "40/60"]
+
+{White makes an illegal move: a1a1} 0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "17"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "*"]
+[GameDuration "00:00:00"]
+[GameEndTime "2025-11-18T00:05:37.874 CET"]
+[GameStartTime "2025-11-18T00:05:36.957 CET"]
+[PlyCount "0"]
+[Termination "unterminated"]
+[TimeControl "40/60"]
+
+{No result} *
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "*"]
+[ECO "A00"]
+[GameDuration "00:00:12"]
+[GameEndTime "2025-11-18T00:13:57.485 CET"]
+[GameStartTime "2025-11-18T00:13:44.815 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "10"]
+[Termination "unterminated"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s} a5 2. Nf3 {1.6s} b5 3. Nd4 {2.1s} c5 4. Nb3 {2.9s} f5 5. e3 {2.0s}
+d5 {No result} *
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "1"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:05"]
+[GameEndTime "2025-11-18T00:15:03.450 CET"]
+[GameStartTime "2025-11-18T00:13:58.154 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "24"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s} a5 2. Nf3 {1.6s} b5 3. Nd4 {2.1s} c5 4. Nb3 {2.9s} f5 5. e3 {2.0s}
+d5 6. Bxb5+ {5.8s} Qd7 7. Bxd7+ {6.2s} Kd8 8. Bxc8 {5.9s} e5 9. Nxd5 {5.7s} c4
+10. Bxf5 {7.0s} c3 11. dxc3 {8.0s} h5 12. Nb6+ {7.2s} Ke8 {White loses on time}
+0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "2"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "1/2-1/2"]
+[ECO "A00"]
+[GameDuration "00:00:42"]
+[GameEndTime "2025-11-18T00:15:45.838 CET"]
+[GameStartTime "2025-11-18T00:15:03.450 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "103"]
+[TimeControl "40/60"]
+
+1. Nc3 a5 {1.4s} 2. Nf3 b5 {1.8s} 3. Nd4 c5 {2.3s} 4. Nb3 f5 {2.2s} 5. e3
+d5 {3.8s} 6. Bxb5+ Qd7 {0.99s} 7. Bxd7+ {0.59s} Kd8 {0.66s} 8. Bxc8 e5 {2.8s}
+9. Bb7 c4 {3.9s} 10. Bxa8 g5 {3.9s} 11. Nxa5 d4 {3.5s} 12. Nb5 c3 {4.4s}
+13. dxc3 d3 {4.2s} 14. Qxd3+ Bd6 {0.69s} 15. Qxd6+ Ke8 16. Qxe5+ Ne7 17. Qxh8+
+Ng8 18. Qxg8+ Ke7 19. Qxb8 f4 20. Nc6+ Kf6 21. Qh8+ Kg6 22. exf4 h6 23. Ne5+ Kh5
+24. g4+ Kh4 25. a3 gxf4 26. b3 f3 27. h3 h5 28. Bh6 hxg4 29. a4 g3 30. Qf6+ Kh5
+31. Qf5+ Kh4 32. fxg3+ Kxg3 33. b4 f2+ 34. Kf1 Kh4 35. c4 Kg3 36. c3 Kh4 37. a5
+Kg3 38. c5 Kh4 39. c4 Kg3 40. a6 Kh4 41. c6 Kg3 42. c5 Kh4 43. a7 Kg3 44. c7 Kh4
+45. c6 Kg3 46. c8=Q Kh4 47. c7 Kg3 48. Bc1 Kh4 49. Bb2 Kg3 50. Bc1 Kh4 51. Bb2
+Kg3 52. Bc1 {Draw by 3-fold repetition} 1/2-1/2
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "3"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "0-1"]
+[ECO "A00"]
+[GameDuration "00:01:04"]
+[GameEndTime "2025-11-18T00:16:50.504 CET"]
+[GameStartTime "2025-11-18T00:15:45.839 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "24"]
+[Termination "time forfeit"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.2s} a5 2. Nf3 {1.6s} b5 3. Nd4 {2.1s} c5 4. Nb3 {2.9s} f5 5. e3 {2.0s}
+d5 6. Bxb5+ {5.7s} Qd7 7. Bxd7+ {6.1s} Kd8 8. Bxc8 {5.8s} e5 9. Nxd5 {5.7s} c4
+10. Bxf5 {7.0s} c3 11. dxc3 {7.9s} h5 12. Nb6+ {7.1s} Ke8 {White loses on time}
+0-1
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "4"]
+[White "swag chess"]
+[Black "UciEngine"]
+[Result "1/2-1/2"]
+[ECO "A00"]
+[GameDuration "00:00:42"]
+[GameEndTime "2025-11-18T00:17:33.290 CET"]
+[GameStartTime "2025-11-18T00:16:50.505 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "103"]
+[TimeControl "40/60"]
+
+1. Nc3 a5 {1.4s} 2. Nf3 b5 {1.8s} 3. Nd4 c5 {2.4s} 4. Nb3 f5 {2.2s} 5. e3
+d5 {3.8s} 6. Bxb5+ Qd7 {0.98s} 7. Bxd7+ {0.60s} Kd8 {0.67s} 8. Bxc8 e5 {2.8s}
+9. Bb7 c4 {3.9s} 10. Bxa8 g5 {4.0s} 11. Nxa5 d4 {3.5s} 12. Nb5 c3 {4.5s}
+13. dxc3 d3 {4.4s} 14. Qxd3+ Bd6 {0.71s} 15. Qxd6+ Ke8 16. Qxe5+ Ne7 17. Qxh8+
+Ng8 18. Qxg8+ Ke7 19. Qxb8 f4 20. Nc6+ Kf6 21. Qh8+ Kg6 22. exf4 h6 23. Ne5+ Kh5
+24. g4+ Kh4 25. a3 gxf4 26. b3 f3 27. h3 h5 28. Bh6 hxg4 29. a4 g3 30. Qf6+ Kh5
+31. Qf5+ Kh4 32. fxg3+ Kxg3 33. b4 f2+ 34. Kf1 Kh4 35. c4 Kg3 36. c3 Kh4 37. a5
+Kg3 38. c5 Kh4 39. c4 Kg3 40. a6 Kh4 41. c6 Kg3 42. c5 Kh4 43. a7 Kg3 44. c7 Kh4
+45. c6 Kg3 46. c8=Q Kh4 47. c7 Kg3 48. Bc1 Kh4 49. Bb2 Kg3 50. Bc1 Kh4 51. Bb2
+Kg3 52. Bc1 {Draw by 3-fold repetition} 1/2-1/2
+
+[Event "?"]
+[Site "?"]
+[Date "2025.11.18"]
+[Round "5"]
+[White "UciEngine"]
+[Black "swag chess"]
+[Result "*"]
+[ECO "A00"]
+[GameDuration "00:00:04"]
+[GameEndTime "2025-11-18T00:17:37.371 CET"]
+[GameStartTime "2025-11-18T00:17:33.290 CET"]
+[Opening "Dunst (Sleipner, Heinrichsen) Opening"]
+[PlyCount "4"]
+[Termination "unterminated"]
+[TimeControl "40/60"]
+
+1. Nc3 {1.1s} a5 2. Nf3 {1.6s} b5 {No result} *
+

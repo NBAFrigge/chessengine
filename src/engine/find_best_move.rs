@@ -6,19 +6,25 @@ use crate::{
 const DEPTH: u8 = 5;
 const MAX_MOVES: usize = 255;
 
+const INFINITY: i32 = 30000;
+
 pub fn find_best_move(b: &Board) -> Moves {
     let mut board_mut = *b;
     let mut move_buffers: Vec<Vec<Moves>> =
         (0..=DEPTH).map(|_| Vec::with_capacity(MAX_MOVES)).collect();
 
-    let mut best_move = Moves::new(0, 0, 0, 0, false);
-    let mut alpha = i32::MIN;
-    let beta = i32::MAX;
-
     let (root_move_buffer, next_buffers) = move_buffers.split_at_mut(1);
     let root_move_vec = &mut root_move_buffer[0];
     let turn = board_mut.get_side();
     let moves = board_mut.get_legal_moves(turn, root_move_vec);
+
+    if moves.is_empty() {
+        return Moves::new(0, 0, 0, 0, false);
+    }
+
+    let mut best_move = moves[0];
+    let mut alpha = -INFINITY;
+    let beta = INFINITY;
 
     for mv in moves.iter() {
         let undo_info = board_mut.make_move_with_undo(mv);
