@@ -3,11 +3,19 @@ use crate::{
     engine::evaluate::evaluate::{calculate_game_phase, evaluate},
 };
 
-pub fn negamax(b: &mut Board, depth: u8, move_buffers: &mut [Vec<Moves>]) -> i32 {
+pub fn negamax(
+    b: &mut Board,
+    depth: u8,
+    alpha: i32,
+    beta: i32,
+    move_buffers: &mut [Vec<Moves>],
+) -> i32 {
     if depth == 0 {
         let phase = calculate_game_phase(b);
         return evaluate(b, phase);
     }
+    let mut alpha = alpha;
+    let mut best_value = i32::MIN;
 
     let (current_moves_buffer, next_buffers) = move_buffers.split_first_mut().unwrap();
 
@@ -27,12 +35,19 @@ pub fn negamax(b: &mut Board, depth: u8, move_buffers: &mut [Vec<Moves>]) -> i32
     for mv in moves.iter() {
         let undo_info = b.make_move_with_undo(mv);
 
-        let score = -negamax(b, depth - 1, next_buffers);
-
-        b.unmake_move(mv, undo_info);
+        let score = -negamax(b, depth - 1, -beta, -alpha, next_buffers);
+        b.unmake_move(mv, undo_info); // ✅ SUBITO dopo la chiamata ricorsiva
 
         if score > max_score {
             max_score = score;
+        }
+
+        if max_score > alpha {
+            alpha = max_score;
+        }
+
+        if alpha >= beta {
+            return beta;
         }
     }
 
