@@ -21,4 +21,6 @@ flamegraph.svg
 .idea/
 target/
 versions/
-.pgn
+*.pgn
+*.zip
+
