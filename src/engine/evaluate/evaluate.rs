@@ -1,5 +1,7 @@
 use crate::chess::table::Board;
 use crate::chess::table::{Color, Type};
+use crate::engine::evaluate::bishop_pair::{self, evaluate_bishop_pair};
+use crate::engine::evaluate::king_safety::evaluate_king_safety;
 use crate::engine::evaluate::pawn_evaluation::evaluate_pawn;
 use crate::engine::evaluate::pst::get_pst_value;
 
@@ -39,6 +41,10 @@ pub fn evaluate(b: &Board, phase: f32) -> i32 {
     }
     score += evaluate_pawn(&b.get_pieces(Color::White, Type::Pawn));
     score -= evaluate_pawn(&b.get_pieces(Color::Black, Type::Pawn));
+    score += evaluate_king_safety(b, Color::White, phase);
+    score -= evaluate_king_safety(b, Color::Black, phase);
+    score += evaluate_bishop_pair(b, Color::White);
+    score -= evaluate_bishop_pair(b, Color::Black);
 
     score
 }

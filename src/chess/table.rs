@@ -86,6 +86,8 @@ pub struct Board {
     white_king: bool,
     black_king: bool,
     enpassant: Bitboard,
+    white_has_castled: bool,
+    black_has_castled: bool,
 }
 
 #[derive(Clone, Copy)]
@@ -121,6 +123,8 @@ impl Board {
             black_rook_short_side: true,
             white_king: true,
             black_king: true,
+            white_has_castled: false,
+            black_has_castled: false,
             enpassant: Bitboard::new(0),
         }
     }
@@ -142,6 +146,8 @@ impl Board {
             black_rook_short_side: false,
             white_king: false,
             black_king: false,
+            white_has_castled: false,
+            black_has_castled: false,
             enpassant: Bitboard::new(0),
         };
 
@@ -266,6 +272,18 @@ impl Board {
         Color::Black
     }
 
+    pub fn switch_side(&mut self) {
+        self.is_white_turn = !self.is_white_turn
+    }
+
+    #[inline(always)]
+    pub fn has_castled(&self, color: Color) -> bool {
+        match color {
+            Color::White => self.white_has_castled,
+            Color::Black => self.black_has_castled,
+        }
+    }
+
     #[inline]
     pub fn get_pieces(&self, color: Color, piece_type: Type) -> Bitboard {
         match color {
@@ -308,20 +326,6 @@ impl Board {
             return Some(Color::Black);
         }
         None
-    }
-
-    #[inline]
-    #[allow(dead_code)]
-    fn get_piece_any(&self, piece_type: Type) -> Bitboard {
-        match piece_type {
-            Type::Any => self.white.or(self.black),
-            Type::Pawn => self.pawn,
-            Type::Bishop => self.bishop,
-            Type::Knight => self.knight,
-            Type::Rook => self.rook,
-            Type::Queen => self.queen,
-            Type::King => self.king,
-        }
     }
 
     #[inline]
@@ -978,6 +982,7 @@ impl Board {
                 self.white = self.white.xor(Bitboard::new(0xA0));
                 self.white_king = false;
                 self.white_rook_short_side = false;
+                self.white_has_castled = true;
             }
             (4, 2) => {
                 self.king = self.king.xor(Bitboard::new(0x14));
@@ -986,6 +991,7 @@ impl Board {
                 self.white = self.white.xor(Bitboard::new(0x09));
                 self.white_king = false;
                 self.white_rook_long_side = false;
+                self.white_has_castled = true;
             }
             (60, 62) => {
                 self.king = self.king.xor(Bitboard::new(0x5000000000000000));
@@ -994,6 +1000,7 @@ impl Board {
                 self.black = self.black.xor(Bitboard::new(0xA000000000000000));
                 self.black_king = false;
                 self.black_rook_short_side = false;
+                self.black_has_castled = true;
             }
             (60, 58) => {
                 self.king = self.king.xor(Bitboard::new(0x1400000000000000));
@@ -1002,6 +1009,7 @@ impl Board {
                 self.black = self.black.xor(Bitboard::new(0x0900000000000000));
                 self.black_king = false;
                 self.black_rook_long_side = false;
+                self.black_has_castled = true;
             }
             _ => {}
         }
@@ -1218,6 +1226,7 @@ impl Board {
                 self.white = self.white.xor(Bitboard::new(0x50));
                 self.rook = self.rook.xor(Bitboard::new(0xA0));
                 self.white = self.white.xor(Bitboard::new(0xA0));
+                self.white_has_castled = false;
             }
             // White long castle
             (4, 2) => {
@@ -1225,6 +1234,7 @@ impl Board {
                 self.white = self.white.xor(Bitboard::new(0x14));
                 self.rook = self.rook.xor(Bitboard::new(0x09));
                 self.white = self.white.xor(Bitboard::new(0x09));
+                self.white_has_castled = false;
             }
             // Black short castle
             (60, 62) => {
@@ -1232,6 +1242,7 @@ impl Board {
                 self.black = self.black.xor(Bitboard::new(0x5000000000000000));
                 self.rook = self.rook.xor(Bitboard::new(0xA000000000000000));
                 self.black = self.black.xor(Bitboard::new(0xA000000000000000));
+                self.black_has_castled = false;
             }
             // Black long castle
             (60, 58) => {
@@ -1239,6 +1250,7 @@ impl Board {
                 self.black = self.black.xor(Bitboard::new(0x1400000000000000));
                 self.rook = self.rook.xor(Bitboard::new(0x0900000000000000));
                 self.black = self.black.xor(Bitboard::new(0x0900000000000000));
+                self.black_has_castled = false;
             }
             _ => {}
         }
