@@ -1,7 +1,8 @@
 use crate::{
     chess::{
         moves_gen::moves_struct::{
-            Moves, PROMOTE_BISHOP, PROMOTE_KNIGHT, PROMOTE_QUEEN, PROMOTE_ROOK,
+            FLAG_CAPTURE, FLAG_CASTLE, FLAG_EN_PASSANT, FLAG_NORMAL, Moves, PROMOTE_BISHOP,
+            PROMOTE_KNIGHT, PROMOTE_QUEEN, PROMOTE_ROOK,
         },
         table::Board,
     },
@@ -63,7 +64,7 @@ impl UciEngine {
                 self.handle_position(&parts[1..]);
                 None
             }
-            "go" => Some(self.handle_go()),
+            "go" => Some(self.handle_go(&parts[1..])),
             "quit" => None,
             "debug" => {
                 if parts.len() > 1 {
@@ -133,6 +134,7 @@ impl UciEngine {
 
         let mut promotion = 0;
         let mut is_promotion = false;
+        let mut flags = FLAG_NORMAL;
 
         if move_str.len() == 5 {
             is_promotion = true;
@@ -145,10 +147,37 @@ impl UciEngine {
             };
         }
 
-        Some(Moves::new(from, to, promotion, 0, is_promotion))
+        let is_king_move = self.board.king.get_value() & (1u64 << from) != 0;
+        if is_king_move {
+            let from_to_diff = (to as i8 - from as i8).abs();
+            if from_to_diff == 2 {
+                flags = FLAG_CASTLE;
+            }
+        }
+
+        if flags != FLAG_CASTLE {
+            let target_white = self.board.white.get_value() & (1u64 << to) != 0;
+            let target_black = self.board.black.get_value() & (1u64 << to) != 0;
+
+            if (self.board.is_white_turn && target_black)
+                || (!self.board.is_white_turn && target_white)
+            {
+                flags = FLAG_CAPTURE;
+            }
+
+            if self.board.enpassant.get_value() == (1u64 << to) {
+                let is_pawn = self.board.pawn.get_value() & (1u64 << from) != 0;
+                if is_pawn {
+                    flags = FLAG_EN_PASSANT;
+                }
+            }
+        }
+
+        Some(Moves::new(from, to, promotion, flags, is_promotion))
     }
 
-    fn handle_go(&mut self) -> String {
+    fn handle_go(&mut self, args: &[&str]) -> String {
+        // TODO add args
         let best_move = find_best_move(&self.board);
         format!("bestmove {}", best_move.to_string())
     }
