@@ -5,6 +5,8 @@
 // Bit 14:     is_promotion flag (0/1)
 // Bits 15-16: special flags
 
+use crate::chess::table::Board;
+
 const FROM_MASK: u32 = 0x3F; // 000000...111111
 const TO_MASK: u32 = 0xFC0; // 000000...111111000000
 const PROMO_MASK: u32 = 0x3000; // promotion (bits 12–13)
@@ -20,6 +22,16 @@ pub const PROMOTE_QUEEN: u8 = 0;
 pub const PROMOTE_ROOK: u8 = 1;
 pub const PROMOTE_BISHOP: u8 = 2;
 pub const PROMOTE_KNIGHT: u8 = 3;
+
+const MVV_LVA: [[i32; 6]; 6] = [
+    // P   N    B    R    Q    K
+    [105, 205, 305, 405, 505, 605], // P
+    [104, 204, 304, 404, 504, 604], // N
+    [103, 203, 303, 403, 503, 603], // B
+    [102, 202, 302, 402, 502, 602], // R
+    [101, 201, 301, 401, 501, 601], // Q
+    [100, 200, 300, 400, 500, 600], // K
+];
 
 #[derive(Copy, Clone)]
 pub struct Moves(u32);
@@ -58,6 +70,34 @@ impl Moves {
 
     pub fn flags(&self) -> u8 {
         ((self.0 & FLAGS_MASK) >> 15) as u8
+    }
+
+    pub fn score(&self, b: &Board) -> i32 {
+        if self.flags() == FLAG_CAPTURE {
+            if let Some(victim) = b.get_piece_type_at_square(self.to()) {
+                if let Some(attacker) = b.get_piece_type_at_square(self.from()) {
+                    let a = attacker.id() as usize;
+                    let v = victim.id() as usize;
+                    return 1_000_000 + MVV_LVA[a][v];
+                }
+            }
+        }
+        if self.flags() == FLAG_EN_PASSANT {
+            return 1_000_000 + MVV_LVA[0][0];
+        }
+
+        if self.is_promotion() {
+            let promo_bonus = match self.promotion_piece() {
+                PROMOTE_QUEEN => 0,
+                PROMOTE_ROOK => 1,
+                PROMOTE_BISHOP => 2,
+                PROMOTE_KNIGHT => 3,
+                _ => 4,
+            };
+            return 900_000 - promo_bonus;
+        }
+
+        0
     }
 
     #[allow(dead_code)]

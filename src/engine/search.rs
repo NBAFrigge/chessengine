@@ -34,11 +34,22 @@ pub fn negamax(
         };
     }
 
+    // TODO (Pick Best One at a Time)
+    let mut scored_moves: Vec<(Moves, i32)> = moves
+        .iter()
+        .map(|&mv| {
+            let score = mv.score(b);
+            (mv, score)
+        })
+        .collect();
+
+    scored_moves.sort_by_key(|(_, score)| -score);
+
     let mut max_score = -INFINITY;
-    for mv in moves.iter() {
-        let undo_info = b.make_move_with_undo(mv);
+    for mv in scored_moves {
+        let undo_info = b.make_move_with_undo(&mv.0);
         let score = -negamax(b, depth - 1, -beta, -alpha, next_buffers);
-        b.unmake_move(mv, undo_info);
+        b.unmake_move(&mv.0, undo_info);
 
         if score > max_score {
             max_score = score;

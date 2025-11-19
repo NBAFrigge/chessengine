@@ -15,7 +15,7 @@ const LASTRANK: u64 = 0xff00000000000000;
 pub const FILE_A: u64 = 0x0101010101010101;
 pub const FILE_H: u64 = 0x8080808080808080;
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Color {
     White,
     Black,
@@ -71,14 +71,14 @@ struct MoveContext {
 
 #[derive(Clone, Copy)]
 pub struct Board {
-    pawn: Bitboard,
-    bishop: Bitboard,
-    knight: Bitboard,
-    rook: Bitboard,
-    queen: Bitboard,
-    king: Bitboard,
-    white: Bitboard,
-    black: Bitboard,
+    pub pawn: Bitboard,
+    pub bishop: Bitboard,
+    pub knight: Bitboard,
+    pub rook: Bitboard,
+    pub queen: Bitboard,
+    pub king: Bitboard,
+    pub white: Bitboard,
+    pub black: Bitboard,
     pub is_white_turn: bool,
     white_rook_long_side: bool,
     white_rook_short_side: bool,
@@ -86,7 +86,7 @@ pub struct Board {
     black_rook_short_side: bool,
     white_king: bool,
     black_king: bool,
-    enpassant: Bitboard,
+    pub enpassant: Bitboard,
     white_has_castled: bool,
     black_has_castled: bool,
 }
@@ -1278,38 +1278,46 @@ impl Board {
     #[inline]
     fn perform_castle_move(&mut self, mv: &Moves) {
         match (mv.from(), mv.to()) {
+            // White short castle (e1-g1)
             (4, 6) => {
                 self.king = self.king.xor(Bitboard::new(0x50));
-                self.white = self.white.xor(Bitboard::new(0x50));
                 self.rook = self.rook.xor(Bitboard::new(0xA0));
-                self.white = self.white.xor(Bitboard::new(0xA0));
+                // Combina re + torre in un solo XOR
+                self.white = self.white.xor(Bitboard::new(0x50 | 0xA0));
                 self.white_king = false;
                 self.white_rook_short_side = false;
                 self.white_has_castled = true;
             }
+            // White long castle (e1-c1)
             (4, 2) => {
                 self.king = self.king.xor(Bitboard::new(0x14));
-                self.white = self.white.xor(Bitboard::new(0x14));
                 self.rook = self.rook.xor(Bitboard::new(0x09));
-                self.white = self.white.xor(Bitboard::new(0x09));
+                // Combina re + torre in un solo XOR
+                self.white = self.white.xor(Bitboard::new(0x14 | 0x09));
                 self.white_king = false;
                 self.white_rook_long_side = false;
                 self.white_has_castled = true;
             }
+            // Black short castle (e8-g8)
             (60, 62) => {
                 self.king = self.king.xor(Bitboard::new(0x5000000000000000));
-                self.black = self.black.xor(Bitboard::new(0x5000000000000000));
                 self.rook = self.rook.xor(Bitboard::new(0xA000000000000000));
-                self.black = self.black.xor(Bitboard::new(0xA000000000000000));
+                // Combina re + torre in un solo XOR
+                self.black = self
+                    .black
+                    .xor(Bitboard::new(0x5000000000000000 | 0xA000000000000000));
                 self.black_king = false;
                 self.black_rook_short_side = false;
                 self.black_has_castled = true;
             }
+            // Black long castle (e8-c8)
             (60, 58) => {
                 self.king = self.king.xor(Bitboard::new(0x1400000000000000));
-                self.black = self.black.xor(Bitboard::new(0x1400000000000000));
                 self.rook = self.rook.xor(Bitboard::new(0x0900000000000000));
-                self.black = self.black.xor(Bitboard::new(0x0900000000000000));
+                // Combina re + torre in un solo XOR
+                self.black = self
+                    .black
+                    .xor(Bitboard::new(0x1400000000000000 | 0x0900000000000000));
                 self.black_king = false;
                 self.black_rook_long_side = false;
                 self.black_has_castled = true;
@@ -1492,16 +1500,18 @@ impl Board {
             }
         }
 
+        self.white = self.white.and(Bitboard::new(!(from_bb | to_bb)));
+        self.black = self.black.and(Bitboard::new(!(from_bb | to_bb)));
+
         if undo_info.was_white_turn {
-            self.white = self.white.xor(move_xor_bb);
+            self.white = self.white.or(Bitboard::new(from_bb));
         } else {
-            self.black = self.black.xor(move_xor_bb);
+            self.black = self.black.or(Bitboard::new(from_bb));
         }
 
         if undo_info.captured_piece_type != 255 {
             if let Some(c_type) = Type::from_id(undo_info.captured_piece_type) {
                 let captured_bb = Bitboard::new(to_bb);
-
                 match c_type {
                     Type::Pawn => self.pawn = self.pawn.or(captured_bb),
                     Type::Knight => self.knight = self.knight.or(captured_bb),
@@ -1511,7 +1521,6 @@ impl Board {
                     Type::King => self.king = self.king.or(captured_bb),
                     Type::Any => {}
                 }
-
                 if undo_info.captured_on_white {
                     self.white = self.white.or(captured_bb);
                 } else {
@@ -1526,39 +1535,39 @@ impl Board {
             // White short castle
             (4, 6) => {
                 self.king = self.king.xor(Bitboard::new(0x50));
-                self.white = self.white.xor(Bitboard::new(0x50));
                 self.rook = self.rook.xor(Bitboard::new(0xA0));
-                self.white = self.white.xor(Bitboard::new(0xA0));
+                // Combina re + torre in un solo XOR
+                self.white = self.white.xor(Bitboard::new(0x50 | 0xA0));
                 self.white_has_castled = false;
             }
             // White long castle
             (4, 2) => {
                 self.king = self.king.xor(Bitboard::new(0x14));
-                self.white = self.white.xor(Bitboard::new(0x14));
                 self.rook = self.rook.xor(Bitboard::new(0x09));
-                self.white = self.white.xor(Bitboard::new(0x09));
+                self.white = self.white.xor(Bitboard::new(0x14 | 0x09));
                 self.white_has_castled = false;
             }
             // Black short castle
             (60, 62) => {
                 self.king = self.king.xor(Bitboard::new(0x5000000000000000));
-                self.black = self.black.xor(Bitboard::new(0x5000000000000000));
                 self.rook = self.rook.xor(Bitboard::new(0xA000000000000000));
-                self.black = self.black.xor(Bitboard::new(0xA000000000000000));
+                self.black = self
+                    .black
+                    .xor(Bitboard::new(0x5000000000000000 | 0xA000000000000000));
                 self.black_has_castled = false;
             }
             // Black long castle
             (60, 58) => {
                 self.king = self.king.xor(Bitboard::new(0x1400000000000000));
-                self.black = self.black.xor(Bitboard::new(0x1400000000000000));
                 self.rook = self.rook.xor(Bitboard::new(0x0900000000000000));
-                self.black = self.black.xor(Bitboard::new(0x0900000000000000));
+                self.black = self
+                    .black
+                    .xor(Bitboard::new(0x1400000000000000 | 0x0900000000000000));
                 self.black_has_castled = false;
             }
             _ => {}
         }
     }
-
     fn unmake_enpassant_move(&mut self, mv: &Moves, undo_info: &UndoInfo) {
         let from_bb = 1u64 << mv.from();
         let to_bb = 1u64 << mv.to();

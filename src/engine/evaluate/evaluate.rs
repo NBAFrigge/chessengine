@@ -18,8 +18,8 @@ const BISHOP_PHASE_WEIGTH: i32 = 1;
 const ROOK_PHASE_WEIGHT: i32 = 2;
 
 pub fn evaluate(b: &Board, phase: f32) -> i32 {
-    let mut piece_color;
-    let mut piece_type;
+    let mut piece_color: Color;
+    let mut piece_type: Type;
     let mut score = 0;
     for sq in 0..64 {
         let tmp = b.get_piece_color_at_square(sq);
@@ -27,7 +27,25 @@ pub fn evaluate(b: &Board, phase: f32) -> i32 {
             Some(c) => piece_color = c,
             None => continue,
         }
-        piece_type = b.get_piece_type_at_square(sq).unwrap();
+        let piece_type = match b.get_piece_type_at_square(sq) {
+            Some(t) => t,
+            None => {
+                eprintln!(
+                    "ERROR at square {}: color={:?}, but no type!",
+                    sq, piece_color
+                );
+                eprintln!("  White bitboard: {:064b}", b.white.get_value());
+                eprintln!("  Black bitboard: {:064b}", b.black.get_value());
+                eprintln!("  Pawn: {:064b}", b.pawn.get_value());
+                eprintln!("  Knight: {:064b}", b.knight.get_value());
+                eprintln!("  Bishop: {:064b}", b.bishop.get_value());
+                eprintln!("  Rook: {:064b}", b.rook.get_value());
+                eprintln!("  Queen: {:064b}", b.queen.get_value());
+                eprintln!("  King: {:064b}", b.king.get_value());
+                continue;
+            }
+        };
+
         match piece_color {
             Color::White => {
                 score += get_piece_value(piece_type)
@@ -46,7 +64,7 @@ pub fn evaluate(b: &Board, phase: f32) -> i32 {
     score += evaluate_bishop_pair(b, Color::White);
     score -= evaluate_bishop_pair(b, Color::Black);
 
-    score
+    if !b.is_white_turn { -score } else { score }
 }
 
 pub fn calculate_game_phase(b: &Board) -> f32 {

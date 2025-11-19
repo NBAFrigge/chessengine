@@ -1,5 +1,5 @@
 use crate::{
-    chess::table::{Board, Color},
+    chess::table::{Board, Color, Type},
     engine::evaluate::evaluate::{calculate_game_phase, evaluate},
 };
 
@@ -35,6 +35,12 @@ pub fn quiescence(b: &mut Board, mut alpha: i32, beta: i32, depth: i32) -> i32 {
 
     let mut best_score = stand_pat;
     for capture_move in captures {
+        if let Some(captured_type) = b.get_piece_type_at_square(capture_move.to()) {
+            if captured_type == Type::King {
+                continue;
+            }
+        }
+
         let undo = b.make_move_with_undo(&capture_move);
 
         let opponent = if b.is_white_turn {
