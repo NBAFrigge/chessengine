@@ -1,6 +1,9 @@
 use crate::{
     chess::{moves_gen::moves_struct::Moves, table::Board},
-    engine::evaluate::evaluate::{calculate_game_phase, evaluate},
+    engine::{
+        evaluate::evaluate::{calculate_game_phase, evaluate},
+        quiescence::quiescence,
+    },
 };
 
 const MATE_SCORE: i32 = 20000;
@@ -13,8 +16,7 @@ pub fn negamax(
     move_buffers: &mut [Vec<Moves>],
 ) -> i32 {
     if depth == 0 {
-        let phase = calculate_game_phase(b);
-        return evaluate(b, phase);
+        return quiescence(b, alpha, beta, 0);
     }
 
     let mut alpha = alpha;
