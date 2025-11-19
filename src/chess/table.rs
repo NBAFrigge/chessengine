@@ -1,9 +1,10 @@
 use crate::bitboard::bitboard::Bitboard;
-use crate::chess::moves_gen;
+use crate::chess::moves_gen::knight::moves;
 use crate::chess::moves_gen::moves_struct::{
     FLAG_CAPTURE, FLAG_CASTLE, FLAG_EN_PASSANT, FLAG_NORMAL, Moves, PROMOTE_BISHOP, PROMOTE_KNIGHT,
     PROMOTE_QUEEN, PROMOTE_ROOK,
 };
+use crate::chess::moves_gen::{self, bishop, king, queen};
 use either::Either;
 use std::cmp::PartialEq;
 use strum::IntoEnumIterator;
@@ -950,6 +951,308 @@ impl Board {
         }
 
         false
+    }
+
+    #[inline(always)]
+    pub fn gen_all_attacks(&self, moves: &mut Vec<Moves>) {
+        moves.clear();
+        let color = self.get_side();
+        let context = &self.create_move_context(color);
+        self.gen_pawn_captures(color, context, moves);
+        self.gen_knight_captures(context, moves);
+        self.gen_bishop_captures(context, moves);
+        self.gen_rook_captures(context, moves);
+        self.gen_queen_captures(context, moves);
+        self.gen_king_captures(context, moves);
+    }
+
+    fn gen_pawn_captures(&self, color: Color, context: &MoveContext, buffer: &mut Vec<Moves>) {
+        let pawns = self.get_pieces(color, Type::Pawn);
+        let enemy_pieces = context.enemy_pieces;
+        let enpassant = self.enpassant.get_value();
+
+        for p in pawns.iter_bits() {
+            let from_square = p.lsb() as u8;
+            let p_val = p.get_value();
+
+            match color {
+                Color::White => {
+                    let capture_moves = moves_gen::pawn::white_attack(p_val, enemy_pieces);
+
+                    let mut temp_bb = capture_moves;
+                    while temp_bb != 0 {
+                        let to_square = temp_bb.trailing_zeros() as u8;
+                        let to_bit = 1u64 << to_square;
+                        temp_bb &= temp_bb - 1;
+
+                        let is_promotion = (to_bit & LASTRANK) != 0;
+
+                        if is_promotion {
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_QUEEN,
+                                FLAG_CAPTURE,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_ROOK,
+                                FLAG_CAPTURE,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_BISHOP,
+                                FLAG_CAPTURE,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_KNIGHT,
+                                FLAG_CAPTURE,
+                                true,
+                            ));
+                        } else {
+                            buffer.push(Moves::new(from_square, to_square, 0, FLAG_CAPTURE, false));
+                        }
+                    }
+
+                    if (p_val & 0x00FF000000000000) != 0 {
+                        let to_square = from_square + 8;
+                        let to_bit = 1u64 << to_square;
+
+                        if (to_bit & context.occupied) == 0 {
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_QUEEN,
+                                FLAG_NORMAL,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_ROOK,
+                                FLAG_NORMAL,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_BISHOP,
+                                FLAG_NORMAL,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_KNIGHT,
+                                FLAG_NORMAL,
+                                true,
+                            ));
+                        }
+                    }
+
+                    if enpassant != 0 {
+                        let landing = enpassant << 8;
+                        let left_hit = (p_val << 7) & landing & !FILE_H;
+                        let right_hit = (p_val << 9) & landing & !FILE_A;
+
+                        if left_hit != 0 || right_hit != 0 {
+                            let to_square = landing.trailing_zeros() as u8;
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                0,
+                                FLAG_EN_PASSANT,
+                                false,
+                            ));
+                        }
+                    }
+                }
+                Color::Black => {
+                    let capture_moves = moves_gen::pawn::black_attack(p_val, enemy_pieces);
+
+                    let mut temp_bb = capture_moves;
+                    while temp_bb != 0 {
+                        let to_square = temp_bb.trailing_zeros() as u8;
+                        let to_bit = 1u64 << to_square;
+                        temp_bb &= temp_bb - 1;
+
+                        let is_promotion = (to_bit & FIRSTRANK) != 0;
+
+                        if is_promotion {
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_QUEEN,
+                                FLAG_CAPTURE,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_ROOK,
+                                FLAG_CAPTURE,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_BISHOP,
+                                FLAG_CAPTURE,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_KNIGHT,
+                                FLAG_CAPTURE,
+                                true,
+                            ));
+                        } else {
+                            buffer.push(Moves::new(from_square, to_square, 0, FLAG_CAPTURE, false));
+                        }
+                    }
+
+                    if (p_val & 0x000000000000FF00) != 0 {
+                        let to_square = from_square - 8;
+                        let to_bit = 1u64 << to_square;
+
+                        if (to_bit & context.occupied) == 0 {
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_QUEEN,
+                                FLAG_NORMAL,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_ROOK,
+                                FLAG_NORMAL,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_BISHOP,
+                                FLAG_NORMAL,
+                                true,
+                            ));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                PROMOTE_KNIGHT,
+                                FLAG_NORMAL,
+                                true,
+                            ));
+                        }
+                    }
+
+                    if enpassant != 0 {
+                        let landing = enpassant >> 8;
+                        let left_hit = (p_val >> 9) & landing & !FILE_H;
+                        let right_hit = (p_val >> 7) & landing & !FILE_A;
+
+                        if left_hit != 0 || right_hit != 0 {
+                            let to_square = landing.trailing_zeros() as u8;
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                0,
+                                FLAG_EN_PASSANT,
+                                false,
+                            ));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fn gen_knight_captures(&self, context: &MoveContext, buffer: &mut Vec<Moves>) {
+        let knight = self.get_pieces(self.get_side(), Type::Knight);
+
+        for p in knight.iter_bits() {
+            let from_sq = p.lsb() as u8;
+
+            let captures = moves_gen::knight::moves(p.get_value()) & context.enemy_pieces;
+            let mut temp_bb = captures;
+            while temp_bb != 0 {
+                let to_square = temp_bb.trailing_zeros() as u8;
+                temp_bb &= temp_bb - 1;
+                buffer.push(Moves::new(from_sq, to_square, 0, FLAG_CAPTURE, false));
+            }
+        }
+    }
+
+    fn gen_king_captures(&self, context: &MoveContext, buffer: &mut Vec<Moves>) {
+        let king = self.get_pieces(self.get_side(), Type::King);
+        for p in king.iter_bits() {
+            let from_sq = p.lsb() as u8;
+
+            let captures = moves_gen::king::moves(p.get_value()) & context.enemy_pieces;
+            let mut temp_bb = captures;
+            while temp_bb != 0 {
+                let to_square = temp_bb.trailing_zeros() as u8;
+                temp_bb &= temp_bb - 1;
+                buffer.push(Moves::new(from_sq, to_square, 0, FLAG_CAPTURE, false));
+            }
+        }
+    }
+
+    fn gen_queen_captures(&self, context: &MoveContext, buffer: &mut Vec<Moves>) {
+        let queen = self.get_pieces(self.get_side(), Type::Queen);
+        for p in queen.iter_bits() {
+            let from_sq = p.lsb() as u8;
+
+            let captures =
+                moves_gen::queen::moves(p.get_value(), context.occupied) & context.enemy_pieces;
+            let mut temp_bb = captures;
+            while temp_bb != 0 {
+                let to_square = temp_bb.trailing_zeros() as u8;
+                temp_bb &= temp_bb - 1;
+                buffer.push(Moves::new(from_sq, to_square, 0, FLAG_CAPTURE, false));
+            }
+        }
+    }
+
+    fn gen_rook_captures(&self, context: &MoveContext, buffer: &mut Vec<Moves>) {
+        let rook = self.get_pieces(self.get_side(), Type::Rook);
+        for p in rook.iter_bits() {
+            let from_sq = p.lsb() as u8;
+
+            let captures =
+                moves_gen::rook::moves(p.get_value(), context.occupied) & context.enemy_pieces;
+            let mut temp_bb = captures;
+            while temp_bb != 0 {
+                let to_square = temp_bb.trailing_zeros() as u8;
+                temp_bb &= temp_bb - 1;
+                buffer.push(Moves::new(from_sq, to_square, 0, FLAG_CAPTURE, false));
+            }
+        }
+    }
+
+    fn gen_bishop_captures(&self, context: &MoveContext, buffer: &mut Vec<Moves>) {
+        let bishop = self.get_pieces(self.get_side(), Type::Bishop);
+        for p in bishop.iter_bits() {
+            let from_sq = p.lsb() as u8;
+
+            let captures =
+                moves_gen::bishop::moves(p.get_value(), context.occupied) & context.enemy_pieces;
+            let mut temp_bb = captures;
+            while temp_bb != 0 {
+                let to_square = temp_bb.trailing_zeros() as u8;
+                temp_bb &= temp_bb - 1;
+                buffer.push(Moves::new(from_sq, to_square, 0, FLAG_CAPTURE, false));
+            }
+        }
     }
 
     pub fn perform_move(&mut self, mv: &Moves) -> &Board {
