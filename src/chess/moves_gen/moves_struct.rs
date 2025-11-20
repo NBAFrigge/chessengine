@@ -94,7 +94,7 @@ impl Moves {
                 PROMOTE_KNIGHT => 3,
                 _ => 4,
             };
-            return 900_000 - promo_bonus;
+            return 7_000_000 - promo_bonus;
         }
 
         0
