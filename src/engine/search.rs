@@ -30,14 +30,6 @@ pub fn negamax(
         return if b.is_king_in_check(turn) {
             -MATE_SCORE + depth as i32
         } else {
-            let phase = calculate_game_phase(b);
-            let eval = evaluate(b, phase);
-
-            if eval > 300 {
-                return -200;
-            } else if eval < -300 {
-                return 200;
-            }
             0
         };
     }
