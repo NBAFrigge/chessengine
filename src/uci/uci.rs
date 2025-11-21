@@ -6,12 +6,13 @@ use crate::{
         },
         table::Board,
     },
-    engine::find_best_move::find_best_move,
+    engine::find_best_move::Engine,
 };
 use std::io::{self, BufRead, Write};
 
 pub struct UciEngine {
     board: Board,
+    engine: Engine,
     debug: bool,
 }
 
@@ -19,6 +20,7 @@ impl UciEngine {
     pub fn new() -> Self {
         Self {
             board: Board::new(),
+            engine: Engine::new(),
             debug: false,
         }
     }
@@ -58,6 +60,7 @@ impl UciEngine {
             "isready" => Some("readyok".to_string()),
             "ucinewgame" => {
                 self.board = Board::new();
+                self.engine.clear();
                 None
             }
             "position" => {
@@ -78,7 +81,7 @@ impl UciEngine {
 
     fn handle_uci(&self) -> String {
         let mut response = String::new();
-        response.push_str("id name swag chess V1.2.3\n");
+        response.push_str("id name swag chess V1.2.4\n");
         response.push_str("id author Frigge\n");
         response.push_str("uciok");
         response
@@ -177,8 +180,8 @@ impl UciEngine {
     }
 
     fn handle_go(&mut self, args: &[&str]) -> String {
-        // TODO add args
-        let best_move = find_best_move(&self.board);
+        // TODO: parse time controls from args
+        let best_move = self.engine.find_best_move(&self.board);
         format!("bestmove {}", best_move.to_string())
     }
 }

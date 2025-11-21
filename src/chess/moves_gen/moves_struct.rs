@@ -5,7 +5,7 @@
 // Bit 14:     is_promotion flag (0/1)
 // Bits 15-16: special flags
 
-use crate::chess::table::Board;
+use crate::chess::table::{Board, Type};
 
 const FROM_MASK: u32 = 0x3F; // 000000...111111
 const TO_MASK: u32 = 0xFC0; // 000000...111111000000
@@ -64,8 +64,30 @@ impl Moves {
         ((self.0 & PROMO_MASK) >> 12) as u8
     }
 
+    pub fn promotion_piece_type(&self) -> Type {
+        match self.promotion_piece() {
+            PROMOTE_BISHOP => Type::Bishop,
+            PROMOTE_QUEEN => Type::Queen,
+            PROMOTE_ROOK => Type::Rook,
+            PROMOTE_KNIGHT => Type::Knight,
+            _ => panic!("promotion_piece_type error"),
+        }
+    }
+
     pub fn is_promotion(&self) -> bool {
         (self.0 & IS_PROMO_MASK) != 0
+    }
+
+    pub fn is_capture(&self) -> bool {
+        (self.flags() == FLAG_CAPTURE) || (self.flags() == FLAG_EN_PASSANT)
+    }
+
+    pub fn is_castle(&self) -> bool {
+        self.flags() == FLAG_CASTLE
+    }
+
+    pub fn is_enpassant(&self) -> bool {
+        self.flags() == FLAG_EN_PASSANT
     }
 
     pub fn flags(&self) -> u8 {

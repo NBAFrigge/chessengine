@@ -1,5 +1,5 @@
 use crate::chess::table::Board;
-use crate::engine::find_best_move::find_best_move;
+use crate::engine::find_best_move::Engine;
 use crate::engine::perft::{start_perft, start_perft_divide, start_perft_fen, start_perft_plus};
 use crate::uci::uci::UciEngine;
 mod bitboard;
@@ -11,11 +11,13 @@ use std::env;
 
 fn main() {
     magic_bitboards::init();
+
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
         start_uci();
         return;
     }
+
     let command = &args[1];
     match command.as_str() {
         "perft" => {
@@ -87,20 +89,26 @@ fn start_search() {
             "5. Mate in 2 (White)",
         ),
     ];
+
+    let mut engine = Engine::new();
+
     for (fen, name) in test_cases {
         match Board::new_from_fen(fen) {
             Ok(b) => {
                 let start_time = std::time::Instant::now();
-                let best_move = find_best_move(&b);
+                let best_move = engine.find_best_move(&b);
                 let elapsed = start_time.elapsed();
+
                 let from_sq = best_move.from();
                 let to_sq = best_move.to();
                 let promotion_type = best_move.promotion_piece();
                 let is_promo = best_move.is_promotion();
+
                 let from_file = (b'a' + (from_sq % 8)) as char;
                 let from_rank = (b'1' + (from_sq / 8)) as char;
                 let to_file = (b'a' + (to_sq % 8)) as char;
                 let to_rank = (b'1' + (to_sq / 8)) as char;
+
                 let mut move_str = format!("{}{}{}{}", from_file, from_rank, to_file, to_rank);
                 if is_promo {
                     let promo_char = match promotion_type {
@@ -112,10 +120,12 @@ fn start_search() {
                     };
                     move_str.push(promo_char);
                 }
+
                 println!("--- {} ---", name);
                 println!("FEN: {}", fen);
                 println!("Best Move Found: {}", move_str);
                 println!("Search Time: {} ms", elapsed.as_millis());
+                println!();
             }
             Err(e) => {
                 println!("FEN PARSING ERROR for {}: {}", fen, e);

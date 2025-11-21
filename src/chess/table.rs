@@ -5,6 +5,7 @@ use crate::chess::moves_gen::moves_struct::{
     PROMOTE_QUEEN, PROMOTE_ROOK,
 };
 use crate::chess::moves_gen::{self, bishop, king, queen};
+use crate::chess::zobrist::{ZOBRIST, ZobristTable};
 use either::Either;
 use std::cmp::PartialEq;
 use strum::IntoEnumIterator;
@@ -80,15 +81,16 @@ pub struct Board {
     pub white: Bitboard,
     pub black: Bitboard,
     pub is_white_turn: bool,
-    white_rook_long_side: bool,
-    white_rook_short_side: bool,
-    black_rook_long_side: bool,
-    black_rook_short_side: bool,
+    pub white_rook_long_side: bool,
+    pub white_rook_short_side: bool,
+    pub black_rook_long_side: bool,
+    pub black_rook_short_side: bool,
     white_king: bool,
     black_king: bool,
     pub enpassant: Bitboard,
     white_has_castled: bool,
     black_has_castled: bool,
+    hash: u64,
 }
 
 #[derive(Clone, Copy)]
@@ -104,11 +106,12 @@ pub struct UndoInfo {
     black_king: bool,
     old_enpassant: u64,
     was_white_turn: bool,
+    old_hash: u64,
 }
 
 impl Board {
     pub fn new() -> Self {
-        Board {
+        let mut b = Board {
             pawn: Bitboard::new(0xff00000000ff00),
             bishop: Bitboard::new(0x2400000000000024),
             knight: Bitboard::new(0x4200000000000042),
@@ -127,7 +130,10 @@ impl Board {
             white_has_castled: false,
             black_has_castled: false,
             enpassant: Bitboard::new(0),
-        }
+            hash: 0,
+        };
+        b.hash = ZOBRIST.compute_hash(&b);
+        b
     }
 
     pub fn new_from_fen(fen: &str) -> Result<Self, String> {
@@ -150,6 +156,7 @@ impl Board {
             white_has_castled: false,
             black_has_castled: false,
             enpassant: Bitboard::new(0),
+            hash: 0,
         };
 
         let parts: Vec<&str> = fen.split(' ').collect();
@@ -261,7 +268,7 @@ impl Board {
                 return Err(format!("Invalid en passant square: {}", en_passant_square));
             }
         }
-
+        board.hash = ZOBRIST.compute_hash(&board);
         Ok(board)
     }
 
@@ -271,6 +278,11 @@ impl Board {
             return Color::White;
         }
         Color::Black
+    }
+
+    #[inline]
+    pub fn get_hash(&self) -> u64 {
+        self.hash
     }
 
     pub fn switch_side(&mut self) {
@@ -1256,6 +1268,10 @@ impl Board {
     }
 
     pub fn perform_move(&mut self, mv: &Moves) -> &Board {
+        let old_castling_index = self.get_castling_index();
+
+        self.hash = ZOBRIST.update_hash_before(self.hash, self, mv);
+
         let old_enpassant = self.enpassant;
         self.enpassant.set_empty();
 
@@ -1272,7 +1288,32 @@ impl Board {
         }
 
         self.is_white_turn = !self.is_white_turn;
+
+        let new_castling_index = self.get_castling_index();
+        if old_castling_index != new_castling_index {
+            self.hash ^= ZOBRIST.castling_rights[old_castling_index];
+            self.hash ^= ZOBRIST.castling_rights[new_castling_index];
+        }
+
         self
+    }
+
+    #[inline]
+    fn get_castling_index(&self) -> usize {
+        let mut index = 0;
+        if self.white_rook_long_side {
+            index |= 1;
+        }
+        if self.white_rook_short_side {
+            index |= 2;
+        }
+        if self.black_rook_long_side {
+            index |= 4;
+        }
+        if self.black_rook_short_side {
+            index |= 8;
+        }
+        index
     }
 
     #[inline]
@@ -1292,7 +1333,6 @@ impl Board {
             (4, 2) => {
                 self.king = self.king.xor(Bitboard::new(0x14));
                 self.rook = self.rook.xor(Bitboard::new(0x09));
-                // Combina re + torre in un solo XOR
                 self.white = self.white.xor(Bitboard::new(0x14 | 0x09));
                 self.white_king = false;
                 self.white_rook_long_side = false;
@@ -1302,7 +1342,6 @@ impl Board {
             (60, 62) => {
                 self.king = self.king.xor(Bitboard::new(0x5000000000000000));
                 self.rook = self.rook.xor(Bitboard::new(0xA000000000000000));
-                // Combina re + torre in un solo XOR
                 self.black = self
                     .black
                     .xor(Bitboard::new(0x5000000000000000 | 0xA000000000000000));
@@ -1314,7 +1353,6 @@ impl Board {
             (60, 58) => {
                 self.king = self.king.xor(Bitboard::new(0x1400000000000000));
                 self.rook = self.rook.xor(Bitboard::new(0x0900000000000000));
-                // Combina re + torre in un solo XOR
                 self.black = self
                     .black
                     .xor(Bitboard::new(0x1400000000000000 | 0x0900000000000000));
@@ -1444,11 +1482,13 @@ impl Board {
             black_king: self.black_king,
             old_enpassant: self.enpassant.get_value(),
             was_white_turn: self.is_white_turn,
+            old_hash: self.hash,
         };
 
         self.perform_move(mv);
         undo_info
     }
+
     #[inline(always)]
     pub fn unmake_move(&mut self, mv: &Moves, undo_info: UndoInfo) {
         self.is_white_turn = undo_info.was_white_turn;
@@ -1459,6 +1499,7 @@ impl Board {
         self.black_rook_short_side = undo_info.black_rook_short_side;
         self.white_king = undo_info.white_king;
         self.black_king = undo_info.black_king;
+        self.hash = undo_info.old_hash;
 
         match mv.flags() {
             FLAG_NORMAL | FLAG_CAPTURE => {
@@ -1473,7 +1514,6 @@ impl Board {
             _ => {}
         }
     }
-
     fn unmake_simple_move(&mut self, mv: &Moves, undo_info: &UndoInfo) {
         let from_bb = 1u64 << mv.from();
         let to_bb = 1u64 << mv.to();
@@ -1536,7 +1576,6 @@ impl Board {
             (4, 6) => {
                 self.king = self.king.xor(Bitboard::new(0x50));
                 self.rook = self.rook.xor(Bitboard::new(0xA0));
-                // Combina re + torre in un solo XOR
                 self.white = self.white.xor(Bitboard::new(0x50 | 0xA0));
                 self.white_has_castled = false;
             }

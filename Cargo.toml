@@ -8,5 +8,7 @@ debug = true
 
 [dependencies]
 either = "1.15.0"
+lazy_static = "1.5.0"
+rand = "0.9.2"
 strum = "0.27.2"
 strum_macros = "0.27.2"
