@@ -95,19 +95,6 @@ impl Moves {
     }
 
     pub fn score(&self, b: &Board) -> i32 {
-        if self.flags() == FLAG_CAPTURE {
-            if let Some(victim) = b.get_piece_type_at_square(self.to()) {
-                if let Some(attacker) = b.get_piece_type_at_square(self.from()) {
-                    let a = attacker.id() as usize;
-                    let v = victim.id() as usize;
-                    return 1_000_000 + MVV_LVA[a][v];
-                }
-            }
-        }
-        if self.flags() == FLAG_EN_PASSANT {
-            return 1_000_000 + MVV_LVA[0][0];
-        }
-
         if self.is_promotion() {
             let promo_bonus = match self.promotion_piece() {
                 PROMOTE_QUEEN => 0,
@@ -116,12 +103,25 @@ impl Moves {
                 PROMOTE_KNIGHT => 3,
                 _ => 4,
             };
-            return 7_000_000 - promo_bonus;
+            return 10000 - promo_bonus;
+        }
+
+        if self.flags() == FLAG_CAPTURE {
+            if let Some(victim) = b.get_piece_type_at_square(self.to()) {
+                if let Some(attacker) = b.get_piece_type_at_square(self.from()) {
+                    let a = attacker.id() as usize;
+                    let v = victim.id() as usize;
+                    return 1000 + MVV_LVA[a][v];
+                }
+            }
+        }
+
+        if self.flags() == FLAG_EN_PASSANT {
+            return 1000 + MVV_LVA[0][0];
         }
 
         0
     }
-
     #[allow(dead_code)]
     pub fn to_string(&self) -> String {
         let from = self.index_to_algebraic(self.from());

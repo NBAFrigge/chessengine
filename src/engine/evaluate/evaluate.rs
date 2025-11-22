@@ -34,14 +34,6 @@ pub fn evaluate(b: &Board, phase: f32) -> i32 {
                     "ERROR at square {}: color={:?}, but no type!",
                     sq, piece_color
                 );
-                eprintln!("  White bitboard: {:064b}", b.white.get_value());
-                eprintln!("  Black bitboard: {:064b}", b.black.get_value());
-                eprintln!("  Pawn: {:064b}", b.pawn.get_value());
-                eprintln!("  Knight: {:064b}", b.knight.get_value());
-                eprintln!("  Bishop: {:064b}", b.bishop.get_value());
-                eprintln!("  Rook: {:064b}", b.rook.get_value());
-                eprintln!("  Queen: {:064b}", b.queen.get_value());
-                eprintln!("  King: {:064b}", b.king.get_value());
                 continue;
             }
         };
@@ -83,6 +75,45 @@ pub fn calculate_game_phase(b: &Board) -> f32 {
         / 24.0
 }
 
+fn evaluate_center_control(b: &Board, color: Color) -> i32 {
+    let center_squares = 0x0000001818000000u64;
+    let extended_center = 0x00003C3C3C3C0000u64;
+    let pawns = b.get_pieces(color, Type::Pawn).get_value();
+    let all_pieces = b.get_pieces(color, Type::Any).get_value();
+
+    let center_pawns = (pawns & center_squares).count_ones();
+    let center_pieces = (all_pieces & extended_center).count_ones();
+
+    (center_pawns as i32) * 30 + (center_pieces as i32) * 10
+}
+
+fn evaluate_development(b: &Board, color: Color) -> i32 {
+    let mut score = 0;
+
+    let back_rank = match color {
+        Color::White => 0x00000000000000FF,
+        Color::Black => 0xFF00000000000000,
+    };
+
+    let knights = b.get_pieces(color, Type::Knight);
+    let undeveloped_knights = (knights.get_value() & back_rank).count_ones();
+    score -= (undeveloped_knights as i32) * 50;
+
+    let bishops = b.get_pieces(color, Type::Bishop);
+    let undeveloped_bishops = (bishops.get_value() & back_rank).count_ones();
+    score -= (undeveloped_bishops as i32) * 50;
+
+    let queens = b.get_pieces(color, Type::Queen);
+    if (queens.get_value() & back_rank) == 0 && undeveloped_knights > 0 {
+        score -= 40;
+    }
+
+    if b.has_castled(color) {
+        score += 60;
+    }
+
+    score
+}
 fn get_piece_value(t: Type) -> i32 {
     match t {
         Type::Pawn => PAWN_WEIGHT,
