@@ -549,7 +549,7 @@ impl Board {
                     }
 
                     if enpassant != 0 {
-                        let landing = enpassant << 8;
+                        let landing = enpassant;
                         let left_hit = (p_val << 7) & landing & !FILE_H;
                         let right_hit = (p_val << 9) & landing & !FILE_A;
 
@@ -623,7 +623,7 @@ impl Board {
                     }
 
                     if enpassant != 0 {
-                        let landing = enpassant >> 8;
+                        let landing = enpassant;
                         let left_hit = (p_val >> 9) & landing & !FILE_H;
                         let right_hit = (p_val >> 7) & landing & !FILE_A;
 
@@ -1168,7 +1168,7 @@ impl Board {
                     }
 
                     if enpassant != 0 {
-                        let landing = enpassant >> 8;
+                        let landing = enpassant;
                         let left_hit = (p_val >> 9) & landing & !FILE_H;
                         let right_hit = (p_val >> 7) & landing & !FILE_A;
 
@@ -1369,14 +1369,20 @@ impl Board {
         let from_bb = 1u64 << mv.from();
         let to_bb = 1u64 << mv.to();
 
-        self.pawn = self.pawn.xor(old_enpassant);
+        let captured_pawn_square = if self.is_white_turn {
+            old_enpassant.get_value() >> 8
+        } else {
+            old_enpassant.get_value() << 8
+        };
+
+        self.pawn = self.pawn.xor(Bitboard::new(captured_pawn_square));
 
         if self.is_white_turn {
-            self.black = self.black.xor(old_enpassant);
+            self.black = self.black.xor(Bitboard::new(captured_pawn_square));
             self.pawn = self.pawn.xor(Bitboard::new(from_bb | to_bb));
             self.white = self.white.xor(Bitboard::new(from_bb | to_bb));
         } else {
-            self.white = self.white.xor(old_enpassant);
+            self.white = self.white.xor(Bitboard::new(captured_pawn_square));
             self.pawn = self.pawn.xor(Bitboard::new(from_bb | to_bb));
             self.black = self.black.xor(Bitboard::new(from_bb | to_bb));
         }
@@ -1425,8 +1431,10 @@ impl Board {
             let black_double_move =
                 (from_bb & 0xFF000000000000) != 0 && (to_bb & 0xFF00000000) != 0;
 
-            if white_double_move || black_double_move {
-                self.enpassant = new_pos_bb;
+            if white_double_move {
+                self.enpassant = Bitboard::new(from_bb << 8);
+            } else if black_double_move {
+                self.enpassant = Bitboard::new(from_bb >> 8);
             }
 
             if mv.is_promotion() {
@@ -1621,6 +1629,7 @@ impl Board {
                 .white
                 .and(Bitboard::new(!to_bb))
                 .or(Bitboard::new(from_bb));
+
             let captured_pawn_pos = to_bb >> 8;
             self.pawn = self.pawn.or(Bitboard::new(captured_pawn_pos));
             self.black = self.black.or(Bitboard::new(captured_pawn_pos));
@@ -1629,11 +1638,13 @@ impl Board {
                 .black
                 .and(Bitboard::new(!to_bb))
                 .or(Bitboard::new(from_bb));
+
             let captured_pawn_pos = to_bb << 8;
             self.pawn = self.pawn.or(Bitboard::new(captured_pawn_pos));
             self.white = self.white.or(Bitboard::new(captured_pawn_pos));
         }
     }
+
     #[allow(dead_code)]
     pub fn to_string(&self) -> String {
         let mut string =
