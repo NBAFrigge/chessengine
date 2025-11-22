@@ -3,7 +3,7 @@ use crate::{
     engine::{search::negamax, trasposition_table::TT},
 };
 
-const DEPTH: u8 = 5;
+const DEPTH: u8 = 8;
 const MAX_MOVES: usize = 255;
 const INFINITY: i32 = 30000;
 
