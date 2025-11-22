@@ -18,24 +18,16 @@ const BISHOP_PHASE_WEIGTH: i32 = 1;
 const ROOK_PHASE_WEIGHT: i32 = 2;
 
 pub fn evaluate(b: &Board, phase: f32) -> i32 {
-    let mut piece_color: Color;
-    let mut piece_type: Type;
     let mut score = 0;
+
     for sq in 0..64 {
-        let tmp = b.get_piece_color_at_square(sq);
-        match tmp {
-            Some(c) => piece_color = c,
+        let piece_color = match b.get_piece_color_at_square(sq) {
+            Some(c) => c,
             None => continue,
-        }
+        };
         let piece_type = match b.get_piece_type_at_square(sq) {
             Some(t) => t,
-            None => {
-                eprintln!(
-                    "ERROR at square {}: color={:?}, but no type!",
-                    sq, piece_color
-                );
-                continue;
-            }
+            None => continue,
         };
 
         match piece_color {
@@ -49,6 +41,7 @@ pub fn evaluate(b: &Board, phase: f32) -> i32 {
             }
         }
     }
+
     score += evaluate_pawn(&b.get_pieces(Color::White, Type::Pawn));
     score -= evaluate_pawn(&b.get_pieces(Color::Black, Type::Pawn));
     score += evaluate_king_safety(b, Color::White, phase);
@@ -56,7 +49,14 @@ pub fn evaluate(b: &Board, phase: f32) -> i32 {
     score += evaluate_bishop_pair(b, Color::White);
     score -= evaluate_bishop_pair(b, Color::Black);
 
-    if !b.is_white_turn { -score } else { score }
+    if phase > 0.5 {
+        score += evaluate_center_control(b, Color::White);
+        score -= evaluate_center_control(b, Color::Black);
+        score += evaluate_premature_pawns(b, Color::White);
+        score -= evaluate_premature_pawns(b, Color::Black);
+    }
+
+    score
 }
 
 pub fn calculate_game_phase(b: &Board) -> f32 {
@@ -75,21 +75,8 @@ pub fn calculate_game_phase(b: &Board) -> f32 {
         / 24.0
 }
 
-fn evaluate_center_control(b: &Board, color: Color) -> i32 {
-    let center_squares = 0x0000001818000000u64;
-    let extended_center = 0x00003C3C3C3C0000u64;
-    let pawns = b.get_pieces(color, Type::Pawn).get_value();
-    let all_pieces = b.get_pieces(color, Type::Any).get_value();
-
-    let center_pawns = (pawns & center_squares).count_ones();
-    let center_pieces = (all_pieces & extended_center).count_ones();
-
-    (center_pawns as i32) * 30 + (center_pieces as i32) * 10
-}
-
-fn evaluate_development(b: &Board, color: Color) -> i32 {
+pub fn evaluate_development(b: &Board, color: Color) -> i32 {
     let mut score = 0;
-
     let back_rank = match color {
         Color::White => 0x00000000000000FF,
         Color::Black => 0xFF00000000000000,
@@ -104,8 +91,10 @@ fn evaluate_development(b: &Board, color: Color) -> i32 {
     score -= (undeveloped_bishops as i32) * 50;
 
     let queens = b.get_pieces(color, Type::Queen);
-    if (queens.get_value() & back_rank) == 0 && undeveloped_knights > 0 {
-        score -= 40;
+    if (queens.get_value() & back_rank) == 0 {
+        if undeveloped_knights > 0 || undeveloped_bishops > 0 {
+            score -= 80;
+        }
     }
 
     if b.has_castled(color) {
@@ -114,7 +103,38 @@ fn evaluate_development(b: &Board, color: Color) -> i32 {
 
     score
 }
-fn get_piece_value(t: Type) -> i32 {
+
+pub fn evaluate_center_control(b: &Board, color: Color) -> i32 {
+    let center_squares = 0x0000001818000000u64;
+    let pawns = b.get_pieces(color, Type::Pawn).get_value();
+    let center_pawns = (pawns & center_squares).count_ones();
+    (center_pawns as i32) * 50
+}
+
+pub fn evaluate_premature_pawns(b: &Board, color: Color) -> i32 {
+    let pawns = b.get_pieces(color, Type::Pawn);
+    let back_rank = match color {
+        Color::White => 0x000000000000FFFF,
+        Color::Black => 0xFFFF000000000000,
+    };
+
+    let moved_pawns = pawns.get_value() & !back_rank;
+    let moved_count = moved_pawns.count_ones();
+
+    let knights = b.get_pieces(color, Type::Knight);
+    let bishops = b.get_pieces(color, Type::Bishop);
+    let developed_knights = (knights.get_value() & !back_rank).count_ones();
+    let developed_bishops = (bishops.get_value() & !back_rank).count_ones();
+    let developed_pieces = developed_knights + developed_bishops;
+
+    if moved_count > developed_pieces + 2 {
+        let excess = moved_count - developed_pieces - 2;
+        return -(excess as i32) * 50;
+    }
+
+    0
+}
+pub fn get_piece_value(t: Type) -> i32 {
     match t {
         Type::Pawn => PAWN_WEIGHT,
         Type::Bishop => BISHOP_WEIGTH,

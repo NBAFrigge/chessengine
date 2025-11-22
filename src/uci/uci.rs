@@ -60,7 +60,6 @@ impl UciEngine {
             "isready" => Some("readyok".to_string()),
             "ucinewgame" => {
                 self.board = Board::new();
-                self.engine.clear();
                 None
             }
             "position" => {
@@ -81,7 +80,7 @@ impl UciEngine {
 
     fn handle_uci(&self) -> String {
         let mut response = String::new();
-        response.push_str("id name swag chess V1.2.5\n");
+        response.push_str("id name swag chess V1.2.6\n");
         response.push_str("id author Frigge\n");
         response.push_str("uciok");
         response

@@ -1,12 +1,14 @@
-// piece square value (PST)
-// centipawns value
-
 use crate::chess::table::{Color, Type};
 
 pub const PAWN_PST: [i32; 64] = [
-    0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, -20, -20, 10, 10, 5, 5, -5, -10, 0, 0, -10, -5, 5, 0, 0, 0,
-    20, 20, 0, 0, 0, 5, 5, 10, 25, 25, 10, 5, 5, 10, 10, 20, 30, 30, 20, 10, 10, 50, 50, 50, 50,
-    50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, // Rank 1
+    -10, -5, 0, 20, 20, 0, -5, -10, // Rank 2 ← d2/e2 = +20!
+    -15, -10, -5, 15, 15, -5, -10, -15, // Rank 3 ← a3/h3 = -15!
+    -10, -5, 5, 30, 30, 5, -5, -10, // Rank 4 ← e4/d4 = +30!
+    -5, 0, 10, 35, 35, 10, 0, -5, // Rank 5
+    0, 5, 15, 40, 40, 15, 5, 0, // Rank 6
+    10, 15, 25, 45, 45, 25, 15, 10, // Rank 7 ← ridotto da 50
+    0, 0, 0, 0, 0, 0, 0, 0, // Rank 8
 ];
 
 pub const KNIGHT_PST: [i32; 64] = [
@@ -52,7 +54,7 @@ pub fn get_pst_value(piece_type: Type, square: usize, color: Color, phase: f32) 
     let sq = if color == Color::White {
         square
     } else {
-        63 - square
+        square ^ 56
     };
 
     match piece_type {
@@ -62,7 +64,9 @@ pub fn get_pst_value(piece_type: Type, square: usize, color: Color, phase: f32) 
         Type::Rook => ROOK_PST[sq],
         Type::Queen => QUEEN_PST[sq],
         Type::King => {
-            ((KING_MG_PST[sq] as f32) * phase + (KING_EG_PST[sq] as f32) * (1.0 - phase)) as i32
+            let mg = KING_MG_PST[sq] as f32;
+            let eg = KING_EG_PST[sq] as f32;
+            (mg * phase + eg * (1.0 - phase)) as i32
         }
         _ => 0,
     }

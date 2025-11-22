@@ -1,4 +1,5 @@
 use crate::chess::table::Board;
+
 use crate::engine::find_best_move::Engine;
 use crate::engine::perft::{start_perft, start_perft_divide, start_perft_fen, start_perft_plus};
 use crate::uci::uci::UciEngine;
@@ -8,10 +9,8 @@ mod engine;
 mod uci;
 use chess::moves_gen::magic_bitboards;
 use std::env;
-
 fn main() {
     magic_bitboards::init();
-
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
         start_uci();

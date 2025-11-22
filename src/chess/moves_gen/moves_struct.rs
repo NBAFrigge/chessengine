@@ -33,7 +33,7 @@ const MVV_LVA: [[i32; 6]; 6] = [
     [100, 200, 300, 400, 500, 600], // K
 ];
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub struct Moves(u32);
 
 impl Moves {
@@ -95,15 +95,30 @@ impl Moves {
     }
 
     pub fn score(&self, b: &Board) -> i32 {
+        if self.is_promotion() && self.is_capture() {
+            let promo_value = match self.promotion_piece() {
+                PROMOTE_QUEEN => 900, // Valore della regina
+                PROMOTE_ROOK => 500,
+                PROMOTE_BISHOP => 330,
+                PROMOTE_KNIGHT => 320,
+                _ => 100,
+            };
+
+            if let Some(victim) = b.get_piece_type_at_square(self.to()) {
+                let victim_value = get_piece_value(victim);
+                return 2_000_000 + promo_value + victim_value;
+            }
+        }
+
         if self.is_promotion() {
             let promo_bonus = match self.promotion_piece() {
-                PROMOTE_QUEEN => 0,
-                PROMOTE_ROOK => 1,
-                PROMOTE_BISHOP => 2,
-                PROMOTE_KNIGHT => 3,
-                _ => 4,
+                PROMOTE_QUEEN => 900,
+                PROMOTE_ROOK => 500,
+                PROMOTE_BISHOP => 330,
+                PROMOTE_KNIGHT => 320,
+                _ => 100,
             };
-            return 10000 - promo_bonus;
+            return 800_000 + promo_bonus;
         }
 
         if self.flags() == FLAG_CAPTURE {
@@ -111,17 +126,22 @@ impl Moves {
                 if let Some(attacker) = b.get_piece_type_at_square(self.from()) {
                     let a = attacker.id() as usize;
                     let v = victim.id() as usize;
-                    return 1000 + MVV_LVA[a][v];
+                    return 1_000_000 + MVV_LVA[a][v];
                 }
             }
         }
 
         if self.flags() == FLAG_EN_PASSANT {
-            return 1000 + MVV_LVA[0][0];
+            return 1_000_000 + MVV_LVA[0][0];
+        }
+
+        if self.flags() == FLAG_CASTLE {
+            return 500_000;
         }
 
         0
     }
+
     #[allow(dead_code)]
     pub fn to_string(&self) -> String {
         let from = self.index_to_algebraic(self.from());
@@ -148,5 +168,16 @@ impl Moves {
         let file = (b'a' + (index % 8)) as char;
         let rank = (b'1' + (index / 8)) as char;
         format!("{}{}", file, rank)
+    }
+}
+fn get_piece_value(t: Type) -> i32 {
+    match t {
+        Type::Pawn => 100,
+        Type::Knight => 320,
+        Type::Bishop => 330,
+        Type::Rook => 500,
+        Type::Queen => 900,
+        Type::King => 20000,
+        _ => 0,
     }
 }

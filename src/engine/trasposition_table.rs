@@ -41,7 +41,7 @@ pub enum BoundType {
 
 pub struct TT {
     map: HashMap<u64, TTEntry>,
-    age: u8,
+    pub age: u8,
 }
 
 impl TT {

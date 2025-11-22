@@ -1323,7 +1323,6 @@ impl Board {
             (4, 6) => {
                 self.king = self.king.xor(Bitboard::new(0x50));
                 self.rook = self.rook.xor(Bitboard::new(0xA0));
-                // Combina re + torre in un solo XOR
                 self.white = self.white.xor(Bitboard::new(0x50 | 0xA0));
                 self.white_king = false;
                 self.white_rook_short_side = false;

@@ -69,12 +69,17 @@ fn north_one(b: u64) -> u64 {
 fn south_one(b: u64) -> u64 {
     b >> 8
 }
-
+fn east_one(b: u64) -> u64 {
+    (b << 1) & NOT_AFILE
+}
 fn northeast_one(b: u64) -> u64 {
     (b << 9) & NOT_AFILE
 }
 fn southeast_one(b: u64) -> u64 {
     (b >> 7) & NOT_AFILE
+}
+fn west_one(b: u64) -> u64 {
+    (b >> 1) & NOT_HFILE
 }
 fn southwest_one(b: u64) -> u64 {
     (b >> 9) & NOT_HFILE

@@ -7,7 +7,8 @@ pub fn evaluate_king_safety(b: &Board, color: Color, phase: f32) -> i32 {
     let mut score = 0;
     let king_sq = b.get_pieces(color, Type::King).lsb() as u8;
 
-    if phase > 0.5 {
+    if phase > 0.5 && b.has_castled(color) {
+        // ← Aggiungi has_castled!
         let shelter = evaluate_pawn_shelter(b, king_sq, color);
         score += (shelter as f32 * phase * 3.0) as i32;
     }

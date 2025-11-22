@@ -3,7 +3,7 @@ use crate::{
     engine::{search::negamax, trasposition_table::TT},
 };
 
-const DEPTH: u8 = 8;
+const DEPTH: u8 = 5;
 const MAX_MOVES: usize = 255;
 const INFINITY: i32 = 30000;
 
@@ -47,7 +47,6 @@ impl Engine {
             );
 
             board_mut.unmake_move(mv, undo_info);
-
             if score > alpha {
                 alpha = score;
                 best_move = *mv;
