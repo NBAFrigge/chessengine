@@ -332,10 +332,10 @@ impl Board {
     #[inline]
     pub fn get_piece_color_at_square(&self, square: u8) -> Option<Color> {
         let bb = 1u64 << square;
-        if self.black.get_value() & bb != 0 {
+        if self.white.get_value() & bb != 0 {
             return Some(Color::White);
         }
-        if self.white.get_value() & bb != 0 {
+        if self.black.get_value() & bb != 0 {
             return Some(Color::Black);
         }
         None
