@@ -1033,44 +1033,9 @@ impl Board {
                         }
                     }
 
-                    if (p_val & 0x00FF000000000000) != 0 {
-                        let to_square = from_square + 8;
-                        let to_bit = 1u64 << to_square;
-
-                        if (to_bit & context.occupied) == 0 {
-                            buffer.push(Moves::new(
-                                from_square,
-                                to_square,
-                                PROMOTE_QUEEN,
-                                FLAG_NORMAL,
-                                true,
-                            ));
-                            buffer.push(Moves::new(
-                                from_square,
-                                to_square,
-                                PROMOTE_ROOK,
-                                FLAG_NORMAL,
-                                true,
-                            ));
-                            buffer.push(Moves::new(
-                                from_square,
-                                to_square,
-                                PROMOTE_BISHOP,
-                                FLAG_NORMAL,
-                                true,
-                            ));
-                            buffer.push(Moves::new(
-                                from_square,
-                                to_square,
-                                PROMOTE_KNIGHT,
-                                FLAG_NORMAL,
-                                true,
-                            ));
-                        }
-                    }
-
+                    // En passant
                     if enpassant != 0 {
-                        let landing = enpassant << 8;
+                        let landing = enpassant;
                         let left_hit = (p_val << 7) & landing & !FILE_H;
                         let right_hit = (p_val << 9) & landing & !FILE_A;
 
@@ -1131,42 +1096,7 @@ impl Board {
                         }
                     }
 
-                    if (p_val & 0x000000000000FF00) != 0 {
-                        let to_square = from_square - 8;
-                        let to_bit = 1u64 << to_square;
-
-                        if (to_bit & context.occupied) == 0 {
-                            buffer.push(Moves::new(
-                                from_square,
-                                to_square,
-                                PROMOTE_QUEEN,
-                                FLAG_NORMAL,
-                                true,
-                            ));
-                            buffer.push(Moves::new(
-                                from_square,
-                                to_square,
-                                PROMOTE_ROOK,
-                                FLAG_NORMAL,
-                                true,
-                            ));
-                            buffer.push(Moves::new(
-                                from_square,
-                                to_square,
-                                PROMOTE_BISHOP,
-                                FLAG_NORMAL,
-                                true,
-                            ));
-                            buffer.push(Moves::new(
-                                from_square,
-                                to_square,
-                                PROMOTE_KNIGHT,
-                                FLAG_NORMAL,
-                                true,
-                            ));
-                        }
-                    }
-
+                    // En passant
                     if enpassant != 0 {
                         let landing = enpassant;
                         let left_hit = (p_val >> 9) & landing & !FILE_H;
@@ -1187,7 +1117,6 @@ impl Board {
             }
         }
     }
-
     fn gen_knight_captures(&self, context: &MoveContext, buffer: &mut Vec<Moves>) {
         let knight = self.get_pieces(self.get_side(), Type::Knight);
 
