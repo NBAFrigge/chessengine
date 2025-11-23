@@ -56,7 +56,7 @@ pub fn evaluate(b: &Board, phase: f32) -> i32 {
         score -= evaluate_premature_pawns(b, Color::Black);
     }
 
-    score
+    if b.is_white_turn { score } else { -score }
 }
 
 pub fn calculate_game_phase(b: &Board) -> f32 {
