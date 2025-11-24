@@ -97,7 +97,7 @@ impl Moves {
     pub fn score(&self, b: &Board) -> i32 {
         if self.is_promotion() && self.is_capture() {
             let promo_value = match self.promotion_piece() {
-                PROMOTE_QUEEN => 900,
+                PROMOTE_QUEEN => 9000,
                 PROMOTE_ROOK => 500,
                 PROMOTE_BISHOP => 330,
                 PROMOTE_KNIGHT => 320,

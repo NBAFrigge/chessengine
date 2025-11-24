@@ -5,44 +5,57 @@ use crate::engine::trasposition_table::{BoundType, TT, TTEntry};
 
 const MATE_SCORE: i32 = 20000;
 
-const INFINITY: i32 = 30000;
+#[inline(always)]
+fn is_repetition(history: &[u64], history_len: usize, current_hash: u64) -> bool {
+    let start = if history_len > 8 { history_len - 8 } else { 0 };
+
+    let mut count = 0;
+    for i in start..history_len {
+        if history[i] == current_hash {
+            count += 1;
+            if count >= 2 {
+                return true;
+            }
+        }
+    }
+    false
+}
 
 pub fn negamax(
     b: &mut Board,
     depth: u8,
     mut alpha: i32,
-    mut beta: i32,
+    beta: i32,
     tt: &mut TT,
     move_buffers: &mut [Vec<Moves>],
+    position_history: &mut [u64; 32],
+    history_len: usize,
 ) -> i32 {
-    let hash = b.get_hash();
+    let current_hash = b.get_hash();
 
-    let mut tt_move: Option<Moves> = None;
+    if depth >= 3 && is_repetition(position_history, history_len, current_hash) {
+        return 0;
+    }
 
-    if let Some(entry) = tt.probe(hash) {
-        tt_move = Some(entry.best_move);
+    let alpha_orig = alpha;
 
+    if let Some(entry) = tt.probe(current_hash) {
         if entry.depth >= depth {
             match entry.bound {
-                BoundType::Exact => {
-                    return entry.score;
-                }
+                BoundType::Exact => return entry.score,
                 BoundType::Lower => {
-                    if entry.score >= beta {
-                        return beta;
+                    if entry.score > alpha {
+                        alpha = entry.score;
                     }
-                    alpha = alpha.max(entry.score);
                 }
                 BoundType::Upper => {
-                    if entry.score <= alpha {
-                        return alpha;
+                    if entry.score < beta {
+                        return entry.score;
                     }
-                    beta = beta.min(entry.score);
                 }
             }
-
             if alpha >= beta {
-                return alpha;
+                return entry.score;
             }
         }
     }
@@ -65,38 +78,48 @@ pub fn negamax(
         }
     }
 
-    let mut scored_moves: Vec<(Moves, i32)> = moves
-        .iter()
-        .map(|&mv| {
-            let mut score = mv.score(b);
-            if let Some(tt_mv) = tt_move {
-                if mv.from() == tt_mv.from()
-                    && mv.to() == tt_mv.to()
-                    && mv.promotion_piece() == tt_mv.promotion_piece()
-                {
-                    score += 10_000_000;
-                }
+    let mut best_score = -MATE_SCORE - 1;
+    let mut best_move = moves[0];
+
+    let mut scored_moves: Vec<(Moves, i32)> = moves.iter().map(|&mv| (mv, mv.score(b))).collect();
+
+    if let Some(entry) = tt.probe(current_hash) {
+        for (mv, score) in scored_moves.iter_mut() {
+            if mv.from() == entry.best_move.from() && mv.to() == entry.best_move.to() {
+                *score += 10000;
+                break;
             }
+        }
+    }
 
-            (mv, score)
-        })
-        .collect();
-
-    scored_moves.sort_by_key(|(_, score)| -score);
-
-    let mut best_score = -INFINITY;
-    let mut best_move: Option<Moves> = None;
+    scored_moves.sort_unstable_by_key(|(_, score)| -score);
 
     for (mv, _) in scored_moves.iter() {
         let undo_info = b.make_move_with_undo(mv);
 
-        let score = -negamax(b, depth - 1, -beta, -alpha, tt, next_buffers);
+        let new_history_len = if history_len < 32 {
+            position_history[history_len] = b.get_hash();
+            history_len + 1
+        } else {
+            history_len
+        };
+
+        let score = -negamax(
+            b,
+            depth - 1,
+            -beta,
+            -alpha,
+            tt,
+            next_buffers,
+            position_history,
+            new_history_len,
+        );
 
         b.unmake_move(mv, undo_info);
 
         if score > best_score {
             best_score = score;
-            best_move = Some(*mv);
+            best_move = *mv;
         }
 
         if best_score > alpha {
@@ -108,22 +131,16 @@ pub fn negamax(
         }
     }
 
-    let bound = if best_score >= beta {
+    let bound = if best_score <= alpha_orig {
+        BoundType::Upper
+    } else if best_score >= beta {
         BoundType::Lower
     } else {
-        BoundType::Upper
+        BoundType::Exact
     };
 
-    let tt_entry = TTEntry::new(
-        hash,
-        best_score,
-        best_move.unwrap_or(Moves::new(0, 0, 0, 0, false)),
-        depth,
-        bound,
-        tt.age,
-    );
-
-    tt.store(hash, tt_entry);
+    let entry = TTEntry::new(current_hash, best_score, best_move, depth, bound, tt.age);
+    tt.store(current_hash, entry);
 
     best_score
 }
