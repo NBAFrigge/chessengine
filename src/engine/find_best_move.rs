@@ -17,6 +17,7 @@ impl Engine {
     }
 
     pub fn find_best_move(&mut self, b: &Board) -> Moves {
+        self.tt.new_search();
         let mut board_mut = *b;
         let mut move_buffers: Vec<Vec<Moves>> =
             (0..=DEPTH).map(|_| Vec::with_capacity(MAX_MOVES)).collect();

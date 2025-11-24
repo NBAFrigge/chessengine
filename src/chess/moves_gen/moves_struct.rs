@@ -33,7 +33,7 @@ const MVV_LVA: [[i32; 6]; 6] = [
     [100, 200, 300, 400, 500, 600], // K
 ];
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub struct Moves(u32);
 
 impl Moves {

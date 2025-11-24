@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 use crate::chess::moves_gen::moves_struct::Moves;
 
+#[derive(Debug)]
 pub struct TTEntry {
     pub hash: u64,
     pub score: i32,
@@ -32,7 +33,7 @@ impl TTEntry {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 pub enum BoundType {
     Exact = 0,
     Lower = 1, // Fail-high
@@ -62,6 +63,12 @@ impl TT {
     }
 
     pub fn store(&mut self, hash: u64, entry: TTEntry) {
+        if let Some(existing) = self.map.get(&hash) {
+            if existing.age == self.age && existing.depth > entry.depth {
+                return;
+            }
+        }
+
         self.map.insert(hash, entry);
     }
 

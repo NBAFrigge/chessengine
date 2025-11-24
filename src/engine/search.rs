@@ -5,14 +5,48 @@ use crate::engine::trasposition_table::{BoundType, TT, TTEntry};
 
 const MATE_SCORE: i32 = 20000;
 
+const INFINITY: i32 = 30000;
+
 pub fn negamax(
     b: &mut Board,
     depth: u8,
     mut alpha: i32,
-    beta: i32,
+    mut beta: i32,
     tt: &mut TT,
     move_buffers: &mut [Vec<Moves>],
 ) -> i32 {
+    let hash = b.get_hash();
+
+    let mut tt_move: Option<Moves> = None;
+
+    if let Some(entry) = tt.probe(hash) {
+        tt_move = Some(entry.best_move);
+
+        if entry.depth >= depth {
+            match entry.bound {
+                BoundType::Exact => {
+                    return entry.score;
+                }
+                BoundType::Lower => {
+                    if entry.score >= beta {
+                        return beta;
+                    }
+                    alpha = alpha.max(entry.score);
+                }
+                BoundType::Upper => {
+                    if entry.score <= alpha {
+                        return alpha;
+                    }
+                    beta = beta.min(entry.score);
+                }
+            }
+
+            if alpha >= beta {
+                return alpha;
+            }
+        }
+    }
+
     if depth == 0 {
         return quiescence(b, alpha, beta, 0);
     }
@@ -25,17 +59,33 @@ pub fn negamax(
 
     if moves.is_empty() {
         if b.is_king_in_check(turn) {
-            return -20000 + (depth as i32);
+            return -MATE_SCORE + (depth as i32);
         } else {
             return 0;
         }
     }
 
-    let mut best_score = -20001;
+    let mut scored_moves: Vec<(Moves, i32)> = moves
+        .iter()
+        .map(|&mv| {
+            let mut score = mv.score(b);
+            if let Some(tt_mv) = tt_move {
+                if mv.from() == tt_mv.from()
+                    && mv.to() == tt_mv.to()
+                    && mv.promotion_piece() == tt_mv.promotion_piece()
+                {
+                    score += 10_000_000;
+                }
+            }
 
-    let mut scored_moves: Vec<(Moves, i32)> = moves.iter().map(|&mv| (mv, mv.score(b))).collect();
+            (mv, score)
+        })
+        .collect();
 
     scored_moves.sort_by_key(|(_, score)| -score);
+
+    let mut best_score = -INFINITY;
+    let mut best_move: Option<Moves> = None;
 
     for (mv, _) in scored_moves.iter() {
         let undo_info = b.make_move_with_undo(mv);
@@ -46,6 +96,7 @@ pub fn negamax(
 
         if score > best_score {
             best_score = score;
+            best_move = Some(*mv);
         }
 
         if best_score > alpha {
@@ -56,6 +107,23 @@ pub fn negamax(
             break;
         }
     }
+
+    let bound = if best_score >= beta {
+        BoundType::Lower
+    } else {
+        BoundType::Upper
+    };
+
+    let tt_entry = TTEntry::new(
+        hash,
+        best_score,
+        best_move.unwrap_or(Moves::new(0, 0, 0, 0, false)),
+        depth,
+        bound,
+        tt.age,
+    );
+
+    tt.store(hash, tt_entry);
 
     best_score
 }

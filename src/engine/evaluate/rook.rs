@@ -19,16 +19,12 @@ pub fn evaluate_rooks(b: &Board, color: Color) -> i32 {
         let rank = sq / 8;
         let file_mask = 0x0101010101010101u64 << file;
 
-        // Colonna aperta (nessun pedone)
         if (own_pawns.get_value() & file_mask) == 0 && (enemy_pawns.get_value() & file_mask) == 0 {
             score += 40;
-        }
-        // Colonna semi-aperta (solo pedoni nemici)
-        else if (own_pawns.get_value() & file_mask) == 0 {
+        } else if (own_pawns.get_value() & file_mask) == 0 {
             score += 25;
         }
 
-        // Torre sulla settima fila
         let seventh_rank = match color {
             Color::White => rank == 6,
             Color::Black => rank == 1,
@@ -37,7 +33,6 @@ pub fn evaluate_rooks(b: &Board, color: Color) -> i32 {
             score += 30;
         }
 
-        // Torri connesse (sulla stessa fila/colonna senza ostacoli)
         if are_rooks_connected(b, color, sq) {
             score += 15;
         }
@@ -59,10 +54,7 @@ fn are_rooks_connected(b: &Board, color: Color, rook_sq: u8) -> bool {
     let rooks_on_rank = (rooks.get_value() & rank_mask).count_ones();
     let rooks_on_file = (rooks.get_value() & file_mask).count_ones();
 
-    // Se ci sono 2 torri sulla stessa fila/colonna
     if rooks_on_rank >= 2 || rooks_on_file >= 2 {
-        // Verifica che non ci siano pezzi tra loro
-        // (implementazione semplificata)
         return true;
     }
 

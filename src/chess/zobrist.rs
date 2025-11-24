@@ -90,79 +90,117 @@ impl ZobristTable {
         hash
     }
 
-    pub fn update_hash_before(&self, old_hash: u64, b: &Board, mv: &Moves) -> u64 {
-        self.compute_hash(b)
-        // let mut new_hash = old_hash;
-        // let sq_to = mv.to();
-        // let sq_from = mv.from();
-        // let piece_type = b.get_piece_type_at_square(sq_from).unwrap();
-        // let piece_color = b.get_piece_color_at_square(sq_from).unwrap();
-        //
-        // let piece_index = get_piece_index(piece_color, piece_type);
-        //
-        // new_hash ^= self.pieces[piece_index][sq_to as usize];
-        // new_hash ^= self.pieces[piece_index][sq_from as usize];
-        //
-        // if mv.is_capture() {
-        //     if mv.is_enpassant() {
-        //         let captured_pawn_sq = if piece_color == Color::White {
-        //             sq_to - 8
-        //         } else {
-        //             sq_to + 8
-        //         };
-        //         let opponent_color = if piece_color == Color::White {
-        //             Color::Black
-        //         } else {
-        //             Color::White
-        //         };
-        //         let pawn_index = get_piece_index(opponent_color, Type::Pawn);
-        //         new_hash ^= self.pieces[pawn_index][captured_pawn_sq as usize];
-        //     } else {
-        //         let capture_type = b.get_piece_type_at_square(sq_to).unwrap();
-        //         let capture_color = b.get_piece_color_at_square(sq_to).unwrap();
-        //         let capture_index = get_piece_index(capture_color, capture_type);
-        //         new_hash ^= self.pieces[capture_index][sq_to as usize];
-        //     }
-        // }
-        //
-        // if mv.is_promotion() {
-        //     let promoted_piece = mv.promotion_piece_type();
-        //     let promoted_index = get_piece_index(piece_color, promoted_piece);
-        //
-        //     new_hash ^= self.pieces[piece_index][sq_to as usize];
-        //
-        //     new_hash ^= self.pieces[promoted_index][sq_to as usize];
-        // }
-        //
-        // if mv.is_castle() {
-        //     let (rook_from, rook_to) = get_rook_squares_for_castling(sq_from, sq_to);
-        //     let rook_index = get_piece_index(piece_color, Type::Rook);
-        //     new_hash ^= self.pieces[rook_index][rook_from];
-        //     new_hash ^= self.pieces[rook_index][rook_to];
-        // }
-        //
-        // if b.enpassant.get_value() != 0 {
-        //     let old_ep_sq = b.enpassant.lsb();
-        //     let file = (old_ep_sq % 8) as usize;
-        //     new_hash ^= self.en_passant_file[file]
-        // }
-        //
-        // if piece_type == Type::Pawn {
-        //     let distance = (sq_to as i8 - sq_from as i8).abs();
-        //     if distance == 16 {
-        //         let new_ep_file = (sq_to % 8) as usize;
-        //         new_hash ^= self.en_passant_file[new_ep_file];
-        //     }
-        // }
-        //
-        // new_hash ^= self.black_to_move;
-        //
-        // new_hash
+    pub fn update_hash_incremental(
+        &self,
+        old_hash: u64,
+        b: &Board,
+        mv: &Moves,
+        moving_color: Color,
+        captured_piece_type: Option<Type>,
+        captured_on_white: bool,
+        old_enpassant: u64,
+        old_castling_index: usize,
+    ) -> u64 {
+        let mut new_hash = old_hash;
+
+        let from_sq = mv.from() as usize;
+        let to_sq = mv.to() as usize;
+
+        // enpassant
+        let old_ep_file = if old_enpassant != 0 {
+            Some((old_enpassant.trailing_zeros() % 8) as usize)
+        } else {
+            None
+        };
+
+        let new_ep_file = if b.enpassant.get_value() != 0 {
+            Some((b.enpassant.lsb() % 8) as usize)
+        } else {
+            None
+        };
+
+        if old_ep_file != new_ep_file {
+            if let Some(old_file) = old_ep_file {
+                new_hash ^= self.en_passant_file[old_file];
+            }
+            if let Some(new_file) = new_ep_file {
+                new_hash ^= self.en_passant_file[new_file];
+            }
+        }
+
+        // castling
+        let new_castling_index = b.get_castling_index();
+        if old_castling_index != new_castling_index {
+            new_hash ^= self.castling_rights[old_castling_index];
+            new_hash ^= self.castling_rights[new_castling_index];
+        }
+
+        // move
+        if mv.is_castle() {
+            let king_index = get_piece_index(moving_color, Type::King);
+            let rook_index = get_piece_index(moving_color, Type::Rook);
+
+            new_hash ^= self.pieces[king_index][from_sq];
+            new_hash ^= self.pieces[king_index][to_sq];
+
+            let (rook_from, rook_to) = get_rook_squares_for_castling(from_sq as u8, to_sq as u8);
+            new_hash ^= self.pieces[rook_index][rook_from];
+            new_hash ^= self.pieces[rook_index][rook_to];
+        } else {
+            let moving_piece_type = if mv.is_promotion() {
+                Type::Pawn
+            } else {
+                b.get_piece_type_at_square(to_sq as u8)
+                    .unwrap_or(Type::Pawn)
+            };
+
+            let moving_piece_index = get_piece_index(moving_color, moving_piece_type);
+
+            new_hash ^= self.pieces[moving_piece_index][from_sq];
+
+            if mv.is_capture() && !mv.is_enpassant() {
+                if let Some(captured_type) = captured_piece_type {
+                    let captured_color = if captured_on_white {
+                        Color::White
+                    } else {
+                        Color::Black
+                    };
+                    let captured_index = get_piece_index(captured_color, captured_type);
+                    new_hash ^= self.pieces[captured_index][to_sq];
+                }
+            }
+
+            if mv.is_enpassant() {
+                let captured_pawn_sq = if moving_color == Color::White {
+                    to_sq - 8
+                } else {
+                    to_sq + 8
+                };
+                let opponent_color = if moving_color == Color::White {
+                    Color::Black
+                } else {
+                    Color::White
+                };
+                let pawn_index = get_piece_index(opponent_color, Type::Pawn);
+                new_hash ^= self.pieces[pawn_index][captured_pawn_sq];
+            }
+
+            if mv.is_promotion() {
+                let promoted_type = mv.promotion_piece_type();
+                let promoted_index = get_piece_index(moving_color, promoted_type);
+                new_hash ^= self.pieces[promoted_index][to_sq];
+            } else {
+                new_hash ^= self.pieces[moving_piece_index][to_sq];
+            }
+        }
+
+        new_hash ^= self.black_to_move;
+
+        new_hash
     }
 }
 
 //helper
-
 fn get_piece_index(c: Color, t: Type) -> usize {
     match c {
         Color::White => t.id() as usize,

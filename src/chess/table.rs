@@ -1198,10 +1198,16 @@ impl Board {
 
     pub fn perform_move(&mut self, mv: &Moves) -> &Board {
         let old_castling_index = self.get_castling_index();
+        let old_enpassant = self.enpassant.get_value();
+        let moving_color = self.get_side();
 
-        self.hash = ZOBRIST.update_hash_before(self.hash, self, mv);
+        let captured_piece_type = if mv.is_capture() && !mv.is_enpassant() {
+            self.get_piece_type_at_square(mv.to())
+        } else {
+            None
+        };
+        let captured_on_white = (self.white.get_value() & (1u64 << mv.to())) != 0;
 
-        let old_enpassant = self.enpassant;
         self.enpassant.set_empty();
 
         match mv.flags() {
@@ -1209,7 +1215,7 @@ impl Board {
                 self.perform_castle_move(mv);
             }
             FLAG_EN_PASSANT => {
-                self.perform_enpassant_move(mv, old_enpassant);
+                self.perform_enpassant_move(mv, Bitboard::new(old_enpassant));
             }
             _ => {
                 self.perform_normal_move(mv);
@@ -1218,17 +1224,22 @@ impl Board {
 
         self.is_white_turn = !self.is_white_turn;
 
-        let new_castling_index = self.get_castling_index();
-        if old_castling_index != new_castling_index {
-            self.hash ^= ZOBRIST.castling_rights[old_castling_index];
-            self.hash ^= ZOBRIST.castling_rights[new_castling_index];
-        }
+        self.hash = ZOBRIST.update_hash_incremental(
+            self.hash,
+            self,
+            mv,
+            moving_color,
+            captured_piece_type,
+            captured_on_white,
+            old_enpassant,
+            old_castling_index,
+        );
 
         self
     }
 
     #[inline]
-    fn get_castling_index(&self) -> usize {
+    pub fn get_castling_index(&self) -> usize {
         let mut index = 0;
         if self.white_rook_long_side {
             index |= 1;
