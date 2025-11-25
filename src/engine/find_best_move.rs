@@ -3,7 +3,6 @@ use crate::{
     engine::{search::negamax, trasposition_table::TT},
 };
 
-const DEPTH: u8 = 6;
 const MAX_MOVES: usize = 255;
 const INFINITY: i32 = 30000;
 
@@ -16,10 +15,10 @@ impl Engine {
         Engine { tt: TT::new(256) }
     }
 
-    pub fn find_best_move(&mut self, b: &Board) -> Moves {
+    pub fn find_best_move(&mut self, b: &Board, depth: u8) -> Moves {
         let mut board_mut = *b;
         let mut move_buffers: Vec<Vec<Moves>> =
-            (0..=DEPTH).map(|_| Vec::with_capacity(MAX_MOVES)).collect();
+            (0..=depth).map(|_| Vec::with_capacity(MAX_MOVES)).collect();
 
         let (root_move_buffer, next_buffers) = move_buffers.split_at_mut(1);
         let root_move_vec = &mut root_move_buffer[0];
@@ -34,7 +33,7 @@ impl Engine {
         let mut alpha = -INFINITY;
         let beta = INFINITY;
 
-        let mut position_history = [0u64; 32];
+        let mut position_history = [0u64; 128];
         let mut history_len = 0;
 
         position_history[history_len] = board_mut.get_hash();
@@ -45,7 +44,7 @@ impl Engine {
 
             let score = -negamax(
                 &mut board_mut,
-                DEPTH - 1,
+                depth - 1,
                 -beta,
                 -alpha,
                 &mut self.tt,

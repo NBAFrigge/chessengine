@@ -80,7 +80,7 @@ impl UciEngine {
 
     fn handle_uci(&self) -> String {
         let mut response = String::new();
-        response.push_str("id name swag chess V1.2.9\n");
+        response.push_str("id name swag chess V1.2.10\n");
         response.push_str("id author Frigge\n");
         response.push_str("uciok");
         response
@@ -179,8 +179,40 @@ impl UciEngine {
     }
 
     fn handle_go(&mut self, args: &[&str]) -> String {
-        // TODO: parse time controls from args
-        let best_move = self.engine.find_best_move(&self.board);
+        let mut depth = 6; // Default depth
+
+        let mut i = 0;
+        while i < args.len() {
+            match args[i] {
+                "depth" => {
+                    if i + 1 < args.len() {
+                        if let Ok(d) = args[i + 1].parse::<u8>() {
+                            depth = d;
+                        }
+                        i += 2;
+                    } else {
+                        i += 1;
+                    }
+                }
+                "movetime" => {
+                    // TODO: time management
+                    i += 2;
+                }
+                "wtime" | "btime" | "winc" | "binc" => {
+                    // TODO: time management
+                    i += 2;
+                }
+                "infinite" => {
+                    depth = 100;
+                    i += 1;
+                }
+                _ => {
+                    i += 1;
+                }
+            }
+        }
+
+        let best_move = self.engine.find_best_move(&self.board, depth);
         format!("bestmove {}", best_move.to_string())
     }
 }

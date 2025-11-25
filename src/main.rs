@@ -95,7 +95,8 @@ fn start_search() {
         match Board::new_from_fen(fen) {
             Ok(b) => {
                 let start_time = std::time::Instant::now();
-                let best_move = engine.find_best_move(&b);
+                //TODO: add depth
+                let best_move = engine.find_best_move(&b, 5);
                 let elapsed = start_time.elapsed();
 
                 let from_sq = best_move.from();

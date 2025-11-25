@@ -7,10 +7,8 @@ const MATE_SCORE: i32 = 20000;
 
 #[inline(always)]
 fn is_repetition(history: &[u64], history_len: usize, current_hash: u64) -> bool {
-    let start = if history_len > 8 { history_len - 8 } else { 0 };
-
     let mut count = 0;
-    for i in start..history_len {
+    for i in 0..history_len {
         if history[i] == current_hash {
             count += 1;
             if count >= 2 {
@@ -28,12 +26,12 @@ pub fn negamax(
     beta: i32,
     tt: &mut TT,
     move_buffers: &mut [Vec<Moves>],
-    position_history: &mut [u64; 32],
+    position_history: &mut [u64; 128],
     history_len: usize,
 ) -> i32 {
     let current_hash = b.get_hash();
 
-    if depth >= 3 && is_repetition(position_history, history_len, current_hash) {
+    if is_repetition(position_history, history_len, current_hash) {
         return 0;
     }
 
