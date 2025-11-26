@@ -1,6 +1,6 @@
 use crate::{
     chess::{moves_gen::moves_struct::Moves, table::Board},
-    engine::{search::negamax, trasposition_table::TT},
+    engine::{evaluate::evaluate::calculate_game_phase, search::negamax, trasposition_table::TT},
 };
 
 const MAX_MOVES: usize = 255;
@@ -17,6 +17,18 @@ impl Engine {
 
     pub fn find_best_move(&mut self, b: &Board, depth: u8) -> Moves {
         let mut board_mut = *b;
+
+        let phase = calculate_game_phase(b);
+        let adjusted_depth = if phase < 0.2 {
+            depth + 3 // Endgame molto profondo: +3 ply (critico per matti!)
+        } else if phase < 0.4 {
+            depth + 2 // Endgame profondo: +2 ply
+        } else if phase < 0.5 {
+            depth + 1 // Endgame: +1 ply
+        } else {
+            depth
+        };
+
         let mut move_buffers: Vec<Vec<Moves>> =
             (0..=depth).map(|_| Vec::with_capacity(MAX_MOVES)).collect();
 
@@ -44,7 +56,7 @@ impl Engine {
 
             let score = -negamax(
                 &mut board_mut,
-                depth - 1,
+                adjusted_depth - 1,
                 -beta,
                 -alpha,
                 &mut self.tt,

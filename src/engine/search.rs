@@ -21,7 +21,7 @@ fn is_repetition(history: &[u64], history_len: usize, current_hash: u64) -> bool
 
 pub fn negamax(
     b: &mut Board,
-    depth: u8,
+    mut depth: u8,
     mut alpha: i32,
     beta: i32,
     tt: &mut TT,
@@ -33,6 +33,13 @@ pub fn negamax(
 
     if is_repetition(position_history, history_len, current_hash) {
         return 0;
+    }
+
+    let ply = history_len as i32;
+    alpha = alpha.max(-MATE_SCORE + ply);
+    let beta_adjusted = beta.min(MATE_SCORE - ply - 1);
+    if alpha >= beta_adjusted {
+        return alpha;
     }
 
     let alpha_orig = alpha;
@@ -59,6 +66,14 @@ pub fn negamax(
     }
 
     if depth == 0 {
+        if b.is_king_in_check(b.get_side()) {
+            depth = 1;
+        } else {
+            return quiescence(b, alpha, beta, 0);
+        }
+    }
+
+    if move_buffers.is_empty() {
         return quiescence(b, alpha, beta, 0);
     }
 

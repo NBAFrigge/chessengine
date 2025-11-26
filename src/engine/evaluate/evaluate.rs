@@ -1,6 +1,7 @@
 use crate::chess::table::Board;
 use crate::chess::table::{Color, Type};
 use crate::engine::evaluate::bishop_pair::{self, evaluate_bishop_pair};
+use crate::engine::evaluate::endgame::evaluate_endgame_aggression;
 use crate::engine::evaluate::king_safety::evaluate_king_safety;
 use crate::engine::evaluate::pawn_evaluation::evaluate_pawn;
 use crate::engine::evaluate::pst::get_pst_value;
@@ -54,6 +55,11 @@ pub fn evaluate(b: &Board, phase: f32) -> i32 {
         score -= evaluate_center_control(b, Color::Black);
         score += evaluate_premature_pawns(b, Color::White);
         score -= evaluate_premature_pawns(b, Color::Black);
+    }
+
+    if phase < 0.5 {
+        score += evaluate_endgame_aggression(b, Color::White, phase);
+        score -= evaluate_endgame_aggression(b, Color::Black, phase);
     }
 
     if b.is_white_turn { score } else { -score }

@@ -1,11 +1,10 @@
 use crate::bitboard::bitboard::Bitboard;
-use crate::chess::moves_gen::knight::moves;
 use crate::chess::moves_gen::moves_struct::{
     FLAG_CAPTURE, FLAG_CASTLE, FLAG_EN_PASSANT, FLAG_NORMAL, Moves, PROMOTE_BISHOP, PROMOTE_KNIGHT,
     PROMOTE_QUEEN, PROMOTE_ROOK,
 };
-use crate::chess::moves_gen::{self, bishop, king, queen};
-use crate::chess::zobrist::{ZOBRIST, ZobristTable};
+use crate::chess::moves_gen::{self};
+use crate::chess::zobrist::ZOBRIST;
 use either::Either;
 use std::cmp::PartialEq;
 use strum::IntoEnumIterator;
