@@ -1,3 +1,5 @@
+use std::time::{Duration, Instant};
+
 use crate::{
     chess::{moves_gen::moves_struct::Moves, table::Board},
     engine::{evaluate::evaluate::calculate_game_phase, search::negamax, trasposition_table::TT},
@@ -15,24 +17,23 @@ impl Engine {
         Engine { tt: TT::new(256) }
     }
 
-    pub fn find_best_move(&mut self, b: &Board, depth: u8) -> Moves {
+    pub fn find_best_move(
+        &mut self,
+        b: &Board,
+        max_depth: u8,
+        game_history: &[u64],
+        time_limit: Option<u64>,
+    ) -> Moves {
         let mut board_mut = *b;
+        let start_time = Instant::now();
 
-        let phase = calculate_game_phase(b);
-        let adjusted_depth = if phase < 0.2 {
-            depth + 3
-        } else if phase < 0.4 {
-            depth + 2
-        } else if phase < 0.5 {
-            depth + 1
-        } else {
-            depth
-        };
+        let limit_duration = time_limit.map(|ms| Duration::from_millis(ms));
 
-        let mut move_buffers: Vec<Vec<Moves>> =
-            (0..=depth).map(|_| Vec::with_capacity(MAX_MOVES)).collect();
+        let mut move_buffers: Vec<Vec<Moves>> = (0..=max_depth + 1)
+            .map(|_| Vec::with_capacity(MAX_MOVES))
+            .collect();
 
-        let (root_move_buffer, next_buffers) = move_buffers.split_at_mut(1);
+        let (root_move_buffer, _) = move_buffers.split_at_mut(1);
         let root_move_vec = &mut root_move_buffer[0];
         let turn = board_mut.get_side();
         let moves = board_mut.get_legal_moves(turn, root_move_vec);
@@ -41,39 +42,73 @@ impl Engine {
             return Moves::new(0, 0, 0, 0, false);
         }
 
-        let mut best_move = moves[0];
-        let mut alpha = -INFINITY;
-        let beta = INFINITY;
+        let mut global_best_move = moves[0];
 
-        let mut position_history = [0u64; 128];
-        let mut history_len = 0;
+        let mut search_history = game_history.to_vec();
+        search_history.push(board_mut.get_hash());
 
-        position_history[history_len] = board_mut.get_hash();
-        history_len += 1;
+        for current_depth in 1..=max_depth {
+            let mut best_move_this_depth = global_best_move;
+            let mut alpha = -INFINITY;
+            let beta = INFINITY;
+            let mut best_score = -INFINITY;
 
-        for mv in moves.iter() {
-            let undo_info = board_mut.make_move_with_undo(mv);
+            let mut depth_completed = true;
 
-            let score = -negamax(
-                &mut board_mut,
-                adjusted_depth - 1,
-                -beta,
-                -alpha,
-                &mut self.tt,
-                next_buffers,
-                &mut position_history,
-                history_len,
-            );
+            let mut iter_buffers: Vec<Vec<Moves>> = (0..=current_depth + 1)
+                .map(|_| Vec::with_capacity(MAX_MOVES))
+                .collect();
+            let (_, next_buffers) = iter_buffers.split_at_mut(1);
 
-            board_mut.unmake_move(mv, undo_info);
+            for mv in moves.iter() {
+                if let Some(limit) = limit_duration {
+                    if start_time.elapsed() > limit {
+                        depth_completed = false;
+                        break;
+                    }
+                }
 
-            if score > alpha {
-                alpha = score;
-                best_move = *mv;
+                let undo_info = board_mut.make_move_with_undo(mv);
+                search_history.push(board_mut.get_hash());
+
+                let score = -negamax(
+                    &mut board_mut,
+                    current_depth - 1,
+                    -beta,
+                    -alpha,
+                    &mut self.tt,
+                    next_buffers,
+                    &mut search_history,
+                    1,
+                );
+
+                search_history.pop();
+                board_mut.unmake_move(mv, undo_info);
+
+                if score > best_score {
+                    best_score = score;
+                    best_move_this_depth = *mv;
+                }
+
+                if score > alpha {
+                    alpha = score;
+                }
+            }
+
+            if depth_completed {
+                global_best_move = best_move_this_depth;
+            } else {
+                break;
+            }
+
+            if let Some(limit) = limit_duration {
+                if start_time.elapsed() > limit / 2 {
+                    break;
+                }
             }
         }
 
-        best_move
+        global_best_move
     }
 
     pub fn clear(&mut self) {

@@ -14,14 +14,17 @@ pub struct UciEngine {
     board: Board,
     engine: Engine,
     debug: bool,
+    history: Vec<u64>,
 }
 
 impl UciEngine {
     pub fn new() -> Self {
+        let board = Board::new();
         Self {
-            board: Board::new(),
+            board,
             engine: Engine::new(),
             debug: false,
+            history: vec![board.get_hash()],
         }
     }
 
@@ -80,7 +83,7 @@ impl UciEngine {
 
     fn handle_uci(&self) -> String {
         let mut response = String::new();
-        response.push_str("id name swag chess V1.3.1\n");
+        response.push_str("id name swag chess V1.3.2\n");
         response.push_str("id author Frigge\n");
         response.push_str("uciok");
         response
@@ -179,7 +182,10 @@ impl UciEngine {
     }
 
     fn handle_go(&mut self, args: &[&str]) -> String {
-        let mut depth = 6; // Default depth
+        let mut depth = 6;
+        let mut wtime: Option<u64> = None;
+        let mut btime: Option<u64> = None;
+        let mut infinite = false;
 
         let mut i = 0;
         while i < args.len() {
@@ -194,16 +200,28 @@ impl UciEngine {
                         i += 1;
                     }
                 }
-                "movetime" => {
-                    // TODO: time management
-                    i += 2;
+                "wtime" => {
+                    if i + 1 < args.len() {
+                        if let Ok(t) = args[i + 1].parse::<u64>() {
+                            wtime = Some(t);
+                        }
+                        i += 2;
+                    } else {
+                        i += 1;
+                    }
                 }
-                "wtime" | "btime" | "winc" | "binc" => {
-                    // TODO: time management
-                    i += 2;
+                "btime" => {
+                    if i + 1 < args.len() {
+                        if let Ok(t) = args[i + 1].parse::<u64>() {
+                            btime = Some(t);
+                        }
+                        i += 2;
+                    } else {
+                        i += 1;
+                    }
                 }
                 "infinite" => {
-                    depth = 100;
+                    infinite = true;
                     i += 1;
                 }
                 _ => {
@@ -212,7 +230,26 @@ impl UciEngine {
             }
         }
 
-        let best_move = self.engine.find_best_move(&self.board, depth);
+        let time_limit = if infinite {
+            None
+        } else {
+            let my_time = if self.board.is_white_turn {
+                wtime
+            } else {
+                btime
+            };
+            match my_time {
+                Some(t) => {
+                    let alloc = t / 30;
+                    Some(alloc.max(50))
+                }
+                None => None,
+            }
+        };
+
+        let best_move = self
+            .engine
+            .find_best_move(&self.board, depth, &self.history, time_limit);
         format!("bestmove {}", best_move.to_string())
     }
 }

@@ -5,12 +5,11 @@ use crate::engine::trasposition_table::{BoundType, TT, TTEntry};
 
 const MATE_SCORE: i32 = 20000;
 const CONTEMPT: i32 = 50;
-
 #[inline(always)]
-fn is_repetition(history: &[u64], history_len: usize, current_hash: u64) -> bool {
+fn is_repetition(history: &[u64], current_hash: u64) -> bool {
     let mut count = 0;
-    for i in 0..history_len {
-        if history[i] == current_hash {
+    for &h in history {
+        if h == current_hash {
             count += 1;
             if count >= 2 {
                 return true;
@@ -27,16 +26,15 @@ pub fn negamax(
     beta: i32,
     tt: &mut TT,
     move_buffers: &mut [Vec<Moves>],
-    position_history: &mut [u64; 128],
-    history_len: usize,
+    position_history: &mut Vec<u64>,
+    ply: i32,
 ) -> i32 {
     let current_hash = b.get_hash();
 
-    if is_repetition(position_history, history_len, current_hash) {
+    if is_repetition(position_history, current_hash) {
         return -CONTEMPT;
     }
 
-    let ply = history_len as i32;
     alpha = alpha.max(-MATE_SCORE + ply);
     let beta_adjusted = beta.min(MATE_SCORE - ply - 1);
     if alpha >= beta_adjusted {
@@ -86,7 +84,7 @@ pub fn negamax(
 
     if moves.is_empty() {
         if b.is_king_in_check(turn) {
-            return -MATE_SCORE + (depth as i32);
+            return -MATE_SCORE + ply;
         } else {
             return 0;
         }
@@ -111,12 +109,7 @@ pub fn negamax(
     for (mv, _) in scored_moves.iter() {
         let undo_info = b.make_move_with_undo(mv);
 
-        let new_history_len = if history_len < 32 {
-            position_history[history_len] = b.get_hash();
-            history_len + 1
-        } else {
-            history_len
-        };
+        position_history.push(b.get_hash());
 
         let score = -negamax(
             b,
@@ -126,9 +119,10 @@ pub fn negamax(
             tt,
             next_buffers,
             position_history,
-            new_history_len,
+            ply + 1,
         );
 
+        position_history.pop();
         b.unmake_move(mv, undo_info);
 
         if score > best_score {

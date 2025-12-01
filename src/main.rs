@@ -8,7 +8,7 @@ mod chess;
 mod engine;
 mod uci;
 use chess::moves_gen::magic_bitboards;
-use std::env;
+use std::{env, vec};
 fn main() {
     magic_bitboards::init();
     let args: Vec<String> = env::args().collect();
@@ -95,7 +95,9 @@ fn start_search() {
         match Board::new_from_fen(fen) {
             Ok(b) => {
                 let start_time = std::time::Instant::now();
-                let best_move = engine.find_best_move(&b, 5);
+                let game_history: Vec<u64> = Vec::new();
+
+                let best_move = engine.find_best_move(&b, 5, &game_history, Some(10000000));
                 let elapsed = start_time.elapsed();
 
                 let from_sq = best_move.from();
