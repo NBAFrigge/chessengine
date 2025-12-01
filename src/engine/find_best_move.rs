@@ -20,11 +20,11 @@ impl Engine {
 
         let phase = calculate_game_phase(b);
         let adjusted_depth = if phase < 0.2 {
-            depth + 3 // Endgame molto profondo: +3 ply (critico per matti!)
+            depth + 3
         } else if phase < 0.4 {
-            depth + 2 // Endgame profondo: +2 ply
+            depth + 2
         } else if phase < 0.5 {
-            depth + 1 // Endgame: +1 ply
+            depth + 1
         } else {
             depth
         };

@@ -1,5 +1,28 @@
 use crate::chess::table::{Board, Color, Type};
 
+pub fn evaluate_endgame_aggression(b: &Board, color: Color, phase: f32) -> i32 {
+    if phase > 0.5 {
+        return 0;
+    }
+
+    let mut score = 0;
+
+    score += king_mobility(b, color);
+
+    score += king_proximity_to_pawns(b, color);
+
+    score += king_opposition(b, color);
+    score += push_enemy_king_to_edge(b, color);
+
+    score += advanced_pawns_bonus(b, color);
+
+    score += control_key_squares(b, color);
+
+    let endgame_multiplier = 1.0 + (0.5 - phase) * 2.0;
+
+    (score as f32 * endgame_multiplier) as i32
+}
+
 pub fn king_mobility(b: &Board, color: Color) -> i32 {
     let king_sq = b.get_pieces(color, Type::King).lsb() as u8;
     let king_bb = 1u64 << king_sq;
@@ -12,19 +35,40 @@ pub fn king_mobility(b: &Board, color: Color) -> i32 {
     free_squares * 3
 }
 
-pub fn king_centralization(b: &Board, color: Color) -> i32 {
+pub fn king_proximity_to_pawns(b: &Board, color: Color) -> i32 {
     let king_sq = b.get_pieces(color, Type::King).lsb() as i32;
-    let file = king_sq % 8;
-    let rank = king_sq / 8;
+    let king_file = king_sq % 8;
+    let king_rank = king_sq / 8;
 
-    let center_file = if file < 4 { 3 } else { 4 };
-    let center_rank = if rank < 4 { 3 } else { 4 };
+    let own_pawns = b.get_pieces(color, Type::Pawn);
 
-    let file_dist = (file - center_file).abs();
-    let rank_dist = (rank - center_rank).abs();
-    let distance_from_center = file_dist.max(rank_dist);
+    let target_pawns = if own_pawns.count_ones() > 0 {
+        own_pawns
+    } else {
+        let enemy_color = match color {
+            Color::White => Color::Black,
+            Color::Black => Color::White,
+        };
+        b.get_pieces(enemy_color, Type::Pawn)
+    };
 
-    (7 - distance_from_center) * 8
+    if target_pawns.count_ones() == 0 {
+        return 0;
+    }
+
+    let mut min_dist = 100;
+    for pawn in target_pawns.iter_bits() {
+        let p_sq = pawn.lsb() as i32;
+        let p_file = p_sq % 8;
+        let p_rank = p_sq / 8;
+
+        let dist = (king_file - p_file).abs() + (king_rank - p_rank).abs(); // Distanza Manhattan
+        if dist < min_dist {
+            min_dist = dist;
+        }
+    }
+
+    (14 - min_dist) * 10
 }
 
 pub fn king_opposition(b: &Board, color: Color) -> i32 {
@@ -41,10 +85,8 @@ pub fn king_opposition(b: &Board, color: Color) -> i32 {
     let enemy_file = enemy_king_sq % 8;
     let enemy_rank = enemy_king_sq / 8;
 
-    // Distanza di Manhattan
     let distance = (own_file - enemy_file).abs() + (own_rank - enemy_rank).abs();
 
-    // Premia re vicini
     if distance <= 7 {
         10 * (14 - distance)
     } else {
@@ -85,22 +127,32 @@ pub fn advanced_pawns_bonus(b: &Board, color: Color) -> i32 {
             Color::Black => 7 - rank,
         };
 
-        let base_bonus = advancement * 15;
+        let mut bonus = advancement * advancement;
 
-        let extra_bonus = match advancement {
-            6 => 50,
-            5 => 20,
-            _ => 0,
-        };
-
-        score += base_bonus + extra_bonus;
+        if advancement == 6 {
+            bonus += 50;
+        }
 
         if is_passed_pawn(b, color, sq as u8) {
-            score += advancement * 20;
+            bonus *= 2;
+
+            if is_supported_by_rook(b, color, sq as u8) {
+                bonus += 20;
+            }
         }
+
+        score += bonus * 5;
     }
 
     score
+}
+
+fn is_supported_by_rook(b: &Board, color: Color, pawn_sq: u8) -> bool {
+    let file = pawn_sq % 8;
+    let rooks = b.get_pieces(color, Type::Rook);
+    let file_mask = 0x0101010101010101u64 << file;
+
+    (rooks.get_value() & file_mask) != 0
 }
 
 fn is_passed_pawn(b: &Board, color: Color, square: u8) -> bool {
@@ -222,26 +274,4 @@ fn is_square_controlled(b: &Board, color: Color, square: u8) -> bool {
     }
 
     false
-}
-
-pub fn evaluate_endgame_aggression(b: &Board, color: Color, phase: f32) -> i32 {
-    if phase > 0.5 {
-        return 0;
-    }
-
-    let mut score = 0;
-
-    score += king_mobility(b, color);
-    score += king_centralization(b, color);
-
-    score += king_opposition(b, color);
-    score += push_enemy_king_to_edge(b, color);
-
-    score += advanced_pawns_bonus(b, color);
-
-    score += control_key_squares(b, color);
-
-    let endgame_multiplier = 1.0 + (0.5 - phase) * 2.0;
-
-    (score as f32 * endgame_multiplier) as i32
 }

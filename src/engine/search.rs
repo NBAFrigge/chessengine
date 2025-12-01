@@ -4,6 +4,7 @@ use crate::engine::quiescence::quiescence;
 use crate::engine::trasposition_table::{BoundType, TT, TTEntry};
 
 const MATE_SCORE: i32 = 20000;
+const CONTEMPT: i32 = 50;
 
 #[inline(always)]
 fn is_repetition(history: &[u64], history_len: usize, current_hash: u64) -> bool {
@@ -32,7 +33,7 @@ pub fn negamax(
     let current_hash = b.get_hash();
 
     if is_repetition(position_history, history_len, current_hash) {
-        return 0;
+        return -CONTEMPT;
     }
 
     let ply = history_len as i32;
