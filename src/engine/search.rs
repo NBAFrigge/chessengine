@@ -43,24 +43,13 @@ pub fn negamax(
 
     let alpha_orig = alpha;
 
-    if let Some(entry) = tt.probe(current_hash) {
-        if entry.depth >= depth {
-            match entry.bound {
-                BoundType::Exact => return entry.score,
-                BoundType::Lower => {
-                    if entry.score > alpha {
-                        alpha = entry.score;
-                    }
-                }
-                BoundType::Upper => {
-                    if entry.score < beta {
-                        return entry.score;
-                    }
-                }
-            }
-            if alpha >= beta {
-                return entry.score;
-            }
+    if let Some(entry) = tt.probe(current_hash).filter(|e| e.depth >= depth) {
+        match entry.bound {
+            BoundType::Exact => return entry.score,
+            BoundType::Upper if entry.score <= alpha => return alpha,
+            BoundType::Lower if entry.score >= beta => return beta,
+            BoundType::Lower => alpha = alpha.max(entry.score),
+            BoundType::Upper => {}
         }
     }
 

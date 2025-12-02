@@ -515,6 +515,7 @@ impl Board {
                                 PROMOTE_QUEEN,
                                 flag,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -522,6 +523,7 @@ impl Board {
                                 PROMOTE_ROOK,
                                 flag,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -529,6 +531,7 @@ impl Board {
                                 PROMOTE_BISHOP,
                                 flag,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -536,6 +539,7 @@ impl Board {
                                 PROMOTE_KNIGHT,
                                 flag,
                                 true,
+                                false,
                             ));
                         } else {
                             let flag = if is_capture {
@@ -543,7 +547,7 @@ impl Board {
                             } else {
                                 FLAG_NORMAL
                             };
-                            buffer.push(Moves::new(from_square, to_square, 0, flag, false));
+                            buffer.push(Moves::new(from_square, to_square, 0, flag, false, false));
                         }
                     }
 
@@ -559,6 +563,7 @@ impl Board {
                                 to_square,
                                 0,
                                 FLAG_EN_PASSANT,
+                                false,
                                 false,
                             ));
                         }
@@ -589,6 +594,7 @@ impl Board {
                                 PROMOTE_QUEEN,
                                 flag,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -596,6 +602,7 @@ impl Board {
                                 PROMOTE_ROOK,
                                 flag,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -603,6 +610,7 @@ impl Board {
                                 PROMOTE_BISHOP,
                                 flag,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -610,6 +618,7 @@ impl Board {
                                 PROMOTE_KNIGHT,
                                 flag,
                                 true,
+                                false,
                             ));
                         } else {
                             let flag = if is_capture {
@@ -617,7 +626,7 @@ impl Board {
                             } else {
                                 FLAG_NORMAL
                             };
-                            buffer.push(Moves::new(from_square, to_square, 0, flag, false));
+                            buffer.push(Moves::new(from_square, to_square, 0, flag, false, false));
                         }
                     }
 
@@ -633,6 +642,7 @@ impl Board {
                                 to_square,
                                 0,
                                 FLAG_EN_PASSANT,
+                                false,
                                 false,
                             ));
                         }
@@ -659,7 +669,7 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                buffer.push(Moves::new(from_square, to_square, 0, flag, false));
+                buffer.push(Moves::new(from_square, to_square, 0, flag, false, false));
             }
         }
     }
@@ -682,7 +692,7 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                buffer.push(Moves::new(from_square, to_square, 0, flag, false));
+                buffer.push(Moves::new(from_square, to_square, 0, flag, false, false));
             }
         }
     }
@@ -705,7 +715,7 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                buffer.push(Moves::new(from_square, to_square, 0, flag, false));
+                buffer.push(Moves::new(from_square, to_square, 0, flag, false, false));
             }
         }
     }
@@ -727,7 +737,7 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                buffer.push(Moves::new(from_square, to_square, 0, flag, false));
+                buffer.push(Moves::new(from_square, to_square, 0, flag, false, false));
             }
         }
     }
@@ -749,7 +759,7 @@ impl Board {
                     FLAG_NORMAL
                 };
 
-                buffer.push(Moves::new(from_square, to_square, 0, flag, false));
+                buffer.push(Moves::new(from_square, to_square, 0, flag, false, false));
             }
         }
     }
@@ -761,18 +771,18 @@ impl Board {
         match color {
             Color::White => {
                 if self.can_castle(color, Side::Long) {
-                    buffer.push(Moves::new(4, 2, 0, FLAG_CASTLE, false));
+                    buffer.push(Moves::new(4, 2, 0, FLAG_CASTLE, false, false));
                 }
                 if self.can_castle(color, Side::Short) {
-                    buffer.push(Moves::new(4, 6, 0, FLAG_CASTLE, false));
+                    buffer.push(Moves::new(4, 6, 0, FLAG_CASTLE, false, false));
                 }
             }
             Color::Black => {
                 if self.can_castle(color, Side::Long) {
-                    buffer.push(Moves::new(60, 58, 0, FLAG_CASTLE, false));
+                    buffer.push(Moves::new(60, 58, 0, FLAG_CASTLE, false, false));
                 }
                 if self.can_castle(color, Side::Short) {
-                    buffer.push(Moves::new(60, 62, 0, FLAG_CASTLE, false));
+                    buffer.push(Moves::new(60, 62, 0, FLAG_CASTLE, false, false));
                 }
             }
         }
@@ -1005,6 +1015,7 @@ impl Board {
                                 PROMOTE_QUEEN,
                                 FLAG_CAPTURE,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -1012,6 +1023,7 @@ impl Board {
                                 PROMOTE_ROOK,
                                 FLAG_CAPTURE,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -1019,6 +1031,7 @@ impl Board {
                                 PROMOTE_BISHOP,
                                 FLAG_CAPTURE,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -1026,9 +1039,17 @@ impl Board {
                                 PROMOTE_KNIGHT,
                                 FLAG_CAPTURE,
                                 true,
+                                false,
                             ));
                         } else {
-                            buffer.push(Moves::new(from_square, to_square, 0, FLAG_CAPTURE, false));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                0,
+                                FLAG_CAPTURE,
+                                false,
+                                false,
+                            ));
                         }
                     }
 
@@ -1045,6 +1066,7 @@ impl Board {
                                 to_square,
                                 0,
                                 FLAG_EN_PASSANT,
+                                false,
                                 false,
                             ));
                         }
@@ -1068,6 +1090,7 @@ impl Board {
                                 PROMOTE_QUEEN,
                                 FLAG_CAPTURE,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -1075,6 +1098,7 @@ impl Board {
                                 PROMOTE_ROOK,
                                 FLAG_CAPTURE,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -1082,6 +1106,7 @@ impl Board {
                                 PROMOTE_BISHOP,
                                 FLAG_CAPTURE,
                                 true,
+                                false,
                             ));
                             buffer.push(Moves::new(
                                 from_square,
@@ -1089,9 +1114,17 @@ impl Board {
                                 PROMOTE_KNIGHT,
                                 FLAG_CAPTURE,
                                 true,
+                                false,
                             ));
                         } else {
-                            buffer.push(Moves::new(from_square, to_square, 0, FLAG_CAPTURE, false));
+                            buffer.push(Moves::new(
+                                from_square,
+                                to_square,
+                                0,
+                                FLAG_CAPTURE,
+                                false,
+                                false,
+                            ));
                         }
                     }
 
@@ -1108,6 +1141,7 @@ impl Board {
                                 to_square,
                                 0,
                                 FLAG_EN_PASSANT,
+                                false,
                                 false,
                             ));
                         }
@@ -1127,7 +1161,14 @@ impl Board {
             while temp_bb != 0 {
                 let to_square = temp_bb.trailing_zeros() as u8;
                 temp_bb &= temp_bb - 1;
-                buffer.push(Moves::new(from_sq, to_square, 0, FLAG_CAPTURE, false));
+                buffer.push(Moves::new(
+                    from_sq,
+                    to_square,
+                    0,
+                    FLAG_CAPTURE,
+                    false,
+                    false,
+                ));
             }
         }
     }
@@ -1142,7 +1183,14 @@ impl Board {
             while temp_bb != 0 {
                 let to_square = temp_bb.trailing_zeros() as u8;
                 temp_bb &= temp_bb - 1;
-                buffer.push(Moves::new(from_sq, to_square, 0, FLAG_CAPTURE, false));
+                buffer.push(Moves::new(
+                    from_sq,
+                    to_square,
+                    0,
+                    FLAG_CAPTURE,
+                    false,
+                    false,
+                ));
             }
         }
     }
@@ -1158,7 +1206,14 @@ impl Board {
             while temp_bb != 0 {
                 let to_square = temp_bb.trailing_zeros() as u8;
                 temp_bb &= temp_bb - 1;
-                buffer.push(Moves::new(from_sq, to_square, 0, FLAG_CAPTURE, false));
+                buffer.push(Moves::new(
+                    from_sq,
+                    to_square,
+                    0,
+                    FLAG_CAPTURE,
+                    false,
+                    false,
+                ));
             }
         }
     }
@@ -1174,7 +1229,14 @@ impl Board {
             while temp_bb != 0 {
                 let to_square = temp_bb.trailing_zeros() as u8;
                 temp_bb &= temp_bb - 1;
-                buffer.push(Moves::new(from_sq, to_square, 0, FLAG_CAPTURE, false));
+                buffer.push(Moves::new(
+                    from_sq,
+                    to_square,
+                    0,
+                    FLAG_CAPTURE,
+                    false,
+                    false,
+                ));
             }
         }
     }
@@ -1190,7 +1252,14 @@ impl Board {
             while temp_bb != 0 {
                 let to_square = temp_bb.trailing_zeros() as u8;
                 temp_bb &= temp_bb - 1;
-                buffer.push(Moves::new(from_sq, to_square, 0, FLAG_CAPTURE, false));
+                buffer.push(Moves::new(
+                    from_sq,
+                    to_square,
+                    0,
+                    FLAG_CAPTURE,
+                    false,
+                    false,
+                ));
             }
         }
     }
@@ -1460,6 +1529,7 @@ impl Board {
             _ => {}
         }
     }
+
     fn unmake_simple_move(&mut self, mv: &Moves, undo_info: &UndoInfo) {
         let from_bb = 1u64 << mv.from();
         let to_bb = 1u64 << mv.to();
@@ -1553,6 +1623,7 @@ impl Board {
             _ => {}
         }
     }
+
     fn unmake_enpassant_move(&mut self, mv: &Moves, undo_info: &UndoInfo) {
         let from_bb = 1u64 << mv.from();
         let to_bb = 1u64 << mv.to();
@@ -1656,13 +1727,9 @@ impl Board {
             .chars()
             .enumerate()
             .flat_map(|(i, c)| {
-                if i != 0 && i % 1 == 0 {
-                    Some(' ')
-                } else {
-                    None
-                }
-                .into_iter()
-                .chain(std::iter::once(c))
+                if i != 0 { Some(' ') } else { None }
+                    .into_iter()
+                    .chain(std::iter::once(c))
             })
             .collect::<String>();
 

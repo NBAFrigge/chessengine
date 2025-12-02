@@ -4,7 +4,7 @@
 // Bits 12-13: promotion piece
 // Bit 14:     is_promotion flag (0/1)
 // Bits 15-16: special flags
-
+// Bit 17:     is_null_move_flag
 use crate::chess::table::{Board, Type};
 
 const FROM_MASK: u32 = 0x3F; // 000000...111111
@@ -12,6 +12,7 @@ const TO_MASK: u32 = 0xFC0; // 000000...111111000000
 const PROMO_MASK: u32 = 0x3000; // promotion (bits 12–13)
 const IS_PROMO_MASK: u32 = 0x4000; // bit 14
 const FLAGS_MASK: u32 = 0x18000; // bits 15–16
+const NULL_MOVE_MASK: u32 = 0x20000; // null move
 
 pub const FLAG_NORMAL: u8 = 0;
 pub const FLAG_CAPTURE: u8 = 1;
@@ -37,7 +38,14 @@ const MVV_LVA: [[i32; 6]; 6] = [
 pub struct Moves(u32);
 
 impl Moves {
-    pub fn new(from: u8, to: u8, promotion: u8, flags: u8, is_promotion: bool) -> Self {
+    pub fn new(
+        from: u8,
+        to: u8,
+        promotion: u8,
+        flags: u8,
+        is_promotion: bool,
+        is_null_move: bool,
+    ) -> Self {
         let mut m = 0u32;
 
         m |= (from as u32) & FROM_MASK;
@@ -47,6 +55,10 @@ impl Moves {
 
         if is_promotion {
             m |= IS_PROMO_MASK;
+        }
+
+        if is_null_move {
+            m |= NULL_MOVE_MASK
         }
 
         Moves(m)
@@ -88,6 +100,10 @@ impl Moves {
 
     pub fn is_enpassant(&self) -> bool {
         self.flags() == FLAG_EN_PASSANT
+    }
+
+    pub fn is_null_move(&self) -> bool {
+        self.0 & NULL_MOVE_MASK > 0
     }
 
     pub fn flags(&self) -> u8 {

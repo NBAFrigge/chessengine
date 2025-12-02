@@ -39,7 +39,7 @@ impl Engine {
         let moves = board_mut.get_legal_moves(turn, root_move_vec);
 
         if moves.is_empty() {
-            return Moves::new(0, 0, 0, 0, false);
+            return Moves::new(0, 0, 0, 0, false, false);
         }
 
         let mut global_best_move = moves[0];
@@ -62,8 +62,7 @@ impl Engine {
 
             for mv in moves.iter() {
                 if let Some(limit) = limit_duration {
-                    if start_time.elapsed() > limit {
-                        depth_completed = false;
+                    if start_time.elapsed() > limit / 2 {
                         break;
                     }
                 }
