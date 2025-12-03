@@ -178,7 +178,7 @@ impl UciEngine {
             }
         }
 
-        Some(Moves::new(from, to, promotion, flags, is_promotion, false))
+        Some(Moves::new(from, to, promotion, flags, is_promotion))
     }
 
     fn handle_go(&mut self, args: &[&str]) -> String {
