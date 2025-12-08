@@ -7,6 +7,7 @@ use crate::{
 
 const MAX_MOVES: usize = 255;
 const INFINITY: i32 = 30000;
+const MAX_PLY: usize = 64;
 
 pub struct Engine {
     tt: TT,
@@ -26,6 +27,7 @@ impl Engine {
     ) -> Moves {
         let mut board_mut = *b;
         let start_time = Instant::now();
+        let mut killer_moves = [[Moves::new(0, 0, 0, 0, false); 2]; MAX_PLY];
 
         let limit_duration = time_limit.map(|ms| Duration::from_millis(ms));
 
@@ -79,6 +81,7 @@ impl Engine {
                     &mut self.tt,
                     next_buffers,
                     &mut search_history,
+                    &mut killer_moves,
                     1,
                 );
 
