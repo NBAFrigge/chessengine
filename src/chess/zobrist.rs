@@ -9,8 +9,8 @@ use crate::chess::{
 pub struct ZobristTable {
     pub pieces: [[u64; 64]; 12], // 0-5:  White Pawn, Knight, Bishop, Rook, Queen, King | 6-11: Black Pawn, Knight, Bishop, Rook, Queen, King
     pub castling_rights: [u64; 16],
-    en_passant_file: [u64; 8],
-    black_to_move: u64,
+    pub en_passant_file: [u64; 8],
+    pub black_to_move: u64,
 }
 
 lazy_static! {

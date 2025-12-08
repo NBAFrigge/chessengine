@@ -21,6 +21,13 @@ pub enum Color {
     Black,
 }
 
+// TODO: Move in moves_struct
+#[derive(Clone, Copy)]
+pub struct NullMoveUndo {
+    enpassant: u64,
+    hash: u64,
+}
+
 #[derive(Debug, EnumIter, Copy, Clone, PartialEq)]
 pub enum Type {
     Pawn,
@@ -1581,6 +1588,44 @@ impl Board {
             self.pawn = self.pawn.or(Bitboard::new(captured_pawn_pos));
             self.white = self.white.or(Bitboard::new(captured_pawn_pos));
         }
+    }
+
+    #[inline(always)]
+    pub fn make_null_move(&mut self) -> NullMoveUndo {
+        let undo = NullMoveUndo {
+            enpassant: self.enpassant.get_value(),
+            hash: self.hash,
+        };
+
+        if self.enpassant.get_value() != 0 {
+            let file = (self.enpassant.lsb() % 8) as usize;
+            self.hash ^= ZOBRIST.en_passant_file[file];
+            self.enpassant.set_empty();
+        }
+
+        self.is_white_turn = !self.is_white_turn;
+
+        self.hash ^= ZOBRIST.black_to_move;
+
+        undo
+    }
+
+    #[inline(always)]
+    pub fn unmake_null_move(&mut self, undo: NullMoveUndo) {
+        self.is_white_turn = !self.is_white_turn;
+        self.enpassant = crate::bitboard::bitboard::Bitboard::new(undo.enpassant);
+        self.hash = undo.hash;
+    }
+
+    #[inline(always)]
+    pub fn has_non_pawn_material(&self, color: Color) -> bool {
+        // Uniamo le bitboard di Cavalli, Alfieri, Torri e Regine
+        let knights = self.get_pieces(color, Type::Knight).get_value();
+        let bishops = self.get_pieces(color, Type::Bishop).get_value();
+        let rooks = self.get_pieces(color, Type::Rook).get_value();
+        let queens = self.get_pieces(color, Type::Queen).get_value();
+
+        (knights | bishops | rooks | queens) != 0
     }
 
     #[allow(dead_code)]

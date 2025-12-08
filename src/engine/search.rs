@@ -82,6 +82,36 @@ pub fn negamax(
     current_buffer[0].clear();
 
     let turn = b.get_side();
+
+    if depth >= 3
+        && beta < MATE_SCORE
+        && ply > 0
+        && b.has_non_pawn_material(turn)
+        && !b.is_king_in_check(turn)
+    {
+        let r = 2;
+        let undo_null = b.make_null_move();
+
+        let score = -negamax(
+            b,
+            depth - 1 - r,
+            -beta,
+            -beta + 1,
+            tt,
+            next_buffers,
+            position_history,
+            killer_moves,
+            history,
+            ply + 1,
+        );
+
+        b.unmake_null_move(undo_null);
+
+        if score >= beta {
+            return beta;
+        }
+    }
+
     let moves = b.get_legal_moves(turn, &mut current_buffer[0]);
 
     if moves.is_empty() {
