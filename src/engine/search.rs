@@ -28,6 +28,7 @@ pub fn negamax(
     move_buffers: &mut [Vec<Moves>],
     position_history: &mut Vec<u64>,
     killer_moves: &mut [[Moves; 2]; 64],
+    history: &mut [[i32; 64]; 64],
     ply: i32,
 ) -> i32 {
     let current_hash = b.get_hash();
@@ -97,13 +98,27 @@ pub fn negamax(
     let mut scored_moves: Vec<(Moves, i32)> = moves
         .iter()
         .map(|&mv| {
-            let mut score = mv.score(b);
+            let mut score = 0;
+            if mv.is_capture() {
+                score = mv.score(b);
+            } else {
+                let mut is_killer = false;
+                if (ply as usize) < 64 {
+                    if mv == killer_moves[ply as usize][0] {
+                        score = 900_000;
+                        is_killer = true;
+                    } else if mv == killer_moves[ply as usize][1] {
+                        score = 800_000;
+                        is_killer = true;
+                    }
+                }
 
-            if (ply as usize) < 64 {
-                if mv == killer_moves[ply as usize][0] {
-                    score += 9000;
-                } else if mv == killer_moves[ply as usize][1] {
-                    score += 8000;
+                if !is_killer {
+                    let from = mv.from() as usize;
+                    let to = mv.to() as usize;
+                    let h_val = history[from][to];
+
+                    score = if h_val > 700_000 { 700_000 } else { h_val };
                 }
             }
             (mv, score)
@@ -113,7 +128,7 @@ pub fn negamax(
     if let Some(entry) = tt.probe(current_hash) {
         for (mv, score) in scored_moves.iter_mut() {
             if *mv == entry.best_move {
-                *score += 10_000_000;
+                *score += 20_000_000;
                 break;
             }
         }
@@ -135,6 +150,7 @@ pub fn negamax(
             next_buffers,
             position_history,
             killer_moves,
+            history,
             ply + 1,
         );
 
@@ -151,10 +167,20 @@ pub fn negamax(
         }
 
         if alpha >= beta {
-            if !mv.is_capture() && (ply as usize) < 64 {
-                if killer_moves[ply as usize][0] != *mv {
-                    killer_moves[ply as usize][1] = killer_moves[ply as usize][0];
-                    killer_moves[ply as usize][0] = *mv;
+            if !mv.is_capture() {
+                if (ply as usize) < 64 {
+                    if killer_moves[ply as usize][0] != *mv {
+                        killer_moves[ply as usize][1] = killer_moves[ply as usize][0];
+                        killer_moves[ply as usize][0] = *mv;
+                    }
+                }
+
+                let bonus = (depth as i32) * (depth as i32);
+                let from = mv.from() as usize;
+                let to = mv.to() as usize;
+
+                if history[from][to] < 1_000_000 {
+                    history[from][to] += bonus;
                 }
             }
             break;

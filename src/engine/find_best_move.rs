@@ -28,6 +28,7 @@ impl Engine {
         let mut board_mut = *b;
         let start_time = Instant::now();
         let mut killer_moves = [[Moves::new(0, 0, 0, 0, false); 2]; MAX_PLY];
+        let mut history = [[0i32; 64]; 64];
 
         let limit_duration = time_limit.map(|ms| Duration::from_millis(ms));
 
@@ -82,6 +83,7 @@ impl Engine {
                     next_buffers,
                     &mut search_history,
                     &mut killer_moves,
+                    &mut history,
                     1,
                 );
 
