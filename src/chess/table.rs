@@ -172,17 +172,18 @@ impl Board {
 
         let piece_placement = parts[0];
 
-        let mut rank_start_index: u8 = 56;
+        let mut rank_start_index: i32 = 56;
 
         for rank_str in piece_placement.split('/') {
-            let mut file_index: u8 = 0;
+            let mut file_index: i32 = 0;
 
             for piece_char in rank_str.chars() {
                 if piece_char.is_digit(10) {
-                    let skip = piece_char.to_digit(10).unwrap() as u8;
+                    let skip = piece_char.to_digit(10).unwrap() as i32;
                     file_index += skip;
                 } else {
-                    let square_index = rank_start_index + file_index;
+                    // [CORREZIONE] Cast a u8 solo al momento dell'uso
+                    let square_index = (rank_start_index + file_index) as u8;
 
                     match piece_char {
                         'P' => {

@@ -182,7 +182,7 @@ impl UciEngine {
     }
 
     fn handle_go(&mut self, args: &[&str]) -> String {
-        let mut depth = 6;
+        let mut depth = 64;
         let mut wtime: Option<u64> = None;
         let mut btime: Option<u64> = None;
         let mut infinite = false;

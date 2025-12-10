@@ -166,23 +166,66 @@ pub fn negamax(
 
     scored_moves.sort_unstable_by_key(|(_, score)| -score);
 
-    for (mv, _) in scored_moves.iter() {
+    for (i, (mv, _)) in scored_moves.iter().enumerate() {
         let undo_info = b.make_move_with_undo(mv);
-
         position_history.push(b.get_hash());
 
-        let score = -negamax(
-            b,
-            depth - 1,
-            -beta,
-            -alpha,
-            tt,
-            next_buffers,
-            position_history,
-            killer_moves,
-            history,
-            ply + 1,
-        );
+        let score = if depth >= 3
+            && i > 4
+            && !mv.is_capture()
+            && !mv.is_promotion()
+            && !b.is_king_in_check(turn)
+        {
+            let reduction = 1;
+            let reduced_depth = if depth > reduction + 1 {
+                depth - 1 - reduction
+            } else {
+                1
+            };
+
+            let temp_score = -negamax(
+                b,
+                reduced_depth,
+                -beta,
+                -alpha,
+                tt,
+                next_buffers,
+                position_history,
+                killer_moves,
+                history,
+                ply + 1,
+            );
+
+            if temp_score > alpha {
+                -negamax(
+                    b,
+                    depth - 1,
+                    -beta,
+                    -alpha,
+                    tt,
+                    next_buffers,
+                    position_history,
+                    killer_moves,
+                    history,
+                    ply + 1,
+                )
+            } else {
+                temp_score
+            }
+        } else {
+            -negamax(
+                b,
+                depth - 1,
+                -beta,
+                -alpha,
+                tt,
+                next_buffers,
+                position_history,
+                killer_moves,
+                history,
+                ply + 1,
+            )
+        };
 
         position_history.pop();
         b.unmake_move(mv, undo_info);
@@ -216,7 +259,6 @@ pub fn negamax(
             break;
         }
     }
-
     let bound = if best_score <= alpha_orig {
         BoundType::Upper
     } else if best_score >= beta {
