@@ -63,6 +63,8 @@ impl UciEngine {
             "isready" => Some("readyok".to_string()),
             "ucinewgame" => {
                 self.board = Board::new();
+                self.engine.tt.clear();
+                self.history = vec![self.board.get_hash()];
                 None
             }
             "position" => {
@@ -83,7 +85,7 @@ impl UciEngine {
 
     fn handle_uci(&self) -> String {
         let mut response = String::new();
-        response.push_str("id name swag chess V1.3.2\n");
+        response.push_str("id name swag chess V1.3.4\n");
         response.push_str("id author Frigge\n");
         response.push_str("uciok");
         response
@@ -99,6 +101,8 @@ impl UciEngine {
         match args[0] {
             "startpos" => {
                 self.board = Board::new();
+                self.history = vec![self.board.get_hash()];
+                self.engine.tt.clear();
                 move_index = 1;
             }
             "fen" => {
@@ -111,6 +115,8 @@ impl UciEngine {
                 let fen = fen_parts.join(" ");
                 if let Ok(board) = Board::new_from_fen(&fen) {
                     self.board = board;
+                    self.history = vec![self.board.get_hash()];
+                    self.engine.tt.clear();
                 }
                 move_index = i;
             }
@@ -121,6 +127,7 @@ impl UciEngine {
             for &move_str in &args[move_index + 1..] {
                 if let Some(mv) = self.parse_move(move_str) {
                     self.board.make_move_with_undo(&mv);
+                    self.history.push(self.board.get_hash());
                 }
             }
         }
@@ -240,8 +247,16 @@ impl UciEngine {
             };
             match my_time {
                 Some(t) => {
-                    let alloc = t / 30;
-                    Some(alloc.max(50))
+                    let overhead = 50;
+
+                    if t <= overhead {
+                        Some(5)
+                    } else {
+                        let time_available = t - overhead;
+                        let alloc = time_available / 30;
+
+                        Some(alloc.max(10))
+                    }
                 }
                 None => None,
             }

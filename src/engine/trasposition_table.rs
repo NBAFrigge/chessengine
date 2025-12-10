@@ -1,9 +1,6 @@
-use core::hash;
-use std::collections::HashMap;
-
 use crate::chess::moves_gen::moves_struct::Moves;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct TTEntry {
     pub hash: u64,
     pub score: i32,
@@ -33,23 +30,36 @@ impl TTEntry {
     }
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum BoundType {
     Exact = 0,
-    Lower = 1, // Fail-high
-    Upper = 2, // Fail-low
+    Lower = 1,
+    Upper = 2,
 }
 
 pub struct TT {
-    map: HashMap<u64, TTEntry>,
+    table: Vec<TTEntry>,
+    size: usize,
     pub age: u8,
 }
 
 impl TT {
     pub fn new(size_mb: usize) -> Self {
-        let capacity = (size_mb * 1024 * 1024) / 20;
+        let entry_size = std::mem::size_of::<TTEntry>();
+        let num_entries = (size_mb * 1024 * 1024) / entry_size;
+
+        let empty_entry = TTEntry {
+            hash: 0,
+            score: 0,
+            best_move: Moves::new(0, 0, 0, 0, false),
+            depth: 0,
+            bound: BoundType::Exact,
+            age: 0,
+        };
+
         TT {
-            map: HashMap::with_capacity(capacity),
+            table: vec![empty_entry; num_entries],
+            size: num_entries,
             age: 0,
         }
     }
@@ -59,20 +69,31 @@ impl TT {
     }
 
     pub fn probe(&self, hash: u64) -> Option<&TTEntry> {
-        self.map.get(&hash)
+        let index = (hash as usize) % self.size;
+        let entry = &self.table[index];
+
+        if entry.hash == hash {
+            Some(entry)
+        } else {
+            None
+        }
     }
 
     pub fn store(&mut self, hash: u64, entry: TTEntry) {
-        if let Some(existing) = self.map.get(&hash) {
-            if existing.age == self.age && existing.depth > entry.depth {
-                return;
-            }
-        }
+        let index = (hash as usize) % self.size;
+        let existing = self.table[index];
 
-        self.map.insert(hash, entry);
+        if existing.hash == 0 || existing.age != self.age || entry.depth >= existing.depth {
+            self.table[index] = entry;
+        }
     }
 
     pub fn clear(&mut self) {
-        self.map.clear();
+        for entry in self.table.iter_mut() {
+            entry.hash = 0;
+            entry.depth = 0;
+            entry.age = 0;
+        }
     }
 }
+

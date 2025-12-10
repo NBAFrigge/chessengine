@@ -10,7 +10,7 @@ const INFINITY: i32 = 30000;
 const MAX_PLY: usize = 64;
 
 pub struct Engine {
-    tt: TT,
+    pub tt: TT,
 }
 
 impl Engine {
