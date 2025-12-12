@@ -4,7 +4,7 @@ use crate::engine::quiescence::quiescence;
 use crate::engine::trasposition_table::{BoundType, TT, TTEntry};
 
 const MATE_SCORE: i32 = 20000;
-const CONTEMPT: i32 = 50;
+const CONTEMPT: i32 = 0;
 #[inline(always)]
 fn is_repetition(history: &[u64], current_hash: u64) -> bool {
     let mut count = 0;

@@ -85,7 +85,7 @@ impl UciEngine {
 
     fn handle_uci(&self) -> String {
         let mut response = String::new();
-        response.push_str("id name swag chess V1.3.4\n");
+        response.push_str("id name swag chess V1.3.5\n");
         response.push_str("id author Frigge\n");
         response.push_str("uciok");
         response
@@ -192,6 +192,8 @@ impl UciEngine {
         let mut depth = 64;
         let mut wtime: Option<u64> = None;
         let mut btime: Option<u64> = None;
+        let mut winc: Option<u64> = None;
+        let mut binc: Option<u64> = None;
         let mut infinite = false;
 
         let mut i = 0;
@@ -227,6 +229,26 @@ impl UciEngine {
                         i += 1;
                     }
                 }
+                "winc" => {
+                    if i + 1 < args.len() {
+                        if let Ok(inc) = args[i + 1].parse::<u64>() {
+                            winc = Some(inc);
+                        }
+                        i += 2;
+                    } else {
+                        i += 1;
+                    }
+                }
+                "binc" => {
+                    if i + 1 < args.len() {
+                        if let Ok(inc) = args[i + 1].parse::<u64>() {
+                            binc = Some(inc);
+                        }
+                        i += 2;
+                    } else {
+                        i += 1;
+                    }
+                }
                 "infinite" => {
                     infinite = true;
                     i += 1;
@@ -240,23 +262,19 @@ impl UciEngine {
         let time_limit = if infinite {
             None
         } else {
-            let my_time = if self.board.is_white_turn {
-                wtime
+            let (my_time, my_inc) = if self.board.is_white_turn {
+                (wtime, winc.unwrap_or(0))
             } else {
-                btime
+                (btime, binc.unwrap_or(0))
             };
+
             match my_time {
                 Some(t) => {
-                    let overhead = 50;
+                    let time_slot = (t as f64 / 20.0) + (my_inc as f64 / 2.0);
 
-                    if t <= overhead {
-                        Some(5)
-                    } else {
-                        let time_available = t - overhead;
-                        let alloc = time_available / 30;
+                    let max_alloc = t.saturating_sub(100).max(50);
 
-                        Some(alloc.max(10))
-                    }
+                    Some((time_slot as u64).clamp(50, max_alloc))
                 }
                 None => None,
             }
