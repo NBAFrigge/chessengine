@@ -162,12 +162,16 @@ pub fn negamax(
         let undo_info = b.make_move_with_undo(mv);
         position_history.push(b.get_hash());
 
+        let in_check = b.is_king_in_check(turn);
+        let extension = if in_check { 1 } else { 0 };
+        let new_depth = (depth as i8 - 1 + extension).max(0) as u8;
+
         let mut score;
 
         if i == 0 {
             score = -negamax(
                 b,
-                depth - 1,
+                new_depth,
                 -beta,
                 -alpha,
                 tt,
@@ -179,21 +183,19 @@ pub fn negamax(
             );
         } else {
             let mut reduction = 0;
-            if depth >= 3
-                && i >= 4
-                && !mv.is_capture()
-                && !mv.is_promotion()
-                && !b.is_king_in_check(turn)
-            {
+
+            if depth >= 3 && i >= 4 && !in_check && !mv.is_capture() && !mv.is_promotion() {
                 reduction = 1;
                 if depth >= 6 && i > 10 {
                     reduction = 2;
                 }
             }
 
+            let lmr_depth = (new_depth as i8 - reduction as i8).max(0) as u8;
+
             score = -negamax(
                 b,
-                depth - 1 - reduction,
+                lmr_depth,
                 -alpha - 1,
                 -alpha,
                 tt,
@@ -207,7 +209,7 @@ pub fn negamax(
             if score > alpha && reduction > 0 {
                 score = -negamax(
                     b,
-                    depth - 1,
+                    new_depth,
                     -alpha - 1,
                     -alpha,
                     tt,
@@ -222,7 +224,7 @@ pub fn negamax(
             if score > alpha && score < beta {
                 score = -negamax(
                     b,
-                    depth - 1,
+                    new_depth,
                     -beta_orig,
                     -alpha,
                     tt,
@@ -234,7 +236,6 @@ pub fn negamax(
                 );
             }
         }
-
         position_history.pop();
         b.unmake_move(mv, undo_info);
 

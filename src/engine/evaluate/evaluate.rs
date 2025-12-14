@@ -1,3 +1,5 @@
+use strum::IntoEnumIterator;
+
 use crate::chess::table::Board;
 use crate::chess::table::{Color, Type};
 use crate::engine::evaluate::bishop_pair::{self, evaluate_bishop_pair};
@@ -21,25 +23,23 @@ const ROOK_PHASE_WEIGHT: i32 = 2;
 pub fn evaluate(b: &Board, phase: f32) -> i32 {
     let mut score = 0;
 
-    for sq in 0..64 {
-        let piece_color = match b.get_piece_color_at_square(sq) {
-            Some(c) => c,
-            None => continue,
-        };
-        let piece_type = match b.get_piece_type_at_square(sq) {
-            Some(t) => t,
-            None => continue,
-        };
+    for piece_type in Type::iter() {
+        if piece_type == Type::Any {
+            continue;
+        }
 
-        match piece_color {
-            Color::White => {
-                score += get_piece_value(piece_type)
-                    + get_pst_value(piece_type, sq as usize, piece_color, phase)
-            }
-            Color::Black => {
-                score -= get_piece_value(piece_type)
-                    + get_pst_value(piece_type, sq as usize, piece_color, phase)
-            }
+        let white_pieces = b.get_pieces(Color::White, piece_type);
+        for piece in white_pieces.iter_bits() {
+            let sq = piece.lsb() as usize;
+            score +=
+                get_piece_value(piece_type) + get_pst_value(piece_type, sq, Color::White, phase);
+        }
+
+        let black_pieces = b.get_pieces(Color::Black, piece_type);
+        for piece in black_pieces.iter_bits() {
+            let sq = piece.lsb() as usize;
+            score -=
+                get_piece_value(piece_type) + get_pst_value(piece_type, sq, Color::Black, phase);
         }
     }
 
