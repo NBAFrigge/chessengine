@@ -85,7 +85,7 @@ impl UciEngine {
 
     fn handle_uci(&self) -> String {
         let mut response = String::new();
-        response.push_str("id name swag chess V1.4.0\n");
+        response.push_str("id name swag chess V1.4.1\n");
         response.push_str("id author Frigge\n");
         response.push_str("uciok");
         response
