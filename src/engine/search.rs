@@ -183,19 +183,21 @@ pub fn negamax(
             );
         } else {
             let mut reduction = 0;
-
-            if depth >= 3 && i >= 4 && !in_check && !mv.is_capture() && !mv.is_promotion() {
+            if depth >= 3
+                && i >= 4
+                && !mv.is_capture()
+                && !mv.is_promotion()
+                && !b.is_king_in_check(turn)
+            {
                 reduction = 1;
                 if depth >= 6 && i > 10 {
                     reduction = 2;
                 }
             }
 
-            let lmr_depth = (new_depth as i8 - reduction as i8).max(0) as u8;
-
             score = -negamax(
                 b,
-                lmr_depth,
+                depth - 1 - reduction,
                 -alpha - 1,
                 -alpha,
                 tt,
@@ -209,7 +211,7 @@ pub fn negamax(
             if score > alpha && reduction > 0 {
                 score = -negamax(
                     b,
-                    new_depth,
+                    depth - 1,
                     -alpha - 1,
                     -alpha,
                     tt,
@@ -224,8 +226,8 @@ pub fn negamax(
             if score > alpha && score < beta {
                 score = -negamax(
                     b,
-                    new_depth,
-                    -beta_orig,
+                    depth - 1,
+                    -beta,
                     -alpha,
                     tt,
                     next_buffers,

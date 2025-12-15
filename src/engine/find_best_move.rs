@@ -39,7 +39,9 @@ impl Engine {
         let (root_move_buffer, _) = move_buffers.split_at_mut(1);
         let root_move_vec = &mut root_move_buffer[0];
         let turn = board_mut.get_side();
-        let moves = board_mut.get_legal_moves(turn, root_move_vec);
+
+        board_mut.get_legal_moves(turn, root_move_vec);
+        let moves = root_move_vec; // Ora `moves` è di tipo &mut Vec<Moves>
 
         if moves.is_empty() {
             return Moves::new(0, 0, 0, 0, false);
@@ -51,6 +53,12 @@ impl Engine {
         search_history.push(board_mut.get_hash());
 
         for current_depth in 1..=max_depth {
+            if current_depth > 1 {
+                if let Some(idx) = moves.iter().position(|&m| m == global_best_move) {
+                    moves.swap(0, idx);
+                }
+            }
+
             let mut best_move_this_depth = global_best_move;
             let mut alpha = -INFINITY;
             let beta = INFINITY;
@@ -115,7 +123,6 @@ impl Engine {
 
         global_best_move
     }
-
     pub fn clear(&mut self) {
         self.tt.clear();
     }
