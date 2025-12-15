@@ -182,7 +182,6 @@ impl Board {
                     let skip = piece_char.to_digit(10).unwrap() as i32;
                     file_index += skip;
                 } else {
-                    // [CORREZIONE] Cast a u8 solo al momento dell'uso
                     let square_index = (rank_start_index + file_index) as u8;
 
                     match piece_char {
@@ -1620,7 +1619,6 @@ impl Board {
 
     #[inline(always)]
     pub fn has_non_pawn_material(&self, color: Color) -> bool {
-        // Uniamo le bitboard di Cavalli, Alfieri, Torri e Regine
         let knights = self.get_pieces(color, Type::Knight).get_value();
         let bishops = self.get_pieces(color, Type::Bishop).get_value();
         let rooks = self.get_pieces(color, Type::Rook).get_value();

@@ -33,7 +33,7 @@ pub fn negamax(
     ply: i32,
 ) -> i32 {
     let alpha_orig = alpha;
-    let beta_orig = beta;
+    // let beta_orig = beta;
     let current_hash = b.get_hash();
 
     if is_repetition(position_history, current_hash) {
@@ -81,6 +81,7 @@ pub fn negamax(
     current_buffer[0].clear();
     let turn = b.get_side();
 
+    // Null Move Pruning
     if depth >= 3
         && beta < MATE_SCORE
         && ply > 0
@@ -164,6 +165,7 @@ pub fn negamax(
 
         let in_check = b.is_king_in_check(turn);
         let extension = if in_check { 1 } else { 0 };
+
         let new_depth = (depth as i8 - 1 + extension).max(0) as u8;
 
         let mut score;
@@ -183,21 +185,18 @@ pub fn negamax(
             );
         } else {
             let mut reduction = 0;
-            if depth >= 3
-                && i >= 4
-                && !mv.is_capture()
-                && !mv.is_promotion()
-                && !b.is_king_in_check(turn)
-            {
+            if depth >= 3 && i >= 4 && !mv.is_capture() && !mv.is_promotion() && !in_check {
                 reduction = 1;
                 if depth >= 6 && i > 10 {
                     reduction = 2;
                 }
             }
 
+            let research_depth = new_depth.saturating_sub(reduction);
+
             score = -negamax(
                 b,
-                depth - 1 - reduction,
+                research_depth,
                 -alpha - 1,
                 -alpha,
                 tt,
@@ -211,7 +210,7 @@ pub fn negamax(
             if score > alpha && reduction > 0 {
                 score = -negamax(
                     b,
-                    depth - 1,
+                    new_depth,
                     -alpha - 1,
                     -alpha,
                     tt,
@@ -226,7 +225,7 @@ pub fn negamax(
             if score > alpha && score < beta {
                 score = -negamax(
                     b,
-                    depth - 1,
+                    new_depth,
                     -beta,
                     -alpha,
                     tt,
@@ -238,6 +237,7 @@ pub fn negamax(
                 );
             }
         }
+
         position_history.pop();
         b.unmake_move(mv, undo_info);
 
@@ -249,6 +249,7 @@ pub fn negamax(
             }
         }
 
+        // Beta Cutoff
         if alpha >= beta {
             if !mv.is_capture() {
                 if (ply as usize) < 64 {
