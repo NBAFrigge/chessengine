@@ -42,6 +42,10 @@ pub fn quiescence(b: &mut Board, mut alpha: i32, beta: i32, depth: i32) -> i32 {
             }
         }
 
+        if b.see(&capture_move) < 0 {
+            continue;
+        }
+
         let undo = b.make_move_with_undo(&capture_move);
 
         let opponent = if b.is_white_turn {
@@ -74,4 +78,3 @@ pub fn quiescence(b: &mut Board, mut alpha: i32, beta: i32, depth: i32) -> i32 {
 
     best_score
 }
-

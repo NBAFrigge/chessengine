@@ -1,4 +1,5 @@
 use crate::bitboard::bitboard::Bitboard;
+use crate::chess::moves_gen::magic_bitboards::{bishop_moves, rook_moves};
 use crate::chess::moves_gen::moves_struct::{
     FLAG_CAPTURE, FLAG_CASTLE, FLAG_EN_PASSANT, FLAG_NORMAL, Moves, PROMOTE_BISHOP, PROMOTE_KNIGHT,
     PROMOTE_QUEEN, PROMOTE_ROOK,
@@ -19,6 +20,22 @@ pub const FILE_H: u64 = 0x8080808080808080;
 pub enum Color {
     White,
     Black,
+}
+
+impl Color {
+    pub fn match_color<T>(&self, white: T, black: T) -> T {
+        match self {
+            Color::White => white,
+            Color::Black => black,
+        }
+    }
+
+    pub fn opposite(&self) -> Color {
+        match self {
+            Color::White => Color::Black,
+            Color::Black => Color::White,
+        }
+    }
 }
 
 // TODO: Move in moves_struct
@@ -1646,8 +1663,139 @@ impl Board {
         (knights | bishops | rooks | queens) != 0
     }
 
-    // #[inline(always)]
-    // pub fn see(&self)
+    #[inline(always)]
+    pub fn see(&self, mv: &Moves) -> i32 {
+        if mv.flags() == FLAG_CASTLE {
+            return 0;
+        }
+
+        let from = mv.from();
+        let to = mv.to();
+
+        let mut victim_val = if mv.flags() == FLAG_EN_PASSANT {
+            Type::Pawn.value()
+        } else if let Some(victim) = self.get_piece_type_at_square(to) {
+            victim.value()
+        } else {
+            0
+        };
+
+        if mv.is_promotion() {
+            let promo_val = mv.promotion_piece_type().value();
+            victim_val += promo_val - Type::Pawn.value();
+        }
+
+        let mut aggressor_type = self.get_piece_type_at_square(from).unwrap();
+
+        let mut occupied = self.get_occupied_pos().get_value();
+        occupied &= !(1u64 << from);
+
+        if mv.flags() == FLAG_EN_PASSANT {
+            let cap_sq = if self.is_white_turn { to - 8 } else { to + 8 };
+            occupied &= !(1u64 << cap_sq);
+        }
+
+        if mv.flags() == FLAG_EN_PASSANT {
+            let cap_sq = if self.is_white_turn { to - 8 } else { to + 8 };
+            occupied &= !(1u64 << cap_sq);
+        }
+
+        let mut scores = Vec::with_capacity(32);
+        scores.push(victim_val);
+
+        let mut attackers = self.get_attackers_to_square(to, occupied);
+        let mut side_to_move = self.get_side().match_color(Color::Black, Color::White);
+
+        loop {
+            let my_attackers = attackers & self.get_pieces(side_to_move, Type::Any).get_value();
+
+            if my_attackers == 0 {
+                break;
+            }
+
+            let (lva_val, lva_sq) = self.get_lva(my_attackers, side_to_move);
+            let prev_score = *scores.last().unwrap();
+            let piece_val = aggressor_type.value();
+            scores.push(piece_val - prev_score);
+
+            aggressor_type = match lva_val {
+                100 => Type::Pawn,
+                320 => Type::Knight,
+                330 => Type::Bishop,
+                500 => Type::Rook,
+                900 => Type::Queen,
+                _ => Type::King,
+            };
+            occupied &= !(1u64 << lva_sq);
+            side_to_move = match side_to_move {
+                Color::White => Color::Black,
+                Color::Black => Color::White,
+            };
+
+            let diag_attackers =
+                bishop_moves(1u64 << to, occupied) & (self.bishop.or(self.queen).get_value());
+            let orth_attackers =
+                rook_moves(1u64 << to, occupied) & (self.rook.or(self.queen).get_value());
+            attackers |= diag_attackers | orth_attackers;
+            attackers &= occupied;
+        }
+
+        let mut final_score = 0;
+        while let Some(score) = scores.pop() {
+            if score > -final_score {
+                final_score = -final_score;
+            } else {
+                final_score = score;
+            }
+        }
+        final_score
+    }
+
+    #[inline(always)]
+    fn get_attackers_to_square(&self, sq: u8, occupied: u64) -> u64 {
+        let sq_bb = 1u64 << sq;
+        let mut attackers = 0;
+
+        let w_pawns = self.get_piece_white(Type::Pawn).get_value();
+        let attacks_from_white = crate::chess::moves_gen::pawn::black_attack(sq_bb, w_pawns);
+        attackers |= attacks_from_white;
+
+        let b_pawns = self.get_piece_black(Type::Pawn).get_value();
+        let attacks_from_black = crate::chess::moves_gen::pawn::white_attack(sq_bb, b_pawns);
+        attackers |= attacks_from_black;
+
+        let knights = self.knight.get_value();
+        attackers |= crate::chess::moves_gen::knight::moves(sq_bb) & knights;
+
+        let kings = self.king.get_value();
+        attackers |= crate::chess::moves_gen::king::moves(sq_bb) & kings;
+
+        let bishops_queens = self.bishop.or(self.queen).get_value();
+        attackers |= bishop_moves(sq_bb, occupied) & bishops_queens;
+
+        let rooks_queens = self.rook.or(self.queen).get_value();
+        attackers |= rook_moves(sq_bb, occupied) & rooks_queens;
+
+        attackers
+    }
+
+    fn get_lva(&self, attackers: u64, side: Color) -> (i32, u8) {
+        for &pt in &[
+            Type::Pawn,
+            Type::Knight,
+            Type::Bishop,
+            Type::Rook,
+            Type::Queen,
+            Type::King,
+        ] {
+            let subset = attackers & self.get_pieces(side, pt).get_value();
+            if subset != 0 {
+                let sq = subset.trailing_zeros() as u8;
+                return (pt.value(), sq);
+            }
+        }
+        (0, 0)
+    }
 
     #[allow(dead_code)]
     pub fn to_string(&self) -> String {
