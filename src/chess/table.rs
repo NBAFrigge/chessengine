@@ -40,6 +40,25 @@ pub enum Type {
 }
 
 impl Type {
+    pub const PAWN_VALUE: i32 = 100;
+    pub const KNIGHT_VALUE: i32 = 320;
+    pub const BISHOP_VALUE: i32 = 330;
+    pub const ROOK_VALUE: i32 = 500;
+    pub const QUEEN_VALUE: i32 = 999;
+    pub const KING_VALUE: i32 = 20000;
+
+    pub fn value(self) -> i32 {
+        match self {
+            Type::Pawn => Self::PAWN_VALUE,
+            Type::Knight => Self::KNIGHT_VALUE,
+            Type::Bishop => Self::BISHOP_VALUE,
+            Type::Rook => Self::ROOK_VALUE,
+            Type::Queen => Self::QUEEN_VALUE,
+            Type::King => Self::KING_VALUE,
+            Type::Any => 0,
+        }
+    }
+
     pub fn id(self) -> u8 {
         match self {
             Type::Pawn => 0,
@@ -1627,6 +1646,9 @@ impl Board {
         (knights | bishops | rooks | queens) != 0
     }
 
+    // #[inline(always)]
+    // pub fn see(&self)
+
     #[allow(dead_code)]
     pub fn to_string(&self) -> String {
         let mut string =
@@ -1700,13 +1722,9 @@ impl Board {
             .chars()
             .enumerate()
             .flat_map(|(i, c)| {
-                if i != 0 && i % 1 == 0 {
-                    Some(' ')
-                } else {
-                    None
-                }
-                .into_iter()
-                .chain(std::iter::once(c))
+                if i != 0 { Some(' ') } else { None }
+                    .into_iter()
+                    .chain(std::iter::once(c))
             })
             .collect::<String>();
 

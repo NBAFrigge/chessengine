@@ -95,30 +95,16 @@ impl Moves {
     }
 
     pub fn score(&self, b: &Board) -> i32 {
-        if self.is_promotion() && self.is_capture() {
-            let promo_value = match self.promotion_piece() {
-                PROMOTE_QUEEN => 9000,
-                PROMOTE_ROOK => 500,
-                PROMOTE_BISHOP => 330,
-                PROMOTE_KNIGHT => 320,
-                _ => 100,
-            };
-
-            if let Some(victim) = b.get_piece_type_at_square(self.to()) {
-                let victim_value = get_piece_value(victim);
-                return 2_000_000 + promo_value + victim_value;
-            }
-        }
-
         if self.is_promotion() {
-            let promo_bonus = match self.promotion_piece() {
-                PROMOTE_QUEEN => 900,
-                PROMOTE_ROOK => 500,
-                PROMOTE_BISHOP => 330,
-                PROMOTE_KNIGHT => 320,
-                _ => 100,
-            };
-            return 800_000 + promo_bonus;
+            let promo_value = self.promotion_piece_type().value();
+
+            if self.is_capture() {
+                if let Some(victim) = b.get_piece_type_at_square(self.to()) {
+                    return 2_000_000 + promo_value + victim.value();
+                }
+            }
+
+            return 800_000 + promo_value;
         }
 
         if self.flags() == FLAG_CAPTURE {
@@ -168,16 +154,5 @@ impl Moves {
         let file = (b'a' + (index % 8)) as char;
         let rank = (b'1' + (index / 8)) as char;
         format!("{}{}", file, rank)
-    }
-}
-fn get_piece_value(t: Type) -> i32 {
-    match t {
-        Type::Pawn => 100,
-        Type::Knight => 320,
-        Type::Bishop => 330,
-        Type::Rook => 500,
-        Type::Queen => 900,
-        Type::King => 20000,
-        _ => 0,
     }
 }

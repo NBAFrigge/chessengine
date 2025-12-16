@@ -2,18 +2,11 @@ use strum::IntoEnumIterator;
 
 use crate::chess::table::Board;
 use crate::chess::table::{Color, Type};
-use crate::engine::evaluate::bishop_pair::{self, evaluate_bishop_pair};
+use crate::engine::evaluate::bishop_pair::evaluate_bishop_pair;
 use crate::engine::evaluate::endgame::evaluate_endgame_aggression;
 use crate::engine::evaluate::king_safety::evaluate_king_safety;
 use crate::engine::evaluate::pawn_evaluation::evaluate_pawn;
 use crate::engine::evaluate::pst::get_pst_value;
-
-const PAWN_WEIGHT: i32 = 100;
-const KING_WEIGHT: i32 = 9999;
-const KNIGHT_WEIGHT: i32 = 320;
-const QUEEN_WEIGHT: i32 = 999;
-const BISHOP_WEIGTH: i32 = 330;
-const ROOK_WEIGHT: i32 = 500;
 
 const KNIGHT_PHASE_WEIGHT: i32 = 1;
 const QUEEN_PHASE_WEIGHT: i32 = 4;
@@ -31,15 +24,13 @@ pub fn evaluate(b: &Board, phase: f32) -> i32 {
         let white_pieces = b.get_pieces(Color::White, piece_type);
         for piece in white_pieces.iter_bits() {
             let sq = piece.lsb() as usize;
-            score +=
-                get_piece_value(piece_type) + get_pst_value(piece_type, sq, Color::White, phase);
+            score += piece_type.value() + get_pst_value(piece_type, sq, Color::White, phase);
         }
 
         let black_pieces = b.get_pieces(Color::Black, piece_type);
         for piece in black_pieces.iter_bits() {
             let sq = piece.lsb() as usize;
-            score -=
-                get_piece_value(piece_type) + get_pst_value(piece_type, sq, Color::Black, phase);
+            score -= piece_type.value() + get_pst_value(piece_type, sq, Color::Black, phase);
         }
     }
 
@@ -139,15 +130,4 @@ pub fn evaluate_premature_pawns(b: &Board, color: Color) -> i32 {
     }
 
     0
-}
-pub fn get_piece_value(t: Type) -> i32 {
-    match t {
-        Type::Pawn => PAWN_WEIGHT,
-        Type::Bishop => BISHOP_WEIGTH,
-        Type::Knight => KNIGHT_WEIGHT,
-        Type::King => KING_WEIGHT,
-        Type::Rook => ROOK_WEIGHT,
-        Type::Queen => QUEEN_WEIGHT,
-        _ => 0,
-    }
 }
