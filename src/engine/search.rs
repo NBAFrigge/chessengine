@@ -20,6 +20,17 @@ fn is_repetition(history: &[u64], current_hash: u64) -> bool {
     false
 }
 
+#[inline(always)]
+fn pick_move(moves: &mut [(Moves, i32)], start_index: usize) {
+    let mut best_index = start_index;
+    for i in (start_index + 1)..moves.len() {
+        if moves[i].1 > moves[best_index].1 {
+            best_index = i
+        }
+    }
+    moves.swap(start_index, best_index);
+}
+
 pub fn negamax(
     b: &mut Board,
     mut depth: u8,
@@ -154,12 +165,14 @@ pub fn negamax(
         })
         .collect();
 
-    scored_moves.sort_unstable_by_key(|(_, score)| -score);
+    // scored_moves.sort_unstable_by_key(|(_, score)| -score);
 
     let mut best_score = -MATE_SCORE;
     let mut best_move = scored_moves[0].0;
 
-    for (i, (mv, _)) in scored_moves.iter().enumerate() {
+    for i in 0..scored_moves.len() {
+        pick_move(&mut scored_moves, i);
+        let mv = &scored_moves[i].0;
         let undo_info = b.make_move_with_undo(mv);
         position_history.push(b.get_hash());
 
